@@ -1,14 +1,15 @@
 <p>
-  Howdy! Here's a list of awesome computer scientists. Do you know any others? Add to the list yourself.
+  Create a New Goal
 </p>
-
-<form (submit)="addName()" class="form-inline">
+<form (submit)="addGoal()" class="form-inline">
 <div class="form-group">
-  <input [(ngModel)]="newName" name="newName" class="form-control" placeholder="Awesome Computer Scientist">
+  <input [(ngModel)]="newAccomplished" name="newAccomplished" type="checkbox" class="form-control">
+  <input [(ngModel)]="newGoal" name="newGoal" class="form-control" placeholder="End Goal">
   <button type="submit" class="btn btn-primary">Add</button>
 </div>
 </form>
 
 <ul>
-  <li *ngFor="let name of names">{{name}}</li>
+  <li *ngFor="let goal of goals">{{goal.goal}} [{{goal.accomplished}}] <button type="button" class="btn btn-small" (click)="deleteGoal(goal.guid)"> X </button></li>
 </ul>
+<button type="button" class="btn btn-secondary" (click)="getGoals()">Fetch Goals</button>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NameListService } from '../shared/index';
+import { GoalListService } from '../shared/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -13,44 +13,62 @@ import { NameListService } from '../shared/index';
 
 export class HomeComponent implements OnInit {
 
-  newName: string = '';
+  newGoal: string = '';
+  newAccomplished: boolean = false;
   errorMessage: string;
-  names: any[] = [];
+  goals: any[] = [];
 
   /**
    * Creates an instance of the HomeComponent with the injected
-   * NameListService.
+   * GoalListService.
    *
-   * @param {NameListService} nameListService - The injected NameListService.
+   * @param {GoalListService} goalListService - The injected GoalListService.
    */
-  constructor(public nameListService: NameListService) {}
+  constructor(public goalListService: GoalListService) {}
 
   /**
    * Get the names OnInit
    */
   ngOnInit() {
-    this.getNames();
+    this.getGoals();
   }
 
   /**
    * Handle the nameListService observable
    */
-  getNames() {
-    this.nameListService.get()
+  getGoals() {
+    this.goalListService.get()
                      .subscribe(
-                       names => this.names = names,
+                       goals => this.goals = goals,
                        error =>  this.errorMessage = <any>error
                        );
   }
 
   /**
-   * Pushes a new name onto the names array
+   * Deletes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  addName(): boolean {
-    // TODO: implement nameListService.post
-    this.names.push(this.newName);
-    this.newName = '';
+  deleteGoal(guid: string): boolean {
+    this.goalListService.delete(guid)
+      .subscribe(
+        error => this.errorMessage = <any>error
+      );
+    return false;
+  }
+
+  /**
+   * Pushes a new goal onto the goals array
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  addGoal(): boolean {
+    let guid = Math.random().toString().split('.').pop();
+    this.goalListService.post({goal:this.newGoal,accomplished:this.newAccomplished,guid:guid})
+      .subscribe(
+        error => this.errorMessage = <any>error
+      );
+    this.goals.push({guid:guid,goal:this.newGoal,accomplished:this.newAccomplished});
+    this.newGoal = '';
+    this.newAccomplished = false;
     return false;
   }
 
