@@ -72,4 +72,13 @@ export class HomeComponent implements OnInit {
     return false;
   }
 
+  /**
+   * Returns whether or not a goal is accomplished.
+   * @return {boolean}
+   */
+  accomplished(goal: Goal): boolean {
+    console.log(goal.accomplished);
+    return goal.accomplished;
+  }
+
 }
