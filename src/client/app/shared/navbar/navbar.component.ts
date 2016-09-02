@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Auth } from '../auth/index';
 
 /**
  * This class represents the navigation bar component.
@@ -10,4 +11,6 @@ import { Component } from '@angular/core';
   styleUrls: ['navbar.component.css'],
 })
 
-export class NavbarComponent {}
+export class NavbarComponent {
+  constructor(private auth: Auth) {}
+}

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Config} from './shared/index';
+import { Config } from './shared/index';
+import { Auth } from './shared/auth/index';
 
 /**
  * This class represents the main application component. Within the @Routes annotation is the configuration of the
@@ -12,7 +13,7 @@ import { Config} from './shared/index';
 })
 
 export class AppComponent {
-  constructor() {
+  constructor(private auth: Auth) {
     console.log('Environment config', Config);
   }
 }
