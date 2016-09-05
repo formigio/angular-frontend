@@ -11,16 +11,22 @@
   <div class="col-lg-12">
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let goal of goals">
-        <!--<button class="btn btn-xs" [class.btn-success]="accomplished"><span class="glyphicon glyphicon-ok"></span></button>-->
-         {{goal.accomplished}} | {{goal.goal}} <button type="button" class="btn btn-xs btn-danger" (click)="deleteGoal(goal.guid)"><span class="glyphicon glyphicon-remove-sign"></span></button></li>
+        <form (submit)="accomplishGoal(goal)" id="goal_{{goal.guid}}" #goalForm="ngForm" class="form-inline">
+          <button [class.btn-success]="accomplished(goal)" [(ngModel)]="goal.accomplished" name="accomplished" class="btn btn-xs" type="submit">
+            <span class="glyphicon glyphicon-ok"></span>
+          </button>
+         <span> {{goal.goal}} </span>
+         <button type="button" class="btn btn-xs btn-danger" (click)="deleteGoal(goal.guid)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+        </form>
+      </li>
       <li class="list-group-item">
-      <form (submit)="addGoal()" class="form-inline">
-      <div class="form-group">
-        <input [(ngModel)]="newAccomplished" name="newAccomplished" type="checkbox" class="form-control">
-        <input [(ngModel)]="newGoal" name="newGoal" class="form-control" placeholder="End Goal">
-        <button type="submit" class="btn btn-primary">Add</button>
-      </div>
-      </form>
+        <form (submit)="addGoal()" class="form-inline">
+        <div class="form-group">
+          <input [(ngModel)]="newAccomplished" name="newAccomplished" type="checkbox" class="form-control">
+          <input [(ngModel)]="newGoal" name="newGoal" class="form-control" placeholder="End Goal">
+          <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+        </form>
       </li>
     </ul>
   </div>

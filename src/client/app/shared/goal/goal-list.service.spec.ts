@@ -4,11 +4,11 @@ import { BaseRequestOptions, ConnectionBackend, Http, HTTP_PROVIDERS, Response, 
 import { MockBackend } from '@angular/http/testing';
 import { Observable } from 'rxjs/Observable';
 
-import { NameListService } from './name-list.service';
+import { GoalListService } from './goal-list.service';
 
 export function main() {
   describe('NameList Service', () => {
-    let nameListService: NameListService;
+    let nameListService: GoalListService;
     let backend: MockBackend;
     let initialResponse: any;
     let providerArr: any[];
@@ -20,7 +20,7 @@ export function main() {
         disableDeprecatedForms(),
         provideForms(),
         HTTP_PROVIDERS,
-        NameListService,
+        GoalListService,
         BaseRequestOptions,
         MockBackend,
         provide(Http, {
@@ -30,7 +30,7 @@ export function main() {
           deps: [MockBackend, BaseRequestOptions]
         }),
       ]);
-      nameListService = injector.get(NameListService);
+      nameListService = injector.get(GoalListService);
       backend = injector.get(MockBackend);
 
       let connection: any;

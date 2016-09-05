@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GoalListService } from '../shared/index';
+import { GoalListService, Goal } from '../shared/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -9,14 +9,15 @@ import { GoalListService } from '../shared/index';
   selector: 'sd-home',
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.css'],
+  providers: [ GoalListService ]
 })
 
 export class HomeComponent implements OnInit {
 
   newGoal: string = '';
-  newAccomplished: boolean = false;
+  newAccomplished: string = 'false';
   errorMessage: string;
-  goals: any[] = [];
+  goals: Goal[] = [];
 
   /**
    * Creates an instance of the HomeComponent with the injected
@@ -57,6 +58,31 @@ export class HomeComponent implements OnInit {
   }
 
   /**
+   * Puts the Goal Object to the Goal List Service
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  putGoal(goal:Goal): boolean {
+    this.goalListService.put(goal)
+      .subscribe(
+        error => this.errorMessage = <any>error
+      );
+    return false;
+  }
+
+  /**
+   * Puts the accomplished Goal Object to the Goal List Service
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  accomplishGoal(goal:Goal): boolean {
+    goal.accomplished = 'true';
+    this.goalListService.put(goal)
+      .subscribe(
+        error => this.errorMessage = <any>error
+      );
+    return false;
+  }
+
+  /**
    * Pushes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
@@ -68,7 +94,7 @@ export class HomeComponent implements OnInit {
       );
     this.goals.push({guid:guid,goal:this.newGoal,accomplished:this.newAccomplished});
     this.newGoal = '';
-    this.newAccomplished = false;
+    this.newAccomplished = 'false';
     return false;
   }
 
@@ -77,8 +103,11 @@ export class HomeComponent implements OnInit {
    * @return {boolean}
    */
   accomplished(goal: Goal): boolean {
-    console.log(goal.accomplished);
-    return goal.accomplished;
+    let acc = false;
+    if(goal.accomplished == 'true'){
+      acc = true;
+    }
+    return acc;
   }
 
 }

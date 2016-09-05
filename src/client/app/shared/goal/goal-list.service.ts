@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { Goal } from './goal.model';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -21,7 +22,7 @@ export class GoalListService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  get(): Observable<string[]> {
+  get(): Observable<Goal[]> {
     return this.http.get('https://kd32ih1imd.execute-api.us-east-1.amazonaws.com/dev/goals')
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
@@ -31,7 +32,7 @@ export class GoalListService {
    * Returns an Observable for the HTTP POST request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  post(goal:Object): Observable<string[]> {
+  post(goal:Goal): Observable<string[]> {
     let body = JSON.stringify(goal);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
@@ -46,6 +47,19 @@ export class GoalListService {
    */
   delete(guid:string): Observable<string[]> {
     return this.http.delete('https://kd32ih1imd.execute-api.us-east-1.amazonaws.com/dev/goals/' + guid)
+                    .map((res: Response) => res.json())
+                    .catch(this.handleError);
+  }
+
+  /**
+   * Returns an Observable for the HTTP GET request for the JSON resource.
+   * @return {string[]} The Observable for the HTTP request.
+   */
+  put(goal:Goal): Observable<string[]> {
+    let body = JSON.stringify(goal);
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+    return this.http.put('https://kd32ih1imd.execute-api.us-east-1.amazonaws.com/dev/goals/' + goal.guid, body, options)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }

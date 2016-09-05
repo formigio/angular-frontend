@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToolbarComponent } from './toolbar/index';
 import { NavbarComponent } from './navbar/index';
-import { GoalListService } from './goal-list/index';
+import { GoalListService } from './goal/index';
 
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
