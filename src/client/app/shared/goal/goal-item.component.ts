@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { GoalListService, Goal } from './index'
+import { GoalListService, Goal } from './index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
