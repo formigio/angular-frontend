@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { Goal } from './goal.model';
+import { Goal, Config } from '../../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -23,7 +23,7 @@ export class GoalListService {
    * @return {string[]} The Observable for the HTTP request.
    */
   get(): Observable<Goal[]> {
-    return this.http.get('https://kd32ih1imd.execute-api.us-east-1.amazonaws.com/dev/goals')
+    return this.http.get(Config.API + '/goals')
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -36,7 +36,7 @@ export class GoalListService {
     let body = JSON.stringify(goal);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    return this.http.post('https://kd32ih1imd.execute-api.us-east-1.amazonaws.com/dev/goals',body, options)
+    return this.http.post(Config.API + '/goals',body, options)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -46,7 +46,7 @@ export class GoalListService {
    * @return {string[]} The Observable for the HTTP request.
    */
   delete(guid:string): Observable<string[]> {
-    return this.http.delete('https://kd32ih1imd.execute-api.us-east-1.amazonaws.com/dev/goals/' + guid)
+    return this.http.delete(Config.API + '/goals/' + guid)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -59,7 +59,7 @@ export class GoalListService {
     let body = JSON.stringify(goal);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    return this.http.put('https://kd32ih1imd.execute-api.us-east-1.amazonaws.com/dev/goals/' + goal.guid, body, options)
+    return this.http.put(Config.API + '/goals/' + goal.guid, body, options)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
