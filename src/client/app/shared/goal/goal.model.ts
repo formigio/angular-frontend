@@ -3,5 +3,5 @@ export class Goal {
     public accomplished: string,
     public guid: string,
     public goal: string
-  ){}
+  ) {}
 }

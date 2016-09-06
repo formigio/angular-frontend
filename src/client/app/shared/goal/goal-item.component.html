@@ -1,0 +1,7 @@
+<form (submit)="accomplishGoal(goal)" id="goal_{{goal.guid}}" #goalForm="ngForm" class="form-inline">
+    <button [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs" type="submit">
+        <span class="glyphicon glyphicon-ok"></span>
+    </button>
+    <span> {{goal.goal}} </span>
+    <button type="button" class="btn btn-xs btn-danger" (click)="deleteGoal(goal.guid)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+</form>
