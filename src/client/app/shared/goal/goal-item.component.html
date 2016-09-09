@@ -2,6 +2,6 @@
     <button [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs" type="submit">
         <span class="glyphicon glyphicon-ok"></span>
     </button>
-    <span> {{goal.goal}} </span>
+    <span> <a [routerLink]="['/goal/',goal.guid]" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">{{goal.goal}}</a></span>
     <button type="button" class="btn btn-xs btn-danger" (click)="deleteGoal(goal.guid)"><span class="glyphicon glyphicon-remove-sign"></span></button>
 </form>

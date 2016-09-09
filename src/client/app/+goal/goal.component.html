@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div *ngIf="goal" class="input-group">
+      <span class="input-group-addon" id="goalid">ID</span>
+      <input type="text" class="form-control" aria-describedby="goalid" [(ngModel)]="goal.guid" readonly="readonly">
+      <span class="input-group-addon" id="goalgoal">Goal</span>
+      <input type="text" class="form-control" placeholder="Goal" aria-describedby="goalgoal" [(ngModel)]="goal.goal">
+      <span class="input-group-addon" id="goalacc">Done?</span>
+      <input type="text" class="form-control" aria-describedby="goalacc" [(ngModel)]="goal.accomplished">
+    </div>
+    
+  </div>
+</div>
