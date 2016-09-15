@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TaskService, Task } from './index';
+import { TaskService, Task, Goal } from './index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -13,17 +13,36 @@ import { TaskService, Task } from './index';
 
 export class TaskItemComponent {
 
-  @Input() task:Task;
+  @Input() goal:Goal;
 
   errorMessage: string = '';
+  currentResponse: {};
+  tasks: Task[] = [];
+  task: Task = {
+    complete: 'false',
+    uuid: '',
+    title: '',
+    goal: ''
+  };
 
   /**
    *
    * @param 
    */
   constructor(
-      public service: TaskService
-  ) {}
+    protected service: TaskService
+    ) {}
+
+
+  fetchTasks() {
+    console.log('Getting Tasks for: ' + this.goal.guid);
+    this.service.list(this.goal.guid)
+                .subscribe(
+                  tasks => this.tasks = <Task[]>tasks,
+                  error =>  this.errorMessage = <any>error,
+                  () => console.log('Tasks are Fetched')
+                  );
+  }
 
   /**
    * Deletes a new goal onto the goals array
@@ -61,5 +80,31 @@ export class TaskItemComponent {
       );
     return false;
   }
+
+
+  /**
+   * Pushes a new goal onto the goals array
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  addTask(): boolean {
+    let uuid = Math.random().toString().split('.').pop();
+    this.task.goal = this.goal.guid;
+    let newTask:Task = {
+      complete: 'false',
+      uuid: uuid,
+      title: this.task.title,
+      goal: this.goal.guid
+    };
+    this.service.post(newTask)
+      .subscribe(
+        response => this.currentResponse,
+        error => this.errorMessage = <any>error,
+        () => this.tasks.push(newTask)
+      );
+    // this.tasks.push(newTask)
+    this.task.title = '';
+    return false;
+  }
+
 
 }

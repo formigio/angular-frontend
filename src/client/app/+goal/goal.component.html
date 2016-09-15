@@ -15,24 +15,7 @@
 <div class="row">
   <div class="col-lg-12">
     <ul class="list-group">
-      <li class="list-group-item" *ngFor="let task of tasks">
-        <!--<task-item [task]="task"></task-item>-->
-        <form (submit)="completeTask(task)" id="task_{{task.uuid}}" #taskForm="ngForm" class="form-inline">
-          <button [class.btn-success]="task.complete==='true'" name="complete" class="btn btn-xs" type="submit">
-              <span class="glyphicon glyphicon-ok"></span>
-          </button>
-          <span>{{task.title}}</span>
-          <button type="button" class="btn btn-xs btn-danger" (click)="deleteTask(task.uuid)"><span class="glyphicon glyphicon-remove-sign"></span></button>
-        </form>
-      </li>
-      <li class="list-group-item">
-        <form (submit)="addTask()" class="form-inline">
-        <div class="form-group">
-          <input [(ngModel)]="task.title" name="newTaskTitle" class="form-control" placeholder="Enter Task">
-          <button type="submit" class="btn btn-primary">Add</button>
-        </div>
-        </form>
-      </li>
+      <task-item [goal]="goal"></task-item>
     </ul>
   </div>
 </div>
