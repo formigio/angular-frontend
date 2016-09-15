@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GoalService, Goal, TaskService, Task, TaskItemComponent } from '../shared/index';
+import { GoalService, Goal, TaskService, Task } from '../shared/index';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -9,7 +9,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   moduleId: module.id,
   selector: 'goal-view',
-  // directives: [ TaskItemComponent ],
   templateUrl: 'goal.component.html',
   styleUrls: ['goal.component.css'],
   providers: [ GoalService, TaskService ]
@@ -26,7 +25,7 @@ export class GoalComponent implements OnInit {
     complete: 'false',
     uuid: '',
     title: '',
-    goal: ''    
+    goal: ''
   };
 
   private sub: Subscription;
@@ -82,7 +81,7 @@ export class GoalComponent implements OnInit {
       complete: 'false',
       uuid: uuid,
       title: this.task.title,
-      goal: this.goal.guid    
+      goal: this.goal.guid
     };
     this.taskService.post(newTask)
       .subscribe(
