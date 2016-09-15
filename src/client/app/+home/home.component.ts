@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { GoalListService, Goal, GoalItemComponent } from '../shared/index';
 
 /**
@@ -15,6 +16,7 @@ import { GoalListService, Goal, GoalItemComponent } from '../shared/index';
 
 export class HomeComponent implements OnInit {
 
+  successObject: {};
   newGoal: string = '';
   newAccomplished: string = 'false';
   errorMessage: string;
@@ -26,7 +28,7 @@ export class HomeComponent implements OnInit {
    *
    * @param {GoalListService} goalListService - The injected GoalListService.
    */
-  constructor(public goalListService: GoalListService) {}
+  constructor(public goalListService: GoalListService, public router: Router) {}
 
   /**
    * Get the names OnInit
@@ -54,7 +56,9 @@ export class HomeComponent implements OnInit {
     let guid = Math.random().toString().split('.').pop();
     this.goalListService.post({goal:this.newGoal,accomplished:this.newAccomplished,guid:guid})
       .subscribe(
-        error => this.errorMessage = <any>error
+        response => this.successObject,
+        error => this.errorMessage = <any>error,
+        () => this.router.navigate(['/goal/' + guid])
       );
     this.goals.push({guid:guid,goal:this.newGoal,accomplished:this.newAccomplished});
     this.newGoal = '';

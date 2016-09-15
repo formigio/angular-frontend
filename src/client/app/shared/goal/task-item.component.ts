@@ -1,53 +1,38 @@
 import { Component, Input } from '@angular/core';
-import { GoalListService, Goal } from './index';
+import { TaskService, Task } from './index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
  */
 @Component({
   moduleId: module.id,
-  selector: 'goal-item',
-  templateUrl: 'goal-item.component.html',
-  providers: [ GoalListService ]
+  selector: 'task-item',
+  templateUrl: 'task-item.component.html',
+  providers: [ TaskService ]
 })
 
-export class GoalItemComponent {
+export class TaskItemComponent {
 
-  @Input() goal:Goal;
+  @Input() task:Task;
 
   errorMessage: string = '';
-  successResponse: {};
 
   /**
    *
    * @param 
    */
   constructor(
-      public goalListService: GoalListService
+      public service: TaskService
   ) {}
-
-  /**
-   * Returns whether or not a goal is accomplished.
-   * @return {boolean}
-   */
-  isAccomplished(goal: Goal): boolean {
-    let acc = false;
-    if(goal.accomplished==='true') {
-      acc = true;
-    }
-    return acc;
-  }
 
   /**
    * Deletes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  deleteGoal(goal:Goal): boolean {
-    this.goalListService.delete(goal.guid)
+  deleteTask(uuid: string): boolean {
+    this.service.delete(uuid)
       .subscribe(
-        response => this.successResponse,
-        error => this.errorMessage = <any>error,
-        () => goal.guid = ''
+        error => this.errorMessage = <any>error
       );
     return false;
   }
@@ -56,8 +41,8 @@ export class GoalItemComponent {
    * Puts the Goal Object to the Goal List Service
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  putGoal(goal:Goal): boolean {
-    this.goalListService.put(goal)
+  saveTask(task:Task): boolean {
+    this.service.put(task)
       .subscribe(
         error => this.errorMessage = <any>error
       );
@@ -68,14 +53,13 @@ export class GoalItemComponent {
    * Puts the accomplished Goal Object to the Goal List Service
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  accomplishGoal(goal:Goal): boolean {
-    goal.accomplished = 'true';
-    this.goalListService.put(goal)
+  completeTask(task:Task): boolean {
+    task.complete = 'true';
+    this.service.put(task)
       .subscribe(
         error => this.errorMessage = <any>error
       );
     return false;
   }
-
 
 }
