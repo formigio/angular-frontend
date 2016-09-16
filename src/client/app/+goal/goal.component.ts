@@ -60,6 +60,39 @@ export class GoalComponent implements OnInit {
      });
   }
 
+  /**
+   * Deletes a new goal onto the goals array
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  deleteGoal(goal:Goal): boolean {
+    this.service.delete(goal.guid)
+      .subscribe(
+        response => this.currentResponse,
+        error => this.errorMessage = <any>error,
+        () => this.router.navigate(['/'])
+      );
+    return false;
+  }
+
+  /**
+   * Puts the accomplished Goal Object to the Goal List Service
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  accomplishGoal(goal:Goal): boolean {
+    goal.accomplished = 'true';
+    this.service.put(goal)
+      .subscribe(
+        response => this.currentResponse,
+        error => this.errorMessage = <any>error,
+        () => console.log('Goal Successfully saved.')
+      );
+    return false;
+  }
+
+  /**
+   * Puts the accomplished Goal Object to the Goal List Service
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
   fetchTasks() {
     console.log('Getting Tasks for: ' + this.goal.guid);
     this.taskService.list(this.goal.guid)
@@ -91,6 +124,47 @@ export class GoalComponent implements OnInit {
       );
     // this.tasks.push(newTask)
     this.task.title = '';
+    return false;
+  }
+
+  /**
+   * Deletes a new goal onto the goals array
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  deleteTask(task:Task): boolean {
+    this.taskService.delete(task)
+      .subscribe(
+        response => this.currentResponse,
+        error => this.errorMessage = <any>error,
+        () => task.uuid = ''
+      );
+    return false;
+  }
+
+  /**
+   * Puts the Goal Object to the Goal List Service
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  saveTask(task:Task): boolean {
+    this.taskService.put(task)
+      .subscribe(
+        response => this.currentResponse,
+        error => this.errorMessage = <any>error
+      );
+    return false;
+  }
+
+  /**
+   * Puts the accomplished Goal Object to the Goal List Service
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  completeTask(task:Task): boolean {
+    task.complete = 'true';
+    this.taskService.put(task)
+      .subscribe(
+        response => this.currentResponse,
+        error => this.errorMessage = <any>error
+      );
     return false;
   }
 

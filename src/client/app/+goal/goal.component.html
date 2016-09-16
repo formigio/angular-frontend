@@ -1,35 +1,36 @@
 <div class="row">
-  <div class="col-lg-12">
-    <div *ngIf="goal" class="input-group">
-      <span class="input-group-addon" id="goalid">ID</span>
-      <input type="text" class="form-control" aria-describedby="goalid" [(ngModel)]="goal.guid" readonly="readonly">
-      <span class="input-group-addon" id="goalgoal">Goal</span>
-      <input type="text" class="form-control" placeholder="Goal" aria-describedby="goalgoal" [(ngModel)]="goal.goal">
-      <span class="input-group-addon" id="goalacc">Done?</span>
-      <input type="text" class="form-control" aria-describedby="goalacc" [(ngModel)]="goal.accomplished">
-    </div>
-    
+  <div class="col-lg-12 text-center" *ngIf="goal">
+      <button  type="button" (click)="accomplishGoal(goal)" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
+          <span class="">Complete</span>
+      </button>
+      <button type="button" (click)="deleteGoal(goal)" class="btn btn-xs btn-danger pull-right">
+          <span class="">Delete</span>
+      </button>
+  </div>
+  <div class="col-lg-12" *ngIf="goal">
+      <h2><small>Goal:</small> {{goal.goal}} <small>ID: {{goal.guid}}</small></h2>
   </div>
 </div>
-{{errorMessage}}
+{{errorMessage | json}}
 <div class="row">
   <div class="col-lg-12">
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let task of tasks">
-        <!--<task-item [task]="task"></task-item>-->
-        <form (submit)="completeTask(task)" id="task_{{task.uuid}}" #taskForm="ngForm" class="form-inline">
+        <form (submit)="completeTask(task)" id="task_{{task.uuid}}" #taskForm="ngForm" class="form-inline" *ngIf="task.uuid">
           <button [class.btn-success]="task.complete==='true'" name="complete" class="btn btn-xs" type="submit">
               <span class="glyphicon glyphicon-ok"></span>
           </button>
           <span>{{task.title}}</span>
-          <button type="button" class="btn btn-xs btn-danger" (click)="deleteTask(task.uuid)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+          <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
         </form>
       </li>
       <li class="list-group-item">
         <form (submit)="addTask()" class="form-inline">
         <div class="form-group">
-          <input [(ngModel)]="task.title" name="newTaskTitle" class="form-control" placeholder="Enter Task">
+          <span class="hidden" contenteditable="true" #newtasktitle >{{task.title}}</span>
+          <input [(ngModel)]="task.title" name="newTaskTitle" class="form-control" placeholder="Enter Task" />
           <button type="submit" class="btn btn-primary">Add</button>
+          <button type="button" class="btn btn-secondary" (click)="fetchTasks()"><span class="glyphicon glyphicon-refresh"></span></button>
         </div>
         </form>
       </li>

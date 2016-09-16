@@ -3,5 +3,4 @@
         <span class="glyphicon glyphicon-ok"></span>
     </button>
     <span> <a [routerLink]="['/goal/',goal.guid]" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">{{goal.goal}}</a></span>
-    <button type="button" class="btn btn-xs btn-danger" (click)="deleteGoal(goal)"><span class="glyphicon glyphicon-remove-sign"></span></button>
 </form>

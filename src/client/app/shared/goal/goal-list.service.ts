@@ -45,16 +45,6 @@ export class GoalListService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  delete(guid:string): Observable<string[]> {
-    return this.http.delete(Config.API + '/goals/' + guid)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
-  }
-
-  /**
-   * Returns an Observable for the HTTP GET request for the JSON resource.
-   * @return {string[]} The Observable for the HTTP request.
-   */
   put(goal:Goal): Observable<string[]> {
     let body = JSON.stringify(goal);
     let headers = new Headers({ 'Content-Type': 'application/json' });

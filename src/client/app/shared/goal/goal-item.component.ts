@@ -39,20 +39,6 @@ export class GoalItemComponent {
   }
 
   /**
-   * Deletes a new goal onto the goals array
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  deleteGoal(goal:Goal): boolean {
-    this.goalListService.delete(goal.guid)
-      .subscribe(
-        response => this.successResponse,
-        error => this.errorMessage = <any>error,
-        () => goal.guid = ''
-      );
-    return false;
-  }
-
-  /**
    * Puts the Goal Object to the Goal List Service
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */

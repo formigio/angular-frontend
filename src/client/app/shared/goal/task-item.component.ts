@@ -29,8 +29,8 @@ export class TaskItemComponent {
    * Deletes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  deleteTask(uuid: string): boolean {
-    this.service.delete(uuid)
+  deleteTask(task:Task): boolean {
+    this.service.delete(task)
       .subscribe(
         error => this.errorMessage = <any>error
       );
