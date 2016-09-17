@@ -1,6 +1,6 @@
 <form (submit)="accomplishGoal(goal)" id="goal_{{goal.guid}}" #goalForm="ngForm" class="form-inline" *ngIf="goal.guid">
-    <button [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs" type="submit">
-        <span class="glyphicon glyphicon-ok"></span>
+    <button [class.btn-success]="goal.accomplished==='true'" [class.btn-default]="goal.accomplished==='false'" name="accomplished" class="btn btn-xs" type="submit">
+        <span [class.glyphicon-ok]="goal.accomplished==='true'" [class.glyphicon-stop]="goal.accomplished==='false'" class="glyphicon"></span>
     </button>
     <span> <a [routerLink]="['/goal/',goal.guid]" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">{{goal.goal}}</a></span>
 </form>
