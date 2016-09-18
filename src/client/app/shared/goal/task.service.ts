@@ -43,6 +43,7 @@ export class TaskService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(task:Task): Observable<string[]> {
+    task.title = this.htmlEntities(task.title);
     let body = JSON.stringify(task);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
@@ -85,4 +86,12 @@ export class TaskService {
     console.error(errMsg); // log to console instead
     return Observable.throw(errMsg);
   }
+
+  /**
+    * Handle Convert HTML entities
+    */
+  private htmlEntities(str:string): string {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
 }

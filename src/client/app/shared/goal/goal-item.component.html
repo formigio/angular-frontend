@@ -2,5 +2,5 @@
     <button [class.btn-success]="goal.accomplished==='true'" [class.btn-default]="goal.accomplished==='false'" name="accomplished" class="btn btn-xs" type="submit">
         <span [class.glyphicon-ok]="goal.accomplished==='true'" [class.glyphicon-stop]="goal.accomplished==='false'" class="glyphicon"></span>
     </button>
-    <span> <a [routerLink]="['/goal/',goal.guid]" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">{{goal.goal}}</a></span>
+    <span> <a [routerLink]="['/goal/',goal.guid]" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}" [innerHtml]="goal.goal"></a></span>
 </form>

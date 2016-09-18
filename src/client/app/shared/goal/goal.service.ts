@@ -33,6 +33,7 @@ export class GoalService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(goal:Goal): Observable<string[]> {
+    goal.goal = this.htmlEntities(goal.goal);
     let body = JSON.stringify(goal);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
@@ -75,4 +76,12 @@ export class GoalService {
     console.error(errMsg); // log to console instead
     return Observable.throw(errMsg);
   }
+
+  /**
+    * Handle Convert HTML entities
+    */
+  private htmlEntities(str:string): string {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
 }
