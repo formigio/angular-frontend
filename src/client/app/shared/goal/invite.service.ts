@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { Task, Config } from '../../shared/index';
+import { Invite, Config } from '../../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -9,7 +9,7 @@ import 'rxjs/add/operator/catch';
  * This class provides the NameList service with methods to read names and add names.
  */
 @Injectable()
-export class TaskService {
+export class InviteService {
 
   /**
    * Creates a new NameListService with the injected Http.
@@ -22,8 +22,8 @@ export class TaskService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  get(guid:string): Observable<Task> {
-    return this.http.get(Config.API + '/goals/' + guid + '/tasks')
+  get(guid:string): Observable<Invite> {
+    return this.http.get(Config.API + '/goals/' + guid + '/invites')
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -32,8 +32,8 @@ export class TaskService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(guid:string): Observable<Task[]> {
-    return this.http.get(Config.API + '/goals/' + guid + '/tasks')
+  list(guid:string): Observable<Invite[]> {
+    return this.http.get(Config.API + '/goals/' + guid + '/invites')
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -42,12 +42,12 @@ export class TaskService {
    * Returns an Observable for the HTTP POST request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  post(task:Task): Observable<string[]> {
-    task.title = this.htmlEntities(task.title);
-    let body = JSON.stringify(task);
+  post(invite:Invite): Observable<string[]> {
+    invite.email = this.htmlEntities(invite.email);
+    let body = JSON.stringify(invite);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    return this.http.post(Config.API + '/goals/' + task.goal + '/tasks',body, options)
+    return this.http.post(Config.API + '/goals/' + invite.goal + '/invites',body, options)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -56,8 +56,8 @@ export class TaskService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  delete(task:Task): Observable<string[]> {
-    return this.http.delete(Config.API + '/goals/'+ task.goal + '/tasks/' + task.uuid)
+  delete(invite:Invite): Observable<string[]> {
+    return this.http.delete(Config.API + '/goals/'+ invite.goal + '/invites/' + invite.uuid)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -66,11 +66,12 @@ export class TaskService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  put(task:Task): Observable<string[]> {
-    let body = JSON.stringify(task);
+  put(invite:Invite): Observable<string[]> {
+    invite.email = this.htmlEntities(invite.email);
+    let body = JSON.stringify(invite);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    return this.http.put(Config.API + '/goals/'+ task.goal + '/tasks/' + task.uuid, body, options)
+    return this.http.put(Config.API + '/goals/' + invite.goal + '/invites/' + invite.uuid, body, options)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }

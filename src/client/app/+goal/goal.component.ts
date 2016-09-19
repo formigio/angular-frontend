@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GoalService, Goal, TaskService, Task } from '../shared/index';
+import { GoalService, Goal, TaskService, Task, InviteService, Invite } from '../shared/index';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -11,7 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   selector: 'goal-view',
   templateUrl: 'goal.component.html',
   styleUrls: ['goal.component.css'],
-  providers: [ GoalService, TaskService ]
+  providers: [ GoalService, TaskService, InviteService ]
 })
 
 export class GoalComponent implements OnInit {
@@ -20,11 +20,17 @@ export class GoalComponent implements OnInit {
   currentResponse: {};
   goal: Goal;
   tasks: Task[] = [];
+  invites: Invite[] = [];
   newTaskTitle: '';
   task: Task = {
     complete: 'false',
     uuid: '',
     title: '',
+    goal: ''
+  };
+  invite: Invite = {
+    uuid: '',
+    email: '',
     goal: ''
   };
 
@@ -41,6 +47,7 @@ export class GoalComponent implements OnInit {
   constructor(
     protected service: GoalService,
     protected taskService: TaskService,
+    protected inviteService: InviteService,
     protected route: ActivatedRoute,
     protected router: Router) {}
 
@@ -54,7 +61,7 @@ export class GoalComponent implements OnInit {
                       .subscribe(
                         goal => this.goal = <Goal>goal,
                         error =>  this.errorMessage = <any>error,
-                        () => this.fetchTasks()
+                        () => this.fetchTasksAndInvites()
                         );
 
      });
@@ -93,6 +100,11 @@ export class GoalComponent implements OnInit {
    * Puts the accomplished Goal Object to the Goal List Service
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
+  fetchTasksAndInvites() {
+    this.fetchTasks();
+    this.fetchInvites();
+  }
+
   fetchTasks() {
     console.log('Getting Tasks for: ' + this.goal.guid);
     this.taskService.list(this.goal.guid)
@@ -100,6 +112,15 @@ export class GoalComponent implements OnInit {
                   tasks => this.tasks = <Task[]>tasks,
                   error =>  this.errorMessage = <any>error,
                   () => console.log('Tasks are Fetched')
+                  );
+  }
+
+  fetchInvites() {
+    this.inviteService.list(this.goal.guid)
+                .subscribe(
+                  invites => this.invites = <Invite[]>invites,
+                  error =>  this.errorMessage = <any>error,
+                  () => console.log('Invites are Fetched')
                   );
   }
 
@@ -128,7 +149,29 @@ export class GoalComponent implements OnInit {
   }
 
   /**
-   * Deletes a new goal onto the goals array
+   * Pushes a new invite onto the invites array
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  addInvite(): boolean {
+    let uuid = Math.random().toString().split('.').pop();
+    this.invite.goal = this.goal.guid;
+    let newInvite:Invite = {
+      uuid: uuid,
+      email: this.invite.email,
+      goal: this.goal.guid
+    };
+    this.inviteService.post(newInvite)
+      .subscribe(
+        response => this.currentResponse,
+        error => this.errorMessage = <any>error,
+        () => this.invites.push(newInvite)
+      );
+    this.invite.email = '';
+    return false;
+  }
+
+  /**
+   * Deletes a task
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteTask(task:Task): boolean {
