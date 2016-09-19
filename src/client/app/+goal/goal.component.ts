@@ -102,7 +102,7 @@ export class GoalComponent implements OnInit {
    */
   fetchTasksAndInvites() {
     this.fetchTasks();
-    this.fetchInvites();  
+    this.fetchInvites();
   }
 
   fetchTasks() {
