@@ -7,4 +7,5 @@ export * from './goal-item.component';
 export * from './task-item.component';
 export * from './goal.model';
 export * from './task.service';
+export * from './invite.service';
 
