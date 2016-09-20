@@ -72,12 +72,18 @@ export class GoalComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteGoal(goal:Goal): boolean {
-    this.service.delete(goal.guid)
-      .subscribe(
-        response => this.currentResponse,
-        error => this.errorMessage = <any>error,
-        () => this.router.navigate(['/'])
-      );
+
+    if(this.tasks.length === 0) {
+      this.service.delete(goal.guid)
+        .subscribe(
+          response => this.currentResponse,
+          error => this.errorMessage = <any>error,
+          () => this.router.navigate(['/'])
+        );
+    } else {
+      this.tasks.forEach((task) => this.deleteTask(task));
+    }
+
     return false;
   }
 
@@ -179,8 +185,19 @@ export class GoalComponent implements OnInit {
       .subscribe(
         response => this.currentResponse,
         error => this.errorMessage = <any>error,
-        () => task.uuid = ''
+        () => this.removeTask(task)
       );
+    return false;
+  }
+
+  removeTask(remove:Task): boolean {
+    let newtasks:Task[] = [];
+    this.tasks.forEach((task) => {
+      if(task.uuid !== remove.uuid) {
+        newtasks.push(task);
+      }
+    });
+    this.tasks = newtasks;
     return false;
   }
 
