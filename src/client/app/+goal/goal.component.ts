@@ -22,6 +22,7 @@ export class GoalComponent implements OnInit {
   tasks: Task[] = [];
   invites: Invite[] = [];
   newTaskTitle: '';
+  fullDeleteInitialized: boolean = false;
   task: Task = {
     complete: 'false',
     uuid: '',
@@ -73,7 +74,7 @@ export class GoalComponent implements OnInit {
    */
   deleteGoal(goal:Goal): boolean {
 
-    if(this.tasks.length === 0) {
+    if(this.tasks.length === 0 && this.invites.length === 0) {
       this.service.delete(goal.guid)
         .subscribe(
           response => this.currentResponse,
@@ -82,9 +83,14 @@ export class GoalComponent implements OnInit {
         );
     } else {
       this.tasks.forEach((task) => this.deleteTask(task));
+      this.invites.forEach((invite) => this.deleteInvite(invite));
     }
 
     return false;
+  }
+
+  goalHasChildren(): boolean {
+    return this.tasks.length > 0 || this.invites.length > 0;
   }
 
   /**
@@ -175,6 +181,33 @@ export class GoalComponent implements OnInit {
     this.invite.email = '';
     return false;
   }
+
+
+  /**
+   * Deletes an invite
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  deleteInvite(invite:Invite): boolean {
+    this.inviteService.delete(invite)
+      .subscribe(
+        response => this.currentResponse,
+        error => this.errorMessage = <any>error,
+        () => this.removeInvite(invite)
+      );
+    return false;
+  }
+
+  removeInvite(remove:Invite): boolean {
+    let newinvites:Invite[] = [];
+    this.invites.forEach((invite) => {
+      if(invite.uuid !== remove.uuid) {
+        newinvites.push(invite);
+      }
+    });
+    this.invites = newinvites;
+    return false;
+  }
+
 
   /**
    * Deletes a task
