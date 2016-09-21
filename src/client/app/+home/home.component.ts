@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { GoalListService, Goal, GoalItemComponent } from '../shared/index';
+import { AuthenticationService } from '../+login/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -28,12 +29,17 @@ export class HomeComponent implements OnInit {
    *
    * @param {GoalListService} goalListService - The injected GoalListService.
    */
-  constructor(public goalListService: GoalListService, public router: Router) {}
+  constructor(
+    public auth: AuthenticationService,
+    public goalListService: GoalListService,
+    public router: Router
+  ) {}
 
   /**
    * Get the names OnInit
    */
   ngOnInit() {
+    this.auth.enforceAuthentication();
     this.getGoals();
   }
 
