@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GoalService, Goal, TaskService, Task } from '../shared/index';
+import { GoalService, Goal, TaskService, Task, InviteService, Invite } from '../shared/index';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -19,6 +19,7 @@ export class GoalViewComponent implements OnInit {
   currentResponse: {};
   goal: Goal;
   tasks: Task[] = [];
+  validInvite: Invite;
 
   private sub: Subscription;
 
@@ -33,6 +34,7 @@ export class GoalViewComponent implements OnInit {
   constructor(
     protected service: GoalService,
     protected taskService: TaskService,
+    protected inviteService: InviteService,
     protected route: ActivatedRoute,
     protected router: Router) {}
 
@@ -41,15 +43,28 @@ export class GoalViewComponent implements OnInit {
    */
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
-       let id = params['guid'];
-       this.service.get(id)
-                      .subscribe(
-                        goal => this.goal = <Goal>goal,
-                        error =>  this.errorMessage = <any>error,
-                        () => this.fetchTasks()
-                        );
+      let id = params['guid'];
+      let token = params['uuid'];
+      // @TODO: Verify the Invite is still valid
+      this.inviteService
+        .check(id,token).subscribe(
+          invite => this.validInvite = <Invite>invite,
+          error => this.errorMessage = error,
+          () => {
+            if(this.validInvite.uuid) {
+                this.service.get(id)
+                    .subscribe(
+                      goal => this.goal = <Goal>goal,
+                      error =>  this.errorMessage = <any>error,
+                      () => this.fetchTasks()
+                    );
+            } else {
+              this.errorMessage = 'Invite has expired, or been removed.';
+            }
+          }
+      );
 
-     });
+      });
   }
 
   /**

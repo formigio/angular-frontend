@@ -32,6 +32,16 @@ export class InviteService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
+  check(guid:string,uuid:string): Observable<any> {
+    return this.http.get(Config.API + '/goals/' + guid + '/invites/' + uuid)
+                    .map((res: Response) => res.json())
+                    .catch(this.handleError);
+  }
+
+  /**
+   * Returns an Observable for the HTTP GET request for the JSON resource.
+   * @return {string[]} The Observable for the HTTP request.
+   */
   list(guid:string): Observable<Invite[]> {
     return this.http.get(Config.API + '/goals/' + guid + '/invites')
                     .map((res: Response) => res.json())
