@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GoalService, Goal, TaskService, Task, InviteService, Invite } from '../shared/index';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthenticationService } from '../+login/index';
 
 /**
  * This class represents the lazy loaded GoalComponent.
@@ -46,6 +47,7 @@ export class GoalComponent implements OnInit {
    * @param {Router} router - The injected Router.
    */
   constructor(
+    protected auth: AuthenticationService,
     protected service: GoalService,
     protected taskService: TaskService,
     protected inviteService: InviteService,
@@ -56,6 +58,7 @@ export class GoalComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
+    this.auth.enforceAuthentication();
     this.sub = this.route.params.subscribe(params => {
        let id = params['guid'];
        this.service.get(id)
