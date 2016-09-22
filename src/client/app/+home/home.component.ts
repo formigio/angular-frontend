@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { GoalListService, Goal, GoalItemComponent } from '../shared/index';
 import { AuthenticationService } from '../+login/index';
+import { HelperService } from '../shared/util/helper.service';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -12,7 +13,7 @@ import { AuthenticationService } from '../+login/index';
   directives: [ GoalItemComponent ],
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.css'],
-  providers: [ GoalListService ]
+  providers: [ GoalListService, HelperService ]
 })
 
 export class HomeComponent implements OnInit {
@@ -32,6 +33,7 @@ export class HomeComponent implements OnInit {
   constructor(
     public auth: AuthenticationService,
     public goalListService: GoalListService,
+    public helper: HelperService,
     public router: Router
   ) {}
 
@@ -50,7 +52,8 @@ export class HomeComponent implements OnInit {
     this.goalListService.get()
                      .subscribe(
                        goals => this.goals = goals,
-                       error =>  this.errorMessage = <any>error
+                       error =>  this.errorMessage = <any>error,
+                       () => this.helper.sortBy(this.goals,'goal')
                        );
   }
 
@@ -67,6 +70,7 @@ export class HomeComponent implements OnInit {
         () => this.router.navigate(['/goal/' + guid])
       );
     this.goals.push({guid:guid,goal:this.newGoal,accomplished:this.newAccomplished});
+    this.helper.sortBy(this.goals,'goal');
     this.newGoal = '';
     this.newAccomplished = 'false';
     return false;

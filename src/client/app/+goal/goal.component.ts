@@ -3,6 +3,7 @@ import { GoalService, Goal, TaskService, Task, InviteService, Invite } from '../
 import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../+login/index';
+import { HelperService } from '../shared/util/helper.service';
 
 /**
  * This class represents the lazy loaded GoalComponent.
@@ -12,7 +13,7 @@ import { AuthenticationService } from '../+login/index';
   selector: 'goal-view',
   templateUrl: 'goal.component.html',
   styleUrls: ['goal.component.css'],
-  providers: [ GoalService, TaskService, InviteService ]
+  providers: [ GoalService, TaskService, InviteService, HelperService ]
 })
 
 export class GoalComponent implements OnInit {
@@ -52,7 +53,8 @@ export class GoalComponent implements OnInit {
     protected taskService: TaskService,
     protected inviteService: InviteService,
     protected route: ActivatedRoute,
-    protected router: Router) {}
+    protected router: Router,
+    protected helper: HelperService) {}
 
   /**
    * Get the names OnInit
@@ -126,8 +128,8 @@ export class GoalComponent implements OnInit {
                 .subscribe(
                   tasks => this.tasks = <Task[]>tasks,
                   error =>  this.errorMessage = <any>error,
-                  () => console.log('Tasks are Fetched')
-                  );
+                  () => this.helper.sortBy(this.tasks,'title')
+                );
   }
 
   fetchInvites() {
@@ -156,9 +158,12 @@ export class GoalComponent implements OnInit {
       .subscribe(
         response => this.currentResponse,
         error => this.errorMessage = <any>error,
-        () => this.tasks.push(newTask)
+        () => {
+          this.tasks.push(newTask);
+          this.helper.sortBy(this.tasks,'title');
+        }
       );
-    // this.tasks.push(newTask)
+
     this.task.title = '';
     return false;
   }
