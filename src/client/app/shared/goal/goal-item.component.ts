@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { GoalListService, Goal } from './index';
 
 /**
@@ -17,14 +18,25 @@ export class GoalItemComponent {
 
   errorMessage: string = '';
   successResponse: {};
+  state: string = 'view';
 
   /**
    *
    * @param 
    */
   constructor(
-      public goalListService: GoalListService
+      public goalListService: GoalListService,
+      public router: Router
   ) {}
+
+  makeEditable() {
+    this.state = 'edit';
+  }
+
+  persistGoal() {
+    this.state='view';
+    this.putGoal(this.goal);
+  }
 
   /**
    * Returns whether or not a goal is accomplished.
@@ -45,7 +57,9 @@ export class GoalItemComponent {
   putGoal(goal:Goal): boolean {
     this.goalListService.put(goal)
       .subscribe(
-        error => this.errorMessage = <any>error
+        data => this.successResponse,
+        error => this.errorMessage = <any>error,
+        () => console.log('Goal Saved')
       );
     return false;
   }
@@ -63,5 +77,8 @@ export class GoalItemComponent {
     return false;
   }
 
+  navigateTo(goal:Goal) {
+    this.router.navigate(['/goal/',goal.guid]);
+  }
 
 }

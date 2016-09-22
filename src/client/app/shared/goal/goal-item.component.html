@@ -1,8 +1,8 @@
-<form (submit)="accomplishGoal(goal)" id="goal_{{goal.guid}}" #goalForm="ngForm" class="form-inline" *ngIf="goal.guid">
-    <button [class.btn-success]="goal.accomplished==='true'" [class.btn-default]="goal.accomplished==='false'" name="accomplished" class="btn btn-xs" type="submit">
-        <span [class.glyphicon-ok]="goal.accomplished==='true'" [class.glyphicon-stop]="goal.accomplished==='false'" class="glyphicon"></span>
-    </button>
-    <span>
-        <a [routerLink]="['/goal/',goal.guid]" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}" [innerHtml]="goal.goal"></a>
-    </span>
-</form>
+<button [class.btn-success]="goal.accomplished==='true'" [class.btn-default]="goal.accomplished==='false'" name="accomplished" class="btn btn-xs" type="button" (click)="accomplishGoal(goal)">
+    <span [class.glyphicon-ok]="goal.accomplished==='true'" [class.glyphicon-stop]="goal.accomplished==='false'" class="glyphicon"></span>
+</button>
+<span [innerHtml]="goal.goal" (dblclick)="makeEditable()" *ngIf="state==='view'"></span>
+<input [(ngModel)]="goal.goal" (blur)="persistGoal()" *ngIf="state==='edit'">
+<button name="accomplished" class="btn btn-xs btn-default pull-right" type="button" (click)="navigateTo(goal)">
+    <span class="glyphicon glyphicon-list"></span>
+</button>
