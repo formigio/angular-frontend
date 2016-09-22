@@ -1,8 +1,14 @@
 <button [class.btn-success]="goal.accomplished==='true'" [class.btn-default]="goal.accomplished==='false'" name="accomplished" class="btn btn-xs" type="button" (click)="accomplishGoal(goal)">
     <span [class.glyphicon-ok]="goal.accomplished==='true'" [class.glyphicon-stop]="goal.accomplished==='false'" class="glyphicon"></span>
 </button>
-<span [innerHtml]="goal.goal" (dblclick)="makeEditable()" *ngIf="state==='view'"></span>
-<input [(ngModel)]="goal.goal" (blur)="persistGoal()" *ngIf="state==='edit'">
+<div style="display:inline-block;" *ngIf="state==='view'">
+    <span [innerHtml]="goal.goal" (click)="navigateTo(goal)"></span>
+    <button type="button" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+</div>
+<form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistGoal()" *ngIf="state==='edit'">
+    <input [(ngModel)]="goal.goal" name="goal" type="text" style="min-width:75%">
+    <button type="submit" class="btn btn-success btn-xs">Save</button>
+</form>
 <button name="accomplished" class="btn btn-xs btn-default pull-right" type="button" (click)="navigateTo(goal)">
     <span class="glyphicon glyphicon-list"></span>
 </button>
