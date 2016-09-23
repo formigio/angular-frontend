@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { GoalService, Goal, TaskService, Task, InviteService, Invite } from '../shared/index';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../+login/index';
-import { HelperService } from '../shared/util/helper.service';
+
+import { GoalService, Goal } from './index';
+import { TaskService, Task } from '../task/index';
+import { InviteService, Invite } from '../invite/index';
+
+import { HelperService } from '../shared/index';
 
 /**
  * This class represents the lazy loaded GoalComponent.

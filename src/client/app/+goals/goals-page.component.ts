@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { GoalListComponent } from '../goal/index';
 import { AuthenticationService } from '../+login/index';
 
 /**
@@ -7,12 +7,12 @@ import { AuthenticationService } from '../+login/index';
  */
 @Component({
   moduleId: module.id,
-  selector: 'sd-home',
-  templateUrl: 'home.component.html',
-  styleUrls: ['home.component.css']
+  selector: 'goals-page',
+  directives: [ GoalListComponent ],
+  templateUrl: 'goals-page.component.html'
 })
 
-export class HomeComponent implements OnInit {
+export class GoalsPageComponent implements OnInit {
 
   /**
    * Creates an instance of the HomeComponent with the injected
@@ -21,8 +21,7 @@ export class HomeComponent implements OnInit {
    * @param {GoalListService} goalListService - The injected GoalListService.
    */
   constructor(
-    public auth: AuthenticationService,
-    public router: Router
+    public auth: AuthenticationService
   ) {}
 
   /**

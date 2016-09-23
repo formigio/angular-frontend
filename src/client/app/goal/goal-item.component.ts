@@ -25,7 +25,7 @@ export class GoalItemComponent {
    * @param 
    */
   constructor(
-      public goalListService: GoalListService,
+      public service: GoalListService,
       public router: Router
   ) {}
 
@@ -55,7 +55,7 @@ export class GoalItemComponent {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   putGoal(goal:Goal): boolean {
-    this.goalListService.put(goal)
+    this.service.put(goal)
       .subscribe(
         data => this.successResponse,
         error => this.errorMessage = <any>error,
@@ -70,7 +70,7 @@ export class GoalItemComponent {
    */
   accomplishGoal(goal:Goal): boolean {
     goal.accomplished = 'true';
-    this.goalListService.put(goal)
+    this.service.put(goal)
       .subscribe(
         error => this.errorMessage = <any>error
       );

@@ -8,14 +8,16 @@ import { routes } from './app.routes';
 
 import { AboutModule } from './+about/about.module';
 import { HomeModule } from './+home/home.module';
-import { GoalModule } from './+goal/goal.module';
+import { GoalModule } from './goal/goal.module';
+import { GoalPagesModule } from './+goals/goal-pages.module';
 import { LoginModule } from './+login/login.module';
 import { SharedModule } from './shared/shared.module';
+import { NavModule } from './nav/nav.module';
 
 @NgModule({
   imports: [
     BrowserModule, HttpModule, RouterModule.forRoot(routes),
-    LoginModule, GoalModule, AboutModule, HomeModule, SharedModule.forRoot()],
+    LoginModule, GoalModule, GoalPagesModule, AboutModule, HomeModule, NavModule, SharedModule.forRoot()],
   declarations: [AppComponent],
   providers: [{
     provide: APP_BASE_HREF,
