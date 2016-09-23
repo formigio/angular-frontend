@@ -11,7 +11,8 @@ export class Task {
     public complete: string = 'false',
     public uuid: string,
     public title: string = '',
-    public goal: string
+    public goal: string,
+    public state: string = 'view'
   ) {}
 }
 

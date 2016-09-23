@@ -29,7 +29,8 @@ export class GoalComponent implements OnInit {
     complete: 'false',
     uuid: '',
     title: '',
-    goal: ''
+    goal: '',
+    state: 'view'
   };
   invite: Invite = {
     uuid: '',
@@ -71,6 +72,15 @@ export class GoalComponent implements OnInit {
                         );
 
      });
+  }
+
+  makeEditable(task:Task) {
+    task.state = 'edit';
+  }
+
+  persistTask(task:Task) {
+    task.state='view';
+    this.saveTask(task);
   }
 
   /**
@@ -128,7 +138,10 @@ export class GoalComponent implements OnInit {
                 .subscribe(
                   tasks => this.tasks = <Task[]>tasks,
                   error =>  this.errorMessage = <any>error,
-                  () => this.helper.sortBy(this.tasks,'title')
+                  () => {
+                    this.tasks.forEach((task) => {task.state = 'view';});
+                    this.helper.sortBy(this.tasks,'title');
+                  }
                 );
   }
 
@@ -152,7 +165,8 @@ export class GoalComponent implements OnInit {
       complete: 'false',
       uuid: uuid,
       title: this.task.title,
-      goal: this.goal.guid
+      goal: this.goal.guid,
+      state: 'view'
     };
     this.taskService.post(newTask)
       .subscribe(
