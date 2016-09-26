@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GoalComponent } from '../goal/index';
+import { GoalViewComponent } from '../goal/index';
 import { TaskListComponent } from '../task/index';
 import { InviteListComponent } from '../invite/index';
 import { AuthenticationService } from '../+login/index';
@@ -10,7 +10,7 @@ import { AuthenticationService } from '../+login/index';
 @Component({
   moduleId: module.id,
   selector: 'goal-page',
-  directives: [ GoalComponent, TaskListComponent, InviteListComponent ],
+  directives: [ GoalViewComponent, TaskListComponent, InviteListComponent ],
   templateUrl: 'goal-page.component.html'
 })
 

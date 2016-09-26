@@ -3,7 +3,7 @@
  */
 export * from './goal.model';
 export * from './goal.service';
-export * from './goal.component';
+export * from './goal-view.component';
 export * from './goal-list.service';
 export * from './goal-item.component';
 export * from './goal-list.component';

@@ -1,7 +1,21 @@
-<form (submit)="completeTask(task)" id="task_{{task.uuid}}" #taskForm="ngForm" class="form-inline">
-    <button [class.btn-success]="task.complete==='true'" name="complete" class="btn btn-xs" type="submit">
-        <span class="glyphicon glyphicon-ok"></span>
-    </button>
-    <span>{{task.title}}</span>
-    <button type="button" class="btn btn-xs btn-danger" (click)="deleteTask(task.uuid)"><span class="glyphicon glyphicon-remove-sign"></span></button>
-</form>
+<div class="row">
+  <div class="col-lg-12">
+    <p>Active Invitations</p>
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let invite of invites">
+          <span>{{invite.email}}</span>
+          <a routerLink="/goal/{{goal.guid}}/invite/{{invite.uuid}}">View Only Invitation Link</a>
+          <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteInvite(invite)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+      </li>
+      <li class="list-group-item">
+        <form (submit)="addInvite()" class="form-inline">
+        <div class="form-group">
+          <input [(ngModel)]="invite.email" name="newInvite" class="form-control" placeholder="Enter Email to Invite" />
+          <button type="submit" class="btn btn-primary">Invite</button>
+          <button type="button" class="btn btn-secondary" (click)="fetchInvites()"><span class="glyphicon glyphicon-refresh"></span></button>
+        </div>
+        </form>
+      </li>
+    </ul>
+  </div>
+</div>

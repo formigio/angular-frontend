@@ -3,7 +3,7 @@ import { GoalListComponent } from '../goal/index';
 import { AuthenticationService } from '../+login/index';
 
 /**
- * This class represents the lazy loaded HomeComponent.
+ * This class represents the lazy loaded GoalsPageComponent.
  */
 @Component({
   moduleId: module.id,
@@ -15,17 +15,17 @@ import { AuthenticationService } from '../+login/index';
 export class GoalsPageComponent implements OnInit {
 
   /**
-   * Creates an instance of the HomeComponent with the injected
-   * GoalListService.
+   * Creates an instance of the GoalsPageComponent with the injected
+   * AuthenticationService.
    *
-   * @param {GoalListService} goalListService - The injected GoalListService.
+   * @param {AuthenticationService} auth - The injected AuthenticationService.
    */
   constructor(
     public auth: AuthenticationService
   ) {}
 
   /**
-   * Get the names OnInit
+   * Enfore Authentication OnInit
    */
   ngOnInit() {
     this.auth.enforceAuthentication();
