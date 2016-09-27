@@ -1,4 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+
 import { Invite, InviteService } from './index';
 import { Goal } from '../goal/index';
 
@@ -14,8 +17,6 @@ import { Goal } from '../goal/index';
 
 export class InviteListComponent implements OnInit {
 
-  @Input() goal:Goal;
-
   errorMessage: string = '';
   invites: Invite[] = [];
   currentResponse: string;
@@ -25,29 +26,32 @@ export class InviteListComponent implements OnInit {
     goal: ''
   }
 
+  goal: Goal = {
+    accomplished: '',
+    guid: '',
+    goal: ''
+  };
+
+  private sub: Subscription;
+
   /**
    *
    * @param 
    */
   constructor(
-      public service: InviteService
+      protected service: InviteService,
+      protected route: ActivatedRoute
   ) {}
 
   /**
    * Get the names OnInit
    */
   ngOnInit() {
-    // this.sub = this.route.params.subscribe(params => {
-    //    let id = params['guid'];
-      //  this.service.get(id)
-      //                 .subscribe(
-      //                   goal => this.goal = <Goal>goal,
-      //                   error =>  this.errorMessage = <any>error,
-      //                   () => this.fetchTasksAndInvites()
-      //                   );
-      this.fetchInvites();
-
-    //  });
+    this.sub = this.route.params.subscribe(params => {
+      if(this.goal.guid = params['guid']) {
+        this.fetchInvites();
+      }
+     });
   }
 
   fetchInvites() {
