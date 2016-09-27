@@ -16,6 +16,7 @@ export class TaskItemComponent {
   @Input() task:Task;
 
   errorMessage: string = '';
+  success: string = '';
   state: string = 'view';
 
   /**
@@ -42,7 +43,9 @@ export class TaskItemComponent {
   deleteTask(task:Task): boolean {
     this.service.delete(task)
       .subscribe(
-        error => this.errorMessage = <any>error
+        success => this.success,
+        error => this.errorMessage = <any>error,
+        () => this.task.uuid = ''
       );
     return false;
   }

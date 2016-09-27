@@ -39,19 +39,8 @@ export class InviteItemComponent {
       .subscribe(
         response => this.currentResponse,
         error => this.errorMessage = <any>error,
-        () => this.removeInvite(invite)
+        () => invite.uuid = ''
       );
-    return false;
-  }
-
-  removeInvite(remove:Invite): boolean {
-    let newinvites:Invite[] = [];
-    this.invites.forEach((invite) => {
-      if(invite.uuid !== remove.uuid) {
-        newinvites.push(invite);
-      }
-    });
-    this.invites = newinvites;
     return false;
   }
 
