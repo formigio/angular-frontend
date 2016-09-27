@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { GoalPageComponent, GoalsPageComponent } from './index';
+import { GoalPageComponent, GoalsPageComponent, GoalReadonlyComponent } from './index';
 
 export const GoalPagesRoutes: Route[] = [
   {
@@ -9,10 +9,9 @@ export const GoalPagesRoutes: Route[] = [
   {
     path: 'goal/:guid',
     component: GoalPageComponent
+  },
+  {
+    path: 'goal/:guid/invite/:uuid',
+    component: GoalReadonlyComponent
   }
-  // ,
-  // {
-  //   path: 'goal/:guid/invite/:uuid',
-  //   component: GoalReadonlyComponent
-  // }
 ];

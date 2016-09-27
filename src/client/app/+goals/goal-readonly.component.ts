@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+
 import { GoalViewComponent } from '../goal/index';
 import { TaskListComponent } from '../task/index';
-import { InviteListComponent } from '../invite/index';
+import { InviteListComponent, InviteService } from '../invite/index';
 import { AuthenticationService } from '../+login/index';
 
 /**
@@ -10,11 +13,13 @@ import { AuthenticationService } from '../+login/index';
 @Component({
   moduleId: module.id,
   selector: 'goal-page',
-  directives: [ GoalViewComponent, TaskListComponent, InviteListComponent ],
-  templateUrl: 'goal-page.component.html'
+  directives: [ GoalViewComponent, TaskListComponent ],
+  templateUrl: 'goal-readonly.component.html'
 })
 
 export class GoalReadonlyComponent implements OnInit {
+
+  private sub: Subscription;
 
   /**
    * Creates an instance of the HomeComponent with the injected
@@ -23,14 +28,39 @@ export class GoalReadonlyComponent implements OnInit {
    * @param {GoalListService} goalListService - The injected GoalListService.
    */
   constructor(
-    public auth: AuthenticationService
+    protected auth: AuthenticationService,
+    protected service: InviteService,
+    protected route: ActivatedRoute
   ) {}
 
   /**
    * Get the names OnInit
    */
   ngOnInit() {
-    this.auth.enforceAuthentication();
+    this.sub = this.route.params.subscribe(params => {
+      let id = params['guid'];
+      let token = params['uuid'];
+      // @TODO: Verify the Invite is still valid
+      this.service
+        .check(id,token).subscribe(
+          invite => this.validInvite = <Invite>invite,
+          error => this.errorMessage = error,
+          () => {
+            if(this.validInvite.uuid) {
+                this.service.get(id)
+                    .subscribe(
+                      goal => this.goal = <Goal>goal,
+                      error =>  this.errorMessage = <any>error,
+                      () => console.log('Valid Invite Found')
+                    );
+            } else {
+              // @TODO: User Message Service for Explaining
+              // this.errorMessage = 'Invite has expired, or been removed.';
+              this.auth.enforceAuthentication();
+            }
+          }
+      );
+    }
   }
 
 }
