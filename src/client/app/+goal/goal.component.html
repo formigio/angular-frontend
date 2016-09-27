@@ -19,26 +19,34 @@
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let task of tasks">
         <form (submit)="completeTask(task)" id="task_{{task.uuid}}" #taskForm="ngForm" class="form-inline" *ngIf="task.uuid">
-          <button [class.btn-success]="task.complete==='true'" [class.btn-default]="task.complete==='false'" name="complete" class="btn btn-xs" type="submit">
-              <span [class.glyphicon-ok]="task.complete==='true'" [class.glyphicon-stop]="task.complete==='false'" class="glyphicon"></span>
-          </button>
+          <div class="row">
+            <div class="col-md-1">
+              <button [class.btn-success]="task.complete==='true'" [class.btn-default]="task.complete==='false'" name="complete" class="btn btn-xs" type="submit">
+                  <span [class.glyphicon-ok]="task.complete==='true'" [class.glyphicon-stop]="task.complete==='false'" class="glyphicon"></span>
+              </button>
+            </div>
 
-          <div style="display:inline-block;" *ngIf="task.state==='view'">
-              <span [innerHtml]="task.title"></span>
-              <button type="button" (click)="makeEditable(task)" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+            <div class="col-md-10">
+              <div style="display:inline-block;" *ngIf="task.state==='view'">
+                  <span [innerHtml]="task.title"></span>
+                  <button type="button" (click)="makeEditable(task)" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+              </div>
+              <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistTask(task)" *ngIf="task.state==='edit'">
+                  <input [(ngModel)]="task.title" name="title" type="text" style="min-width:75%">
+                  <button type="submit" class="btn btn-success btn-xs">Save</button>
+              </form>
+            </div>
+            <div class="col-md-1">
+
+              <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+            </div>
           </div>
-          <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistTask(task)" *ngIf="task.state==='edit'">
-              <input [(ngModel)]="task.title" name="title" type="text" style="min-width:75%">
-              <button type="submit" class="btn btn-success btn-xs">Save</button>
-          </form>
-
-          <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
         </form>
       </li>
       <li class="list-group-item">
         <form (submit)="addTask()" class="form-inline">
         <div class="form-group">
-          <input [(ngModel)]="task.title" name="newTaskTitle" class="form-control" placeholder="Enter Task" />
+          <textarea [(ngModel)]="task.title" name="newTaskTitle" class="form-control" placeholder="Enter Tasks, Will create a task for each new line" ></textarea>
           <button type="submit" class="btn btn-primary">Add</button>
           <button type="button" class="btn btn-secondary" (click)="fetchTasks()"><span class="glyphicon glyphicon-refresh"></span></button>
         </div>

@@ -159,24 +159,28 @@ export class GoalComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addTask(): boolean {
-    let uuid = Math.random().toString().split('.').pop();
     this.task.goal = this.goal.guid;
-    let newTask:Task = {
-      complete: 'false',
-      uuid: uuid,
-      title: this.task.title,
-      goal: this.goal.guid,
-      state: 'view'
-    };
-    this.taskService.post(newTask)
-      .subscribe(
-        response => this.currentResponse,
-        error => this.errorMessage = <any>error,
-        () => {
-          this.tasks.push(newTask);
-          this.helper.sortBy(this.tasks,'title');
-        }
-      );
+    let taskLines = this.task.title.split('\n');
+    console.log('There was: ' + taskLines.length + ' lines pasted in.');
+    taskLines.forEach((taskTitle) => {
+      let uuid = Math.random().toString().split('.').pop();
+      let newTask:Task = {
+        complete: 'false',
+        uuid: uuid,
+        title: taskTitle,
+        goal: this.goal.guid,
+        state: 'view'
+      };
+      this.taskService.post(newTask)
+        .subscribe(
+          response => this.currentResponse,
+          error => this.errorMessage = <any>error,
+          () => {
+            this.tasks.push(newTask);
+            this.helper.sortBy(this.tasks,'title');
+          }
+        );
+    });
 
     this.task.title = '';
     return false;
