@@ -9,10 +9,12 @@
                 [class.btn-default]="state==='new'" (click)="toggleState()">
                 <span>Sign In</span>
               </button>
+<!--
               <button type="button" class="btn" [class.btn-success]="state==='new'" 
                 [class.btn-default]="state==='registered'" (click)="toggleState()">
                 <span>Sign Up</span>
               </button>
+-->
             </form>    
         </div>
         <div class="panel-body">
@@ -24,7 +26,7 @@
                   <button type="submit" class="btn btn-primary">Login</button>
                 </div>
               </form>
-
+<!--
               <form (submit)="register()" class="form-inline" *ngIf="state==='new'">
                 <div class="form-group">
                   <input [(ngModel)]="user.email" type="email" name="email" class="form-control" placeholder="Email">
@@ -32,7 +34,7 @@
                   <button type="submit" class="btn btn-primary">Register</button>
                 </div>
               </form>
-
+-->
               <span>{{errorMsg}}</span>
             </div>
         </div>

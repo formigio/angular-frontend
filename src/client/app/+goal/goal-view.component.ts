@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GoalService, Goal, TaskService, Task, InviteService, Invite } from '../shared/index';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
+import { HelperService } from '../shared/util/helper.service';
 
 /**
  * This class represents the lazy loaded GoalComponent.
@@ -10,7 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   moduleId: module.id,
   selector: 'goal-view',
   templateUrl: 'goal-view.component.html',
-  providers: [ GoalService, TaskService ]
+  providers: [ GoalService, TaskService, HelperService ]
 })
 
 export class GoalViewComponent implements OnInit {
@@ -36,6 +37,7 @@ export class GoalViewComponent implements OnInit {
     protected taskService: TaskService,
     protected inviteService: InviteService,
     protected route: ActivatedRoute,
+    protected helper: HelperService,
     protected router: Router) {}
 
   /**
@@ -77,7 +79,7 @@ export class GoalViewComponent implements OnInit {
                 .subscribe(
                   tasks => this.tasks = <Task[]>tasks,
                   error =>  this.errorMessage = <any>error,
-                  () => console.log('Tasks are Fetched')
+                  () => this.helper.sortBy(this.tasks,'title')
                   );
   }
 
