@@ -2,6 +2,15 @@
     <button [class.btn-success]="task.complete==='true'" [class.btn-default]="task.complete==='false'" name="complete" class="btn btn-xs" type="submit">
         <span [class.glyphicon-ok]="task.complete==='true'" [class.glyphicon-stop]="task.complete==='false'" class="glyphicon"></span>
     </button>
-    <span [innerHTML]="task.title"></span>
+
+    <div style="display:inline-block;" *ngIf="state==='view'">
+        <span [innerHTML]="task.title"></span>
+        <button type="button" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+    </div>
+    <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistTask()" *ngIf="state==='edit'">
+        <input [(ngModel)]="task.title" name="task" type="text" style="min-width:75%">
+        <button type="submit" class="btn btn-success btn-xs">Save</button>
+    </form>
+
     <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
 </form>

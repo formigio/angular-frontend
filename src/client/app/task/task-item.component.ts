@@ -16,6 +16,7 @@ export class TaskItemComponent {
   @Input() task:Task;
 
   errorMessage: string = '';
+  state: string = 'view';
 
   /**
    *
@@ -24,6 +25,15 @@ export class TaskItemComponent {
   constructor(
       public service: TaskService
   ) {}
+
+  makeEditable() {
+    this.state = 'edit';
+  }
+
+  persistTask() {
+    this.state='view';
+    this.saveTask(this.task);
+  }
 
   /**
    * Deletes a new goal onto the goals array
