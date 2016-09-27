@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -23,7 +23,7 @@ export class InviteListComponent implements OnInit {
     email: '',
     uuid: '',
     goal: ''
-  }
+  };
 
   goal: string;
 

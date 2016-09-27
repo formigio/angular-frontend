@@ -19,7 +19,7 @@ import { NavModule } from './nav/nav.module';
 @NgModule({
   imports: [
     BrowserModule, HttpModule, RouterModule.forRoot(routes),
-    LoginModule, GoalModule, TaskModule, InviteModule, 
+    LoginModule, GoalModule, TaskModule, InviteModule,
     GoalPagesModule, AboutModule, HomeModule, NavModule, SharedModule.forRoot()],
   declarations: [AppComponent],
   providers: [{

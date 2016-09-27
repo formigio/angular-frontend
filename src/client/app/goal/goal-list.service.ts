@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Config } from '../shared/index';
-import { Goal } from './index'
+import { Goal } from './index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
