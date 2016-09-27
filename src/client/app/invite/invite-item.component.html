@@ -1,7 +1,3 @@
-<form (submit)="completeTask(task)" id="task_{{task.uuid}}" #taskForm="ngForm" class="form-inline">
-    <button [class.btn-success]="task.complete==='true'" name="complete" class="btn btn-xs" type="submit">
-        <span class="glyphicon glyphicon-ok"></span>
-    </button>
-    <span>{{task.title}}</span>
-    <button type="button" class="btn btn-xs btn-danger" (click)="deleteTask(task.uuid)"><span class="glyphicon glyphicon-remove-sign"></span></button>
-</form>
+<span>{{invite.email}}</span>
+<a routerLink="/goal/{{invite.goal}}/invite/{{invite.uuid}}">View Only Invitation Link</a>
+<button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteInvite(invite)"><span class="glyphicon glyphicon-remove-sign"></span></button>

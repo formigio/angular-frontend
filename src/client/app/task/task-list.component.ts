@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { TaskService, Task } from './index';
-import { Goal } from '../goal/index';
 
 import { HelperService } from '../shared/index';
 
@@ -33,11 +32,7 @@ export class TaskListComponent implements OnInit {
     goal: ''
   };
 
-  goal: Goal = {
-    accomplished: '',
-    guid: '',
-    goal: ''
-  };
+  goal: string;
 
   private sub: Subscription;
 
@@ -56,15 +51,15 @@ export class TaskListComponent implements OnInit {
    */
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
-      if(this.goal.guid = params['guid']) {
+      if(this.goal = params['guid']) {
         this.fetchTasks();
       }
      });
   }
 
   fetchTasks() {
-    console.log('Getting Tasks for: ' + this.goal.guid);
-    this.service.list(this.goal.guid)
+    console.log('Getting Tasks for: ' + this.goal);
+    this.service.list(this.goal)
                 .subscribe(
                   tasks => this.tasks = <Task[]>tasks,
                   error =>  this.errorMessage = <any>error,
@@ -78,12 +73,12 @@ export class TaskListComponent implements OnInit {
    */
   addTask(): boolean {
     let uuid = Math.random().toString().split('.').pop();
-    this.task.goal = this.goal.guid;
+    this.task.goal = this.goal;
     let newTask:Task = {
       complete: 'false',
       uuid: uuid,
       title: this.task.title,
-      goal: this.goal.guid
+      goal: this.goal
     };
     this.service.post(newTask)
       .subscribe(
@@ -98,44 +93,5 @@ export class TaskListComponent implements OnInit {
     this.task.title = '';
     return false;
   }
-
-
-
-  /**
-   * Deletes a new goal onto the goals array
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  // deleteTask(task:Task): boolean {
-  //   this.service.delete(task)
-  //     .subscribe(
-  //       error => this.errorMessage = <any>error
-  //     );
-  //   return false;
-  // }
-
-  /**
-   * Puts the Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  // saveTask(task:Task): boolean {
-  //   this.service.put(task)
-  //     .subscribe(
-  //       error => this.errorMessage = <any>error
-  //     );
-  //   return false;
-  // }
-
-  /**
-   * Puts the accomplished Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  // completeTask(task:Task): boolean {
-  //   task.complete = 'true';
-  //   this.service.put(task)
-  //     .subscribe(
-  //       error => this.errorMessage = <any>error
-  //     );
-  //   return false;
-  // }
 
 }

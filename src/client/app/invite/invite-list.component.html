@@ -3,9 +3,7 @@
     <p>Active Invitations</p>
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let invite of invites">
-          <span>{{invite.email}}</span>
-          <a routerLink="/goal/{{goal.guid}}/invite/{{invite.uuid}}">View Only Invitation Link</a>
-          <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteInvite(invite)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+        <invite-item [invite]="invite"></invite-item>
       </li>
       <li class="list-group-item">
         <form (submit)="addInvite()" class="form-inline">
