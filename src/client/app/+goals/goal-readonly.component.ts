@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { GoalViewComponent } from '../goal/index';
 import { TaskListComponent } from '../task/index';
-import { InviteListComponent, InviteService } from '../invite/index';
+import { InviteService, Invite } from '../invite/index';
 import { AuthenticationService } from '../+login/index';
 
 /**
@@ -20,6 +20,9 @@ import { AuthenticationService } from '../+login/index';
 export class GoalReadonlyComponent implements OnInit {
 
   private sub: Subscription;
+  private success: string;
+  private validInvite: Invite;
+  private errorMessage: string;
 
   /**
    * Creates an instance of the HomeComponent with the injected
@@ -49,7 +52,7 @@ export class GoalReadonlyComponent implements OnInit {
             if(this.validInvite.uuid) {
                 this.service.get(id)
                     .subscribe(
-                      goal => this.goal = <Goal>goal,
+                      success => this.success,
                       error =>  this.errorMessage = <any>error,
                       () => console.log('Valid Invite Found')
                     );
@@ -60,7 +63,6 @@ export class GoalReadonlyComponent implements OnInit {
             }
           }
       );
-    }
+    });
   }
-
 }
