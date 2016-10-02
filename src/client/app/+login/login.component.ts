@@ -24,9 +24,7 @@ export class LoginComponent implements OnInit {
   };
   errorMsg = '';
 
-  constructor(
-    public auth:AuthenticationService
-    ) { }
+  constructor(public auth:AuthenticationService) { }
 
   ngOnInit() {
     if(this.loggedin()) {

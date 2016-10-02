@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthenticationService } from '../+login/index';
 
 /**
@@ -21,8 +20,7 @@ export class HomeComponent implements OnInit {
    * @param {GoalListService} goalListService - The injected GoalListService.
    */
   constructor(
-    public auth: AuthenticationService,
-    public router: Router
+    public auth: AuthenticationService
   ) {}
 
   /**

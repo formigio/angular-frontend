@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Config } from './shared/index';
+//import { Config } from './shared/index';
 import { ToolbarComponent, NavbarComponent } from './nav/index';
 
 /**
@@ -15,6 +15,6 @@ import { ToolbarComponent, NavbarComponent } from './nav/index';
 
 export class AppComponent {
   constructor() {
-    console.log('Environment config', Config);
+    //console.log('Environment config', Config);
   }
 }

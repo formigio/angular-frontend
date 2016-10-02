@@ -18,8 +18,6 @@ import { HelperService } from '../shared/index';
 
 export class TaskListComponent implements OnInit {
 
-  // @Input() goal:Goal;
-
   errorMessage: string = '';
   currentResponse: string = '';
 

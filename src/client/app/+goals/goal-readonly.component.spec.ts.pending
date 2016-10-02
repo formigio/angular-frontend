@@ -1,0 +1,48 @@
+import { Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { provideFakeRouter } from '../../testing/router/router-testing-providers';
+// import { ActivatedRoute } from '@angular/router';
+
+import { GoalReadonlyComponent } from './index';
+import { AuthenticationService } from '../+login/index';
+import { InviteService } from '../invite/index';
+
+import { LoginStubService } from '../../testing/login/login.service';
+import { TaskStubService } from '../../testing/task/task.service';
+import { TaskStubDirective } from '../../testing/task/task.directive';
+
+export function main() {
+  describe('Goal ReadOnly Page component', () => {
+    let comp: any;
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [ FormsModule ],
+        declarations: [TestComponent, TaskStubDirective],
+        providers: [
+          {provide: provideFakeRouter(TestComponent, [{path: 'goal/:guid/invite/:uuid',component:GoalReadonlyComponent}])},
+          {provide: AuthenticationService, useClass: LoginStubService },
+          {provide: InviteService, useClass: TaskStubService }
+        ]
+      }).compileComponents().then(() => {
+        comp = TestBed.createComponent(GoalReadonlyComponent);
+      });
+    });
+
+    it('is truthy', () => {
+      expect(comp).toBeTruthy();
+    });
+
+    it('is truthy with create', () => {
+      expect(comp).toBeTruthy();
+    });
+
+  });
+}
+
+@Component({
+  selector: 'test-cmp',
+  directives: [GoalReadonlyComponent],
+  template: '<goal-page></goal-page>'
+})
+class TestComponent {}

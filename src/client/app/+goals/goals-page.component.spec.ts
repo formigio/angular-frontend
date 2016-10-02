@@ -3,21 +3,23 @@ import {
   async,
   TestBed
 } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { provideFakeRouter } from '../../testing/router/router-testing-providers';
 
-import { HomeComponent } from './index';
+import { GoalsPageComponent } from './index';
 import { AuthenticationService } from '../+login/index';
 
 import { LoginStubService } from '../../testing/login/login.service';
 
 export function main() {
-   describe('Home component', () => {
+   describe('Goals Page component', () => {
 
     beforeEach(() => {
       TestBed.configureTestingModule({
+        imports: [ FormsModule ],
         declarations: [TestComponent],
         providers: [
-          {provide: provideFakeRouter(TestComponent, [{path: '',component:HomeComponent}])},
+          {provide: provideFakeRouter(TestComponent, [{path: 'goal/:guid',component:GoalsPageComponent}])},
           {provide: AuthenticationService, useClass: LoginStubService }
         ]
       });
@@ -38,7 +40,7 @@ export function main() {
 
 @Component({
   selector: 'test-cmp',
-  directives: [HomeComponent],
-  template: '<sd-home></sd-home>'
+  directives: [GoalsPageComponent],
+  template: '<goal-page></goal-page>'
 })
 class TestComponent {}

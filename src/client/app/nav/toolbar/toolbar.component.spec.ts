@@ -4,39 +4,35 @@ import {
   TestBed
 } from '@angular/core/testing';
 
-import { AppComponent } from './app.component';
-
-import { RouterLinkStubDirective } from '../testing/router/router-stubs';
+import { ToolbarComponent } from './toolbar.component';
 
 export function main() {
-
-  describe('App component', () => {
+  describe('Toolbar component', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [],
-        declarations: [TestComponent, RouterLinkStubDirective],
-        providers: []
+          imports: [],
+          declarations: [ TestComponent ],
+          providers: []
       });
     });
 
-    it('should build without a problem',
-      async( () => {
+    it('should build',
+      async(() => {
         TestBed
           .compileComponents()
           .then(() => {
             let fixture = TestBed.createComponent(TestComponent);
             let compiled = fixture.nativeElement;
-
             expect(compiled).toBeTruthy();
           });
-      }));
-  });
+        }));
+
+    });
 }
 
 @Component({
   selector: 'test-cmp',
-  template: '<sd-app></sd-app>',
-  directives: [AppComponent]
+  directives: [ToolbarComponent],
+  template: '<sd-toolbar></sd-toolbar>'
 })
-
-class TestComponent { }
+class TestComponent {}
