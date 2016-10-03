@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -17,6 +17,8 @@ import { HelperService } from '../shared/index';
 })
 
 export class GoalViewComponent implements OnInit {
+
+  @Input() editable:boolean;
 
   errorMessage: string;
   currentResponse: {};

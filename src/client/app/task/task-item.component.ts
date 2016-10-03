@@ -14,6 +14,7 @@ import { TaskService, Task } from './index';
 export class TaskItemComponent {
 
   @Input() task:Task;
+  @Input() editable: boolean;
 
   errorMessage: string = '';
   success: string = '';

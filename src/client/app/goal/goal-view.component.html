@@ -1,15 +1,19 @@
 <div class="row">
   <div class="col-lg-12 text-center" *ngIf="goal">
-      <button  type="button" (click)="accomplishGoal(goal)" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
+      <button *ngIf="editable===true" type="button" (click)="accomplishGoal(goal)" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
           <span *ngIf="goal.accomplished==='true'">Complete</span>
           <span *ngIf="goal.accomplished!=='true'">In Progress</span>
       </button>
-      <button type="button" (click)="deleteGoal(goal)" class="btn btn-xs btn-danger pull-right">
+      <button *ngIf="editable===false" type="button" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
+          <span *ngIf="goal.accomplished==='true'">Complete</span>
+          <span *ngIf="goal.accomplished!=='true'">In Progress</span>
+      </button>
+      <button *ngIf="editable===true" type="button" (click)="deleteGoal(goal)" class="btn btn-xs btn-danger pull-right">
           <span *ngIf="goalHasChildren()===true">Clear</span>
           <span *ngIf="goalHasChildren()===false">Delete</span>
       </button>
   </div>
   <div class="col-lg-12" *ngIf="goal">
-      <h2><small>Goal:</small> <span [innerHtml]="goal.goal"></span> <small>ID: {{goal.guid}}</small></h2>
+      <h2><small>Goal ID: {{goal.guid}}</small> <br> <span [innerHtml]="goal.goal"></span> </h2>
   </div>
 </div>

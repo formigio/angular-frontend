@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -17,6 +17,8 @@ import { HelperService } from '../shared/index';
 })
 
 export class TaskListComponent implements OnInit {
+
+  @Input() editable: boolean;
 
   errorMessage: string = '';
   currentResponse: string = '';
@@ -69,27 +71,29 @@ export class TaskListComponent implements OnInit {
    * Pushes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  addTask(): boolean {
-    let uuid = Math.random().toString().split('.').pop();
+  addTask(): void {
     this.task.goal = this.goal;
-    let newTask:Task = {
-      complete: 'false',
-      uuid: uuid,
-      title: this.task.title,
-      goal: this.goal
-    };
-    this.service.post(newTask)
-      .subscribe(
-        response => this.currentResponse,
-        error => this.errorMessage = <any>error,
-        () => {
-          this.tasks.push(newTask);
-          this.helper.sortBy(this.tasks,'title');
-        }
-      );
-
-    this.task.title = '';
-    return false;
+    let taskLines = this.task.title.split('\n');
+    taskLines.forEach((taskTitle) => {
+      if(taskTitle) {
+        let uuid = Math.random().toString().split('.').pop();
+        let newTask:Task = {
+          complete: 'false',
+          uuid: uuid,
+          title: taskTitle,
+          goal: this.task.goal
+        };
+        this.service.post(newTask)
+          .subscribe(
+            response => this.currentResponse,
+            error => this.errorMessage = <any>error,
+            () => {
+              this.tasks.push(newTask);
+              this.helper.sortBy(this.tasks,'title');
+            }
+          );        
+      } // If Task Title
+    }); // Task Lines foreach
   }
 
-}
+} // Component end

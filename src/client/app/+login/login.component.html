@@ -9,10 +9,10 @@
                 [class.btn-default]="state==='new'" (click)="toggleState()">
                 <span>Sign In</span>
               </button>
-              <button type="button" class="btn" [class.btn-success]="state==='new'" 
+              <!--<button type="button" class="btn" [class.btn-success]="state==='new'" 
                 [class.btn-default]="state==='registered'" (click)="toggleState()">
                 <span>Sign Up</span>
-              </button>
+              </button>-->
             </form>    
         </div>
         <div class="panel-body">
@@ -25,13 +25,13 @@
                 </div>
               </form>
 
-              <form (submit)="register()" class="form-inline" *ngIf="state==='new'">
+              <!-- <form (submit)="register()" class="form-inline" *ngIf="state==='new'">
                 <div class="form-group">
                   <input [(ngModel)]="user.email" type="email" name="email" class="form-control" placeholder="Email">
                   <input [(ngModel)]="user.password" type="password" name="password" class="form-control" placeholder="Password">
                   <button type="submit" class="btn btn-primary">Register</button>
                 </div>
-              </form>
+              </form> -->
 
               <span>{{errorMsg}}</span>
             </div>
