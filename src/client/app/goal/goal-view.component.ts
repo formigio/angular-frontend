@@ -69,7 +69,7 @@ export class GoalViewComponent implements OnInit {
         .subscribe(
           response => this.currentResponse,
           error => this.errorMessage = <any>error,
-          () => this.router.navigate(['/'])
+          () => this.router.navigate(['/goals'])
         );
     // }
     //  else {

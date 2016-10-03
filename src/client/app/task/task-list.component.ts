@@ -88,6 +88,7 @@ export class TaskListComponent implements OnInit {
             response => this.currentResponse,
             error => this.errorMessage = <any>error,
             () => {
+              this.task.title = '';
               this.tasks.push(newTask);
               this.helper.sortBy(this.tasks,'title');
             }
