@@ -4,3 +4,4 @@
 
 export * from './config/env.config';
 export * from './util/helper.service';
+export * from './message/message.service';

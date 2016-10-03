@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { GoalService, Goal } from './index';
 
 import { HelperService } from '../shared/index';
+import { MessageService } from '../shared/message/message.service';
 
 /**
  * This class represents the lazy loaded GoalViewComponent.
@@ -38,6 +39,7 @@ export class GoalViewComponent implements OnInit {
     protected service: GoalService,
     protected route: ActivatedRoute,
     protected router: Router,
+    protected message: MessageService,
     protected helper: HelperService) {}
 
   /**
@@ -50,7 +52,7 @@ export class GoalViewComponent implements OnInit {
                       .subscribe(
                         goal => this.goal = <Goal>goal,
                         error =>  this.errorMessage = <any>error,
-                        () => console.log('Goal View Component: Goal Loaded')
+                        () => console.log('Goal Loaded')
                         );
 
      });

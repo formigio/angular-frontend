@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TaskService, Task } from './index';
+import { MessageService } from '../shared/message/message.service';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -19,13 +20,15 @@ export class TaskItemComponent {
   errorMessage: string = '';
   success: string = '';
   state: string = 'view';
+  response: any;
 
   /**
    *
    * @param 
    */
   constructor(
-      public service: TaskService
+      public service: TaskService,
+      public message: MessageService
   ) {}
 
   makeEditable() {
@@ -71,7 +74,9 @@ export class TaskItemComponent {
     task.complete = 'true';
     this.service.put(task)
       .subscribe(
-        error => this.errorMessage = <any>error
+        res => this.response = res,
+        error => this.errorMessage = <any>error,
+        () => this.message.setFlash('Task Saved.','success')
       );
     return false;
   }

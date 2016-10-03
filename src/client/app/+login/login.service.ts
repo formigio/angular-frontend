@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { Config } from '../shared/index';
+import { Config, MessageService } from '../shared/index';
 
 export class User {
     constructor(
@@ -21,7 +21,8 @@ export class AuthenticationService {
 
     constructor(
         private _router: Router,
-        private http: Http
+        private http: Http,
+        private messaging: MessageService
     ) { }
 
     logout() {
@@ -38,11 +39,15 @@ export class AuthenticationService {
                     user.password_hash = '';
                     this.authenticateUser(user).subscribe(
                         response => this.response = <User>response,
-                        error => this.errorMsg,
+                        error => this.messaging.setFlash('There has been a problem processing your request.','danger'),
                         () => {
                             if(this.response.uuid) {
-                                localStorage.setItem('user', JSON.stringify(this.response));
+                                let user = this.response;
+                                localStorage.setItem('user', JSON.stringify(user));
+                                this.messaging.setFlash('Login Successful.','success');
                                 this._router.navigate(['/']);
+                            } else {
+                                this.messaging.setFlash('Login Unsuccessful. Bad Credentials, perhaps?','danger');
                             }
                         });
                     }
