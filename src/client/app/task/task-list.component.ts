@@ -92,7 +92,7 @@ export class TaskListComponent implements OnInit {
               this.tasks.push(newTask);
               this.helper.sortBy(this.tasks,'title');
             }
-          );        
+          );
       } // If Task Title
     }); // Task Lines foreach
   }

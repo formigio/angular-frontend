@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { routing, appRoutingProviders } from './app.routes';
 
+import { CoreModule } from './core/core.module';
 import { AboutModule } from './+about/about.module';
 import { HomeModule } from './+home/home.module';
 import { GoalModule } from './goal/goal.module';
@@ -20,7 +21,7 @@ import { GoalPageComponent, GoalReadonlyComponent } from './+goals/index';
 
 @NgModule({
   imports: [
-    BrowserModule, HttpModule, routing,
+    BrowserModule, HttpModule, routing, CoreModule,
     LoginModule, GoalModule, TaskModule, InviteModule,
     GoalPagesModule, AboutModule, HomeModule, NavModule, SharedModule.forRoot()],
   declarations: [AppComponent, GoalPageComponent, GoalReadonlyComponent],

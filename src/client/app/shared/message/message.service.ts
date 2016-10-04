@@ -17,13 +17,11 @@ export class MessageService {
 
     public flashMessage: ReplaySubject<any> = new ReplaySubject(1);
 
-    constructor() { }
-
     public setFlash(message:string, alert:string = 'info') {
         let flashMessage = new FlashMessage(true,message,alert);
         this.flashMessage.next(flashMessage);
         var control = Observable.timer(3000);
-        control.subscribe(x => flashMessage.show = false);        
+        control.subscribe(x => flashMessage.show = false);
     }
 
     public getFlashMessage(): ReplaySubject<any> {

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService, FlashMessage } from './message.service'
-import { Observable } from 'rxjs';
+import { MessageService, FlashMessage } from './message.service';
 
 /**
  * This class represents the toolbar component.
