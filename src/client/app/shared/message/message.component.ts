@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService, FlashMessage } from './message.service';
+import { MessageService, Message } from './message.service';
 
 /**
  * This class represents the toolbar component.
@@ -12,7 +12,8 @@ import { MessageService, FlashMessage } from './message.service';
 })
 export class MessageComponent implements OnInit {
 
-    public flashMessage: FlashMessage = {show: false, message: '', alert: 'info'};
+    public flashMessage: Message = {show: false, message: '', alert: 'info'};
+    public processMessages: Message[] = [];
     public errorMessage: any;
 
     constructor(protected service: MessageService) {}
@@ -20,6 +21,9 @@ export class MessageComponent implements OnInit {
     public ngOnInit() {
         this.service.getFlashMessage().subscribe(
             res => this.flashMessage = res
+        );
+        this.service.getProcessMessageRelay().subscribe(
+            message => this.processMessages.push(message)
         );
     }
 

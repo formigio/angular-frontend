@@ -54,7 +54,7 @@ export class ProcessService {
         }
 
         let processRoutine: ProcessRoutine = (<any>this.routines)[identifier];
-        this.message.setFlash('Initiating Process:' + processRoutine.description);
+        this.message.addProcessMessage('Initiating Process:' + processRoutine.description);
         processRoutine.control_uuid = control_uuid;
         localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
 
@@ -74,7 +74,7 @@ export class ProcessService {
 
         let processTask: ProcessTask = (<any>this.tasks)[signal];
 
-        this.message.setFlash('Initiating Task:' + processTask.description + ' Process: ' + processRoutine.identifier);
+        this.message.addProcessMessage('Initiating Task:' + processTask.description + ' Process: ' + processRoutine.identifier);
 
         return true;
 

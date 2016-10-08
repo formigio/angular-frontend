@@ -3,7 +3,7 @@
 html {
   position: relative;
 }
-#messages {
+#flash_message {
     position: fixed;
     top: 0;
     height: 60px;
