@@ -76,6 +76,56 @@ export class TaskService {
                     .catch(this.handleError);
   }
 
+  public workerTaskGatherTasks(control_uuid: string, params: any): Observable<any> {
+    let goal: string = params.goal;
+    console.log('Fetching Task Count for: ' + goal);
+    let tasks: Task[] = [];
+    let outcome = '';
+    let obs = new Observable((observer:any) => {
+      let taskgetter = this.list(goal).subscribe(
+        tasks => {
+          tasks = <Task[]>tasks;
+          observer.next({control_uuid: control_uuid, outcome: 'success', message:'Tasks fetched successfully.',context:{params:{tasks:tasks,task_count:tasks.length}}})
+        },
+        error => {
+          observer.error({control_uuid: control_uuid, outcome: error, message:'An error has occured fetching the tasks.'});
+        },
+        () => {
+          observer.complete()
+        }
+      );
+      return () => console.log('Observer Created for Working.')
+    });
+
+    return obs;
+  }
+
+  public workerTaskRemoveTasks(control_uuid: string, params: any): Observable<any> {
+    let goal: string = params.goal;
+    let taskCount: string = params.task_count;
+    let tasks: Task[] = params.tasks;
+    let obs = new Observable((observer:any) => {
+      observer.next({control_uuid: control_uuid, outcome: 'success', message:'Tasks removed successfully.',context:{}});
+      observer.complete();
+    });
+    return obs;
+  }
+
+  public workerTaskRemoveGoal(control_uuid: string, params: any): Observable<any> {
+    let goal: string = params.goal;
+    let taskCount: string = params.task_count;
+    let obs = new Observable((observer:any) => {
+      if(taskCount !== "0"){
+        observer.error({control_uuid: control_uuid, outcome: 'error', message:'You can only delete a goal, when it is empty.'});
+      } else {
+        observer.next({control_uuid: control_uuid, outcome: 'success', message:'Goal removed successfully.',context:{}});
+        observer.complete();
+      }
+    });
+    return obs;
+  }
+
+
   /**
     * Handle HTTP error
     */

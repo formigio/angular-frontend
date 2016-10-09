@@ -65,7 +65,7 @@ export class GoalViewComponent implements OnInit {
    */
   deleteGoal(goal:Goal): boolean {
 
-    this.process.initProcess('goal_delete');
+    this.process.initProcess('goal_delete',{goal:goal.guid});
 
     // if(this.tasks.length === 0 && this.invites.length === 0) {
       // this.service.delete(goal.guid)

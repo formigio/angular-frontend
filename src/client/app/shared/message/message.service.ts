@@ -28,8 +28,8 @@ export class MessageService {
     public addProcessMessage(message:string, alert:string = 'info') {
         let processMessage = new Message(true,message,alert);
         this.processMessage.next(processMessage);
-        var control = Observable.timer(3000);
-        control.subscribe(x => processMessage.show = false);
+        // var control = Observable.timer(3000);
+        // control.subscribe(x => processMessage.show = false);
     }
 
     public getFlashMessage(): ReplaySubject<any> {
