@@ -1,5 +1,5 @@
 <div class="row" *ngIf="task.uuid">
-    <div class="col-sm-1">
+    <div class="col-xs-1">
         <button *ngIf="editable===true" (click)="completeTask(task)" [class.btn-success]="task.complete==='true'" [class.btn-default]="task.complete==='false'" name="complete" class="btn btn-xs" type="button">
             <span [class.glyphicon-ok]="task.complete==='true'" [class.glyphicon-stop]="task.complete==='false'" class="glyphicon"></span>
         </button>
@@ -7,7 +7,7 @@
             <span [class.glyphicon-ok]="task.complete==='true'" [class.glyphicon-stop]="task.complete==='false'" class="glyphicon"></span>
         </button>
     </div>
-    <div class="col-sm-10">
+    <div class="col-xs-10">
         <div style="display:inline-block;" *ngIf="state==='view'">
             <span [innerHTML]="task.title"></span>
             <button type="button" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
@@ -17,7 +17,7 @@
             <button type="submit" class="btn btn-success btn-xs">Save</button>
         </form>
     </div>
-    <div class="col-sm-1">
+    <div class="col-xs-1">
         <button *ngIf="editable===true" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
     </div>
 </div>
