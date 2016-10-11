@@ -26,7 +26,7 @@
               </button>
             </div>
 
-            <div class="col-xs-10">
+            <div class="col-xs-9 col-sm-10">
               <div style="display:inline-block;" *ngIf="task.state==='view'">
                   <span [innerHtml]="task.title"></span>
                   <button type="button" (click)="makeEditable(task)" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
