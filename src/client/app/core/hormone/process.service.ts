@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable'
 import { TaskService } from '../../task/index';
+import { GoalService } from '../../goal/index';
+import { HelperService } from '../../shared/index';
 import { MessageService } from '../../shared/index';
 
 export class ProcessWorkerService {
@@ -49,12 +51,17 @@ export class ProcessTask {
         let params = Object.keys(context.params);
         let paramsProcessed: string[] = [];
         let obs = new Observable((observer:any) => {
+            if(params.length == 0) {
+                console.log('Param Counts: ' + params.length + ' Checked: ' + paramsProcessed.length);
+                localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
+                observer.complete();
+            }
             params.forEach((param) => {
                 if(processRoutine.context.params.hasOwnProperty(param)){
                     console.log('Updated Existing Param: ' + param);
                     processRoutine.context.params[param] = (<any>context.params)[param];
                     paramsProcessed.push(param);
-                } else {
+                } else if(param) {
                     console.log('Added New Param: ' + param);
                     processRoutine.context.params[param] = (<any>context.params)[param];
                     paramsProcessed.push(param);
@@ -64,6 +71,7 @@ export class ProcessTask {
                     localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
                     observer.complete();
                 }
+
             });
             return () => console.log('Observer Created for Param Checking.')
         });
@@ -105,36 +113,58 @@ export class ProcessService {
             'The Process Used to Control the Deletion of Goals',
             new ProcessContext,
             ''
+        ),
+        task_delete: new ProcessRoutine(
+            'task_delete',
+            'The Process Used to Control the Deletion of Tasks',
+            new ProcessContext,
+            ''
         )
     };
 
     protected tasks: {} = {
+        task_delete_init: new ProcessTask(
+            'delete_task',
+            'goal_delete_init',
+            'Delete Task',
+            new ProcessWorkerService(TaskService, 'taskService', 'deleteTask'),
+            {task:"Task"}
+        ),
         goal_delete_init: new ProcessTask(
             'gather_goal_tasks',
             'goal_delete_init',
             'Gather Goal Tasks',
-            new ProcessWorkerService(TaskService, "taskService", 'workerTaskGatherTasks'),
+            new ProcessWorkerService(TaskService, 'taskService', 'workerTaskGatherTasks'),
             {goal:"string"}
         ),
         gather_goal_tasks_complete: new ProcessTask(
             'remove_tasks',
             'gather_goal_tasks_complete',
             'Remove Tasks for a specific goal',
-            new ProcessWorkerService(TaskService, "taskService", 'workerTaskRemoveTasks'),
+            new ProcessWorkerService(TaskService, 'taskService', 'workerTaskRemoveTasks'),
             {goal:"string", task_count:"string"}
         ),
         remove_tasks_complete: new ProcessTask(
             'remove_goal',
             'remove_tasks_complete',
             'Delete Goal',
-            new ProcessWorkerService(TaskService, "taskService", 'workerTaskRemoveGoal'),
+            new ProcessWorkerService(GoalService, "goalService", 'removeGoal'),
             {goal:"string", task_count:"string"}
+        ),
+        remove_goal_complete: new ProcessTask(
+            'navigate_to_goals',
+            'remove_tasks_complete',
+            'Navigate Goal',
+            new ProcessWorkerService(HelperService, "helperService", 'navigateTo'),
+            {navigate_to:"string"}
         )
     };
 
     public constructor(
         private message: MessageService,
-        private taskService: TaskService
+        private taskService: TaskService,
+        private goalService: GoalService,
+        private helperService: HelperService
     ) {}
 
     public createContextParams(params:{}): ProcessContext {
@@ -162,12 +192,14 @@ export class ProcessService {
     }
 
     public processSignal(signal: string, control_uuid: string): boolean {
+        console.log('Process Signal: ' + signal);
         // Get the processRoutine from local storage
         let processRoutine = JSON.parse(localStorage.getItem('process_' + control_uuid));
 
         // Verify the Task
         if(!this.tasks.hasOwnProperty(signal)) {
             this.message.addProcessMessage('Warning - Initiating Task for Signal: ' + signal + ' No Task Found.','warning');
+            // localStorage.removeItem('process_' + control_uuid);
             return false;
         }
 
@@ -185,10 +217,12 @@ export class ProcessService {
             },
             () => {
                 this.message.addProcessMessage('required params checked.');
-                let workerService = processTask.workerService.alias;
+                let workerAlias = processTask.workerService.alias;
+                let workerService = (<any>this)[workerAlias].getWorker();
                 let workerMethod = processTask.workerService.method;
                 let workerResponse: WorkerResponse;
-                (<any>this)[workerService][workerMethod](processRoutine.control_uuid, processRoutine.context.params).subscribe(
+                let workerObserver: Observable<any> = workerService[workerMethod](processRoutine.control_uuid, processRoutine.context.params);
+                workerObserver.subscribe(
                     response => workerResponse = response,
                     workerError => {
                         this.message.addProcessMessage('Worker Error: ' + JSON.stringify(workerError.message))

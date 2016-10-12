@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { Config } from '../shared/index';
-import { Task } from './index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { Config, HelperService } from '../shared/index';
+import { Task, TaskWorker } from './index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -17,7 +17,88 @@ export class TaskService {
    * @param {Http} http - The injected Http.
    * @constructor
    */
-  constructor(private http: Http) {}
+  constructor(private http: Http, private helper: HelperService) {}
+
+  tasks: Task[] = [];
+
+  public taskListReplay: ReplaySubject<any> = new ReplaySubject(1);
+
+  getWorker() {
+    return new TaskWorker(this);
+  }
+
+  getTasks(guid:string): ReplaySubject<any> {
+    this.list(guid).subscribe(
+      tasks => this.tasks = tasks,
+      error => console.log(error),
+      () => {
+        this.sortTasks();
+        this.taskListReplay.next(this.tasks);
+      }
+    );
+    return this.taskListReplay;
+  }
+
+  refreshTasks(guid:string) {
+    this.list(guid).subscribe(
+      tasks => this.tasks = tasks,
+      error => console.log(error),
+      () => {
+        this.sortTasks();
+        this.taskListReplay.next(this.tasks);
+      }
+    );
+  }
+
+  addTask(task:Task) {
+    console.log('-- Add Task --' + this.tasks.length);
+    this.post(task).subscribe(
+      null,
+      error => console.log(error),
+      () => {
+        this.tasks.push(task);
+        this.sortTasks();
+        this.taskListReplay.next(this.tasks)
+      }
+    );
+  }
+
+  removeTask(task:Task) {
+    // this.refreshTasks(task.goal);
+    // console.log('-- Remove Task --' + this.tasks.length);
+    // let taskToDelete:Task;
+    // this.findTask(task).subscribe(
+    //   task => {
+    //     console.log('-- Found Task --');
+    //     taskToDelete = task
+    //   },
+    //   error => console.log(error),
+    //   () => {
+        this.delete(task).subscribe(
+          null,
+          error => console.log(error),
+          () => {
+            task.uuid = '';
+            // this.tasks = this.tasks.filter(this.isDeleted);
+            // console.log('-- Sending in Tasklist --');
+            // this.taskListReplay.next(this.tasks)
+          }
+        );
+    //   }
+    // );
+  }
+
+  isDeleted(task:Task) {
+    console.log('-- Is Deleted --');
+    if(task.deleted === true) {
+      return true;
+    }
+    return false;
+  }
+
+  sortTasks() {
+    this.helper.sortBy(this.tasks,'title');
+  }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
@@ -76,56 +157,6 @@ export class TaskService {
                     .catch(this.handleError);
   }
 
-  public workerTaskGatherTasks(control_uuid: string, params: any): Observable<any> {
-    let goal: string = params.goal;
-    console.log('Fetching Task Count for: ' + goal);
-    let tasks: Task[] = [];
-    let outcome = '';
-    let obs = new Observable((observer:any) => {
-      let taskgetter = this.list(goal).subscribe(
-        tasks => {
-          tasks = <Task[]>tasks;
-          observer.next({control_uuid: control_uuid, outcome: 'success', message:'Tasks fetched successfully.',context:{params:{tasks:tasks,task_count:tasks.length}}})
-        },
-        error => {
-          observer.error({control_uuid: control_uuid, outcome: error, message:'An error has occured fetching the tasks.'});
-        },
-        () => {
-          observer.complete()
-        }
-      );
-      return () => console.log('Observer Created for Working.')
-    });
-
-    return obs;
-  }
-
-  public workerTaskRemoveTasks(control_uuid: string, params: any): Observable<any> {
-    let goal: string = params.goal;
-    let taskCount: string = params.task_count;
-    let tasks: Task[] = params.tasks;
-    let obs = new Observable((observer:any) => {
-      observer.next({control_uuid: control_uuid, outcome: 'success', message:'Tasks removed successfully.',context:{}});
-      observer.complete();
-    });
-    return obs;
-  }
-
-  public workerTaskRemoveGoal(control_uuid: string, params: any): Observable<any> {
-    let goal: string = params.goal;
-    let taskCount: string = params.task_count;
-    let obs = new Observable((observer:any) => {
-      if(taskCount !== "0"){
-        observer.error({control_uuid: control_uuid, outcome: 'error', message:'You can only delete a goal, when it is empty.'});
-      } else {
-        observer.next({control_uuid: control_uuid, outcome: 'success', message:'Goal removed successfully.',context:{}});
-        observer.complete();
-      }
-    });
-    return obs;
-  }
-
-
   /**
     * Handle HTTP error
     */
@@ -143,6 +174,24 @@ export class TaskService {
     */
   private htmlEntities(str:string): string {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  private findTask(taskToFind:Task): Observable<any> {
+    let searched: string[] = [];
+    let obs = new Observable((observer:any) => {
+      this.tasks.forEach((task) => {
+        searched.push(task.uuid);
+        console.log('-- Looking --');
+        if(task.uuid === taskToFind.uuid) {
+          console.log('-- Is Found --');
+          observer.next(task);
+        }
+        if(searched.length === this.tasks.length) {
+          observer.complete();
+        }
+      });
+    });
+    return obs;
   }
 
 }

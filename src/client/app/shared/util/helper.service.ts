@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { HelperWorker } from '../index';
 
 @Injectable()
 export class HelperService {
+
+    constructor(public router: Router){}
+
+    getWorker() {
+        return new HelperWorker(this);
+    }
 
     sortBy(arr:any[],property:string) {
         arr.sort((a,b) => {

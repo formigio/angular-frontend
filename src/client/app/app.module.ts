@@ -16,6 +16,8 @@ import { LoginModule } from './+login/login.module';
 import { SharedModule } from './shared/shared.module';
 import { NavModule } from './nav/nav.module';
 import { MessageService } from './shared/index';
+import { HelperService } from './shared/index';
+import { ProcessService } from './core/index';
 
 import { GoalPageComponent, GoalReadonlyComponent } from './+goals/index';
 
@@ -27,6 +29,8 @@ import { GoalPageComponent, GoalReadonlyComponent } from './+goals/index';
   declarations: [AppComponent, GoalPageComponent, GoalReadonlyComponent],
   providers: [
     MessageService,
+    HelperService,
+    ProcessService,
     appRoutingProviders,
     { provide: APP_BASE_HREF, useValue: '<%= APP_BASE %>' }
   ],

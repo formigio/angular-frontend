@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { Goal } from './index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { Goal, GoalWorker } from './index';
 import { Config } from '../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -18,6 +18,19 @@ export class GoalService {
    * @constructor
    */
   constructor(private http: Http) {}
+
+  public goal: ReplaySubject<any> = new ReplaySubject(1);
+
+  getWorker() {
+    return new GoalWorker(this);
+  }
+
+  getGoal(guid:string): ReplaySubject<any> {
+    this.get(guid).subscribe(
+      goal => this.goal.next(goal)
+    );
+    return this.goal;
+  }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
@@ -72,10 +85,10 @@ export class GoalService {
   private handleError (error: any) {
     // In a real world app, we might use a remote logging infrastructure
     // We'd also dig deeper into the error to get a better message
-    let errMsg = (error.message) ? error.message :
-      error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-    console.error(errMsg); // log to console instead
-    return Observable.throw(errMsg);
+    // let errMsg = (error.message) ? error.message :
+    //   error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+    console.error(error); // log to console instead
+    return Observable.throw(error);
   }
 
   /**

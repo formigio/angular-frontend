@@ -16,7 +16,6 @@ import { ProcessService } from '../core/index';
   templateUrl: 'goal-view.component.html',
   providers: [ GoalService, HelperService ]
 })
-
 export class GoalViewComponent implements OnInit {
 
   @Input() editable:boolean;
@@ -49,13 +48,15 @@ export class GoalViewComponent implements OnInit {
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
        let id = params['guid'];
-       this.service.get(id)
-                      .subscribe(
-                        goal => this.goal = <Goal>goal,
-                        error =>  this.errorMessage = <any>error,
-                        () => console.log('Goal Loaded')
-                        );
-
+      //  this.service.get(id)
+      //                 .subscribe(
+      //                   goal => this.goal = <Goal>goal,
+      //                   error =>  this.errorMessage = <any>error,
+      //                   () => console.log('Goal Loaded')
+      //                   );
+      this.service.getGoal(id).subscribe(
+        goal => this.goal = goal
+      );
      });
   }
 

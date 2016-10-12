@@ -29,7 +29,8 @@ export class TaskListComponent implements OnInit {
     complete: 'false',
     uuid: '',
     title: '',
-    goal: ''
+    goal: '',
+    deleted: false
   };
 
   goal: string;
@@ -38,7 +39,7 @@ export class TaskListComponent implements OnInit {
 
   /**
    *
-   * @param 
+   * @param
    */
   constructor(
       protected service: TaskService,
@@ -52,19 +53,17 @@ export class TaskListComponent implements OnInit {
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       if(this.goal = params['guid']) {
-        this.fetchTasks();
+        this.service.getTasks(this.goal)
+                .subscribe(
+                  tasks => this.tasks = <Task[]>tasks
+                );
       }
      });
   }
 
   fetchTasks() {
-    console.log('Getting Tasks for: ' + this.goal);
-    this.service.list(this.goal)
-                .subscribe(
-                  tasks => this.tasks = <Task[]>tasks,
-                  error =>  this.errorMessage = <any>error,
-                  () => this.helper.sortBy(this.tasks,'title')
-                );
+    console.log('Fetching Tasks for: ' + this.goal);
+    this.service.refreshTasks(this.goal);
   }
 
   /**
@@ -81,18 +80,20 @@ export class TaskListComponent implements OnInit {
           complete: 'false',
           uuid: uuid,
           title: taskTitle,
-          goal: this.task.goal
+          goal: this.task.goal,
+          deleted: false
         };
-        this.service.post(newTask)
-          .subscribe(
-            response => this.currentResponse,
-            error => this.errorMessage = <any>error,
-            () => {
-              this.task.title = '';
-              this.tasks.push(newTask);
-              this.helper.sortBy(this.tasks,'title');
-            }
-          );
+        this.service.addTask(newTask);
+        // this.service.post(newTask)
+        //   .subscribe(
+        //     response => this.currentResponse,
+        //     error => this.errorMessage = <any>error,
+        //     () => {
+        //       this.task.title = '';
+        //       this.tasks.push(newTask);
+        //       this.helper.sortBy(this.tasks,'title');
+        //     }
+        //   );
       } // If Task Title
     }); // Task Lines foreach
   }
