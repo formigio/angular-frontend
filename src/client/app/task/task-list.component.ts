@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { TaskService, Task } from './index';
 
-import { HelperService } from '../shared/index';
+// import { HelperService } from '../shared/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -13,7 +13,7 @@ import { HelperService } from '../shared/index';
   moduleId: module.id,
   selector: 'task-list',
   templateUrl: 'task-list.component.html',
-  providers: [ TaskService, HelperService ]
+  providers: [TaskService]
 })
 
 export class TaskListComponent implements OnInit {
@@ -43,8 +43,7 @@ export class TaskListComponent implements OnInit {
    */
   constructor(
       protected service: TaskService,
-      protected route: ActivatedRoute,
-      protected helper: HelperService
+      protected route: ActivatedRoute
   ) {}
 
  /**
@@ -53,10 +52,11 @@ export class TaskListComponent implements OnInit {
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       if(this.goal = params['guid']) {
-        this.service.getTasks(this.goal)
+        this.service.getListReplay()
                 .subscribe(
                   tasks => this.tasks = <Task[]>tasks
                 );
+        this.fetchTasks();
       }
      });
   }

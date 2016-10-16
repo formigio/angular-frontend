@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { Config, MessageService } from '../shared/index';
+import { MessageService } from '../core/index';
+import { Config } from '../shared/index';
 
 export class User {
     constructor(

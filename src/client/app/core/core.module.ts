@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { ProcessService } from './hormone/process.service';
+import { MessageService } from './message/message.service';
 
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
@@ -9,6 +9,6 @@ import { ProcessService } from './hormone/process.service';
   imports: [],
   declarations: [],
   exports: [],
-  providers: [ProcessService]
+  providers: [MessageService]
 })
 export class CoreModule { }

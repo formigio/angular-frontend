@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ReplaySubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs/Rx';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 export class Message {
   constructor(
@@ -7,6 +8,20 @@ export class Message {
     public message: string = '',
     public alert: string = 'info'
   ) {}
+}
+
+export class WorkerMessage {
+    constructor(
+        public signal: string,
+        public control_uuid: string
+    ) {}
+}
+
+export class ProcessMessage {
+    constructor(
+        public routine: string,
+        public params: {}
+    ) {}
 }
 
 /**
@@ -17,6 +32,8 @@ export class MessageService {
 
     public flashMessage: ReplaySubject<any> = new ReplaySubject(1);
     public processMessage: ReplaySubject<any> = new ReplaySubject(1);
+    public workerQueue: ReplaySubject<any> = new ReplaySubject(1);
+    public processQueue: ReplaySubject<any> = new ReplaySubject(1);
 
     public setFlash(message:string, alert:string = 'info') {
         let flashMessage = new Message(true,message,alert);
@@ -28,8 +45,16 @@ export class MessageService {
     public addProcessMessage(message:string, alert:string = 'info') {
         let processMessage = new Message(true,message,alert);
         this.processMessage.next(processMessage);
-        var control = Observable.timer(3000);
-        control.subscribe(x => processMessage.show = false);
+        // var control = Observable.timer(3000);
+        // control.subscribe(x => processMessage.show = false);
+    }
+
+    public processSignal(message: WorkerMessage) {
+        this.workerQueue.next(message);
+    }
+
+    public startProcess(routine: string, params: {}) {
+        this.processQueue.next(new ProcessMessage(routine,params));
     }
 
     public getFlashMessage(): ReplaySubject<any> {
@@ -40,5 +65,12 @@ export class MessageService {
         return this.processMessage;
     }
 
+    public getWorkerQueue(): ReplaySubject<any> {
+        return this.workerQueue;
+    }
+
+    public getProcessQueue(): ReplaySubject<any> {
+        return this.processQueue;
+    }
 
 }

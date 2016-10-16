@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Config, HelperService } from '../shared/index';
-import { Task, TaskWorker } from './index';
+import { Task } from './index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -12,6 +13,10 @@ import 'rxjs/add/operator/catch';
 @Injectable()
 export class TaskService {
 
+  public taskListReplay: ReplaySubject<any> = new ReplaySubject(1);
+
+  private tasks: Task[] = [];
+
   /**
    * Creates a new NameListService with the injected Http.
    * @param {Http} http - The injected Http.
@@ -19,23 +24,7 @@ export class TaskService {
    */
   constructor(private http: Http, private helper: HelperService) {}
 
-  tasks: Task[] = [];
-
-  public taskListReplay: ReplaySubject<any> = new ReplaySubject(1);
-
-  getWorker() {
-    return new TaskWorker(this);
-  }
-
-  getTasks(guid:string): ReplaySubject<any> {
-    this.list(guid).subscribe(
-      tasks => this.tasks = tasks,
-      error => console.log(error),
-      () => {
-        this.sortTasks();
-        this.taskListReplay.next(this.tasks);
-      }
-    );
+  getListReplay(): ReplaySubject<any> {
     return this.taskListReplay;
   }
 
@@ -58,7 +47,7 @@ export class TaskService {
       () => {
         this.tasks.push(task);
         this.sortTasks();
-        this.taskListReplay.next(this.tasks)
+        this.taskListReplay.next(this.tasks);
       }
     );
   }
@@ -174,24 +163,6 @@ export class TaskService {
     */
   private htmlEntities(str:string): string {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  private findTask(taskToFind:Task): Observable<any> {
-    let searched: string[] = [];
-    let obs = new Observable((observer:any) => {
-      this.tasks.forEach((task) => {
-        searched.push(task.uuid);
-        console.log('-- Looking --');
-        if(task.uuid === taskToFind.uuid) {
-          console.log('-- Is Found --');
-          observer.next(task);
-        }
-        if(searched.length === this.tasks.length) {
-          observer.complete();
-        }
-      });
-    });
-    return obs;
   }
 
 }

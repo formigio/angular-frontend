@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 //import { Config } from './shared/index';
 import { ToolbarComponent, NavbarComponent } from './nav/index';
-import { MessageComponent } from './shared/message/message.component';
+import { MessageComponent, ProcessComponent } from './core/index';
 
 /**
  * This class represents the main application component. Within the @Routes annotation is the configuration of the
@@ -11,7 +11,7 @@ import { MessageComponent } from './shared/message/message.component';
   moduleId: module.id,
   selector: 'sd-app',
   templateUrl: 'app.component.html',
-  directives: [ToolbarComponent,NavbarComponent,MessageComponent]
+  directives: [ToolbarComponent,NavbarComponent,MessageComponent,ProcessComponent]
 })
 
 export class AppComponent {

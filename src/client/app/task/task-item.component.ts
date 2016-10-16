@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { TaskService, Task } from './index';
-import { MessageService } from '../shared/message/message.service';
+import { MessageService } from '../core/index';
+
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -9,13 +10,14 @@ import { MessageService } from '../shared/message/message.service';
   moduleId: module.id,
   selector: 'task-item',
   templateUrl: 'task-item.component.html',
-  providers: [ TaskService ]
+  providers: [ ]
 })
 
 export class TaskItemComponent {
 
   @Input() task:Task;
   @Input() editable: boolean;
+  @Input() service: TaskService;
 
   errorMessage: string = '';
   success: string = '';
@@ -24,11 +26,10 @@ export class TaskItemComponent {
 
   /**
    *
-   * @param 
+   * @param
    */
   constructor(
-      public service: TaskService,
-      public message: MessageService
+    public message: MessageService
   ) {}
 
   makeEditable() {
@@ -44,7 +45,9 @@ export class TaskItemComponent {
    * Deletes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  deleteTask(task:Task): boolean {
+  deleteTask(task:Task) {
+    // this.service.removeTask(task);
+    // this.process.initProcess('task_delete',{task:task});
     this.service.delete(task)
       .subscribe(
         success => this.success,

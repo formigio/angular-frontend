@@ -15,22 +15,18 @@ import { GoalPagesModule } from './+goals/goal-pages.module';
 import { LoginModule } from './+login/login.module';
 import { SharedModule } from './shared/shared.module';
 import { NavModule } from './nav/nav.module';
-import { MessageService } from './shared/index';
+import { MessageService } from './core/index';
 import { HelperService } from './shared/index';
-import { ProcessService } from './core/index';
-
-import { GoalPageComponent, GoalReadonlyComponent } from './+goals/index';
 
 @NgModule({
   imports: [
     BrowserModule, HttpModule, routing, CoreModule,
     LoginModule, GoalModule, TaskModule, InviteModule,
     GoalPagesModule, AboutModule, HomeModule, NavModule, SharedModule.forRoot()],
-  declarations: [AppComponent, GoalPageComponent, GoalReadonlyComponent],
+  declarations: [AppComponent],
   providers: [
     MessageService,
     HelperService,
-    ProcessService,
     appRoutingProviders,
     { provide: APP_BASE_HREF, useValue: '<%= APP_BASE %>' }
   ],

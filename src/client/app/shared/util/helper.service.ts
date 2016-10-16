@@ -5,7 +5,7 @@ import { HelperWorker } from '../index';
 @Injectable()
 export class HelperService {
 
-    constructor(public router: Router){}
+    constructor(public router: Router) {}
 
     getWorker() {
         return new HelperWorker(this);

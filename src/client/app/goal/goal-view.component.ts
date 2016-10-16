@@ -4,8 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { GoalService, Goal } from './index';
 
-import { HelperService, MessageService } from '../shared/index';
-import { ProcessService } from '../core/index';
+import { MessageService } from '../core/index';
 
 /**
  * This class represents the lazy loaded GoalViewComponent.
@@ -14,7 +13,7 @@ import { ProcessService } from '../core/index';
   moduleId: module.id,
   selector: 'goal-view',
   templateUrl: 'goal-view.component.html',
-  providers: [ GoalService, HelperService ]
+  providers: [ GoalService ]
 })
 export class GoalViewComponent implements OnInit {
 
@@ -35,12 +34,10 @@ export class GoalViewComponent implements OnInit {
    * @param {Router} router - The injected Router.
    */
   constructor(
-    protected process: ProcessService,
     protected service: GoalService,
     protected route: ActivatedRoute,
     protected router: Router,
-    protected message: MessageService,
-    protected helper: HelperService) {}
+    protected message: MessageService) {}
 
   /**
    * Get the names OnInit
@@ -66,7 +63,7 @@ export class GoalViewComponent implements OnInit {
    */
   deleteGoal(goal:Goal): boolean {
 
-    this.process.initProcess('goal_delete',{goal:goal.guid});
+    this.message.startProcess('goal_delete',{goal:goal.guid});
 
     // if(this.tasks.length === 0 && this.invites.length === 0) {
       // this.service.delete(goal.guid)

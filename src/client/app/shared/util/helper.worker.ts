@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs/Observable'
-import { HelperService } from '../index'
+import { Observable } from 'rxjs/Observable';
+import { HelperService } from '../index';
 
 export class HelperWorker {
 

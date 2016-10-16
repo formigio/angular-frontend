@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
-import { Observable, ReplaySubject } from 'rxjs';
-import { Goal, GoalWorker } from './index';
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Goal } from './index';
 import { Config } from '../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -12,18 +13,14 @@ import 'rxjs/add/operator/catch';
 @Injectable()
 export class GoalService {
 
+  public goal: ReplaySubject<any> = new ReplaySubject(1);
+
   /**
    * Creates a new NameListService with the injected Http.
    * @param {Http} http - The injected Http.
    * @constructor
    */
   constructor(private http: Http) {}
-
-  public goal: ReplaySubject<any> = new ReplaySubject(1);
-
-  getWorker() {
-    return new GoalWorker(this);
-  }
 
   getGoal(guid:string): ReplaySubject<any> {
     this.get(guid).subscribe(
