@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { WorkerMessage, ProcessMessage } from '../index';
 
 export class Message {
   constructor(
@@ -8,20 +9,6 @@ export class Message {
     public message: string = '',
     public alert: string = 'info'
   ) {}
-}
-
-export class WorkerMessage {
-    constructor(
-        public signal: string,
-        public control_uuid: string
-    ) {}
-}
-
-export class ProcessMessage {
-    constructor(
-        public routine: string,
-        public params: {}
-    ) {}
 }
 
 /**
