@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { GoalWorkerComponent } from '../../goal/index';
 import { TaskWorkerComponent } from '../../task/index';
+import { InviteWorkerComponent } from '../../invite/index';
 import { RouteWorkerComponent } from '../../shared/index';
 
 /**
@@ -10,7 +11,7 @@ import { RouteWorkerComponent } from '../../shared/index';
   moduleId: module.id,
   selector: 'sd-process',
   templateUrl: 'process.component.html',
-  directives: [GoalWorkerComponent, TaskWorkerComponent, RouteWorkerComponent]
+  directives: [GoalWorkerComponent, TaskWorkerComponent, InviteWorkerComponent, RouteWorkerComponent]
 })
 export class ProcessComponent {
 

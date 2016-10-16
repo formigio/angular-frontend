@@ -1,42 +1,60 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, ProcessMessage, WorkerMessage, WorkerResponse } from '../core/index';
-import { GoalService } from './index';
+import { HelperService } from '../shared/index';
+import { Invite, InviteService } from './index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
  */
 @Component({
   moduleId: module.id,
-  selector: 'goal-worker',
-  template: `<div>Goal Worker</div>`,
-  providers: [ GoalService ]
+  selector: 'invite-worker',
+  template: `<div>Invite Worker</div>`,
+  providers: [ InviteService ]
 })
-export class GoalWorkerComponent implements OnInit {
+export class InviteWorkerComponent implements OnInit {
 
-  protected routines: {} = {
-      goal_delete: new ProcessRoutine(
-          'goal_delete',
-          'The Process Used to Control the Deletion of Goals',
-          new ProcessContext,
-          ''
-      )
-  };
+    protected routines: {} = {
+        invite_delete: new ProcessRoutine(
+            'invite_delete',
+            'The Process Used to Control the Deletion of Invites',
+            new ProcessContext,
+            ''
+        )
+    };
 
-  protected tasks: {} = {
-      remove_invites_complete: new ProcessTask(
-          'remove_goal',
-          'remove_invites_complete',
-          'Delete Goal',
-          'removeGoal',
-          {goal:'string', invite_count:'string', task_count:'string'}
-      )
-  };
+    protected tasks: {} = {
+        invite_delete_init: new ProcessTask(
+            'delete_invite',
+            'invite_delete_init',
+            'Delete Invite',
+            'deleteInvite',
+            {invite:'Invite'}
+        ),
+        goal_delete_init: new ProcessTask(
+            'gather_goal_invites',
+            'goal_delete_init',
+            'Gather Goal Invites',
+            'gatherInvites',
+            {goal:'string'}
+        ),
+        gather_goal_invites_complete: new ProcessTask(
+            'remove_invites',
+            'gather_goal_invites_complete',
+            'Remove Invites for a specific goal',
+            'removeInvites',
+            {goal:'string', invite_count:'string'}
+        )
+    };
 
   constructor(
-    protected service: GoalService,
+    protected service: InviteService,
+    protected helper: HelperService,
     protected message: MessageService
-  ) {}
+  ) {
+    this.service = this.helper.getServiceInstance(this.service,'InviteService');
+  }
 
   /**
    * Get the OnInit
@@ -62,40 +80,101 @@ export class GoalWorkerComponent implements OnInit {
       }
   }
 
-  protected removeGoal(control_uuid: string, params: any): Observable<any> {
+  public gatherInvites(control_uuid: string, params: any): Observable<any> {
     let goal: string = params.goal;
-    let taskCount: number = params.task_count;
+    console.log('Fetching Invite Count for: ' + goal);
     let obs = new Observable((observer:any) => {
-      if(taskCount > 0) {
-        observer.error({
+      this.service.list(goal).subscribe(
+        invites => {
+          invites = <Invite[]>invites;
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Invites fetched successfully.',
+            context:{params:{invites:invites,invite_count:invites.length}}
+          });
+        },
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured fetching the invites.'
+          });
+        },
+        () => observer.complete()
+      );
+      return () => console.log('Observer Created for Working.');
+    });
+
+    return obs;
+  }
+
+  public deleteInvite(control_uuid: string, params: any): Observable<any> {
+    let invite: Invite = params.invite;
+    let obs = new Observable((observer:any) => {
+      this.service.delete(invite).subscribe(
+        null,
+        error => observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'You can only delete a goal, when it is empty. taskCount:' + taskCount,
+          message:'Error has occured while removing invite.',
           context:{params:{}}
+        }),
+        () => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Invite removed successfully.',
+            context:{params:{invite_deleted:invite.uuid}}
+          });
+          this.service.refreshInvites(invite.goal);
+          observer.complete();
+        }
+      );
+    });
+    return obs;
+  }
+
+  public removeInvites(control_uuid: string, params: any): Observable<any> {
+    let invites: Invite[] = params.invites;
+    let invitesRemoved: string[] = [];
+    let obs = new Observable((observer:any) => {
+      if(invites.length === 0) {
+        observer.next({
+          control_uuid: control_uuid,
+          outcome: 'success',
+          message:'No Tasks to Remove.',
+          context:{params:{invite_count:0}}
         });
-      } else {
-        this.service.delete(goal).subscribe(
+        observer.complete();
+      }
+      invites.forEach((invite) => {
+        this.service.delete(invite).subscribe(
           null,
           error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured during Goal delete',
+            message:'Error has occured while removing invites.',
             context:{params:{}}
           }),
           () => {
-            observer.next({
-              control_uuid: control_uuid,
-              outcome: 'success',
-              message:'Goal removed successfully.',
-              context:{params:{navigate_to:'/goals'}}
-            });
-            observer.complete();
+            invitesRemoved.push(invite.uuid);
+            if(invites.length === invitesRemoved.length) {
+              observer.next({
+                control_uuid: control_uuid,
+                outcome: 'success',
+                message:'Invites removed successfully.',
+                context:{params:{invite_count:0}}
+              });
+              observer.complete();
+            }
           }
         );
-      }
+      });
     });
     return obs;
   }
+
 
   // Functions Below should be in a shared parent class...
   // but the class inheritance doesn't work as expected in Angular2
@@ -132,7 +211,7 @@ export class GoalWorkerComponent implements OnInit {
 
       // Verify the Worker has a Task
       if(!this.tasks.hasOwnProperty(signal)) {
-          console.log('No Task Found in the Goal Worker Class.');
+          console.log('No Task: ' + signal + ' Found in the Goal Worker Class.');
           return false;
       }
 

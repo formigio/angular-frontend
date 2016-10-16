@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable, ReplaySubject } from 'rxjs/Rx';
 import { Config } from '../shared/index';
 import { Invite } from './index';
 import 'rxjs/add/operator/map';
@@ -12,12 +12,42 @@ import 'rxjs/add/operator/catch';
 @Injectable()
 export class InviteService {
 
+  public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
+
+  private invites: Invite[] = [];
+
   /**
    * Creates a new NameListService with the injected Http.
    * @param {Http} http - The injected Http.
    * @constructor
    */
   constructor(private http: Http) {}
+
+
+  getListSubscription(): ReplaySubject<any> {
+    return this.listSubscription;
+  }
+
+  refreshInvites(guid:string) {
+    this.list(guid).subscribe(
+      invites => this.invites = invites,
+      error => console.log(error),
+      () => {
+        this.listSubscription.next(this.invites);
+      }
+    );
+  }
+
+  addInvite(invite:Invite) {
+    this.post(invite).subscribe(
+      null,
+      error => console.log(error),
+      () => {
+        this.invites.push(invite);
+        this.listSubscription.next(this.invites);
+      }
+    );
+  }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.

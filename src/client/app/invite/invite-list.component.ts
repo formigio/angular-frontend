@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
+import { HelperService } from '../shared/index';
 
 import { Invite, InviteService } from './index';
 
@@ -22,7 +23,8 @@ export class InviteListComponent implements OnInit {
   invite: Invite = {
     email: '',
     uuid: '',
-    goal: ''
+    goal: '',
+    deleted: false
   };
 
   goal: string;
@@ -31,12 +33,15 @@ export class InviteListComponent implements OnInit {
 
   /**
    *
-   * @param 
+   * @param
    */
   constructor(
       protected service: InviteService,
-      protected route: ActivatedRoute
-  ) {}
+      protected route: ActivatedRoute,
+      protected helper: HelperService
+  ) {
+    this.service = this.helper.getServiceInstance(this.service,'InviteService');
+  }
 
   /**
    * Get the names OnInit
@@ -44,18 +49,19 @@ export class InviteListComponent implements OnInit {
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       if(this.goal = params['guid']) {
+        this.service.getListSubscription()
+                .subscribe(
+                  invites => {
+                    this.invites = <Invite[]>invites;
+                  }
+                );
         this.fetchInvites();
       }
      });
   }
 
   fetchInvites() {
-    this.service.list(this.goal)
-                .subscribe(
-                  invites => this.invites = <Invite[]>invites,
-                  error =>  this.errorMessage = <any>error,
-                  () => console.log('Invites are Fetched')
-                  );
+    this.service.refreshInvites(this.goal);
   }
 
   /**
@@ -68,14 +74,10 @@ export class InviteListComponent implements OnInit {
     let newInvite:Invite = {
       uuid: uuid,
       email: this.invite.email,
-      goal: this.goal
+      goal: this.goal,
+      deleted: false
     };
-    this.service.post(newInvite)
-      .subscribe(
-        response => this.currentResponse,
-        error => this.errorMessage = <any>error,
-        () => this.invites.push(newInvite)
-      );
+    this.service.addInvite(newInvite);
     this.invite.email = '';
     return false;
   }

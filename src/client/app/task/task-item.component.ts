@@ -48,14 +48,6 @@ export class TaskItemComponent {
   deleteTask(task:Task) {
     task.deleted = true;
     this.message.startProcess('task_delete',{task:task});
-    // this.service.removeTask(task);
-    // this.process.initProcess('task_delete',{task:task});
-    // this.service.delete(task)
-    //   .subscribe(
-    //     success => this.success,
-    //     error => this.errorMessage = <any>error,
-    //     () => this.task.uuid = ''
-    //   );
     return false;
   }
 

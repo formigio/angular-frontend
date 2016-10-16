@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { MessageService } from '../core/index';
 import { InviteService, Invite } from './index';
-import { Goal } from '../goal/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -16,18 +16,13 @@ export class InviteItemComponent {
 
   @Input() invite:Invite;
 
-  goal: Goal;
-  invites: Invite[] = [];
-  currentResponse: any;
-
-  errorMessage: string = '';
-
   /**
    *
-   * @param 
+   * @param
    */
   constructor(
-      public service: InviteService
+      public service: InviteService,
+      public message: MessageService
   ) {}
 
   /**
@@ -35,12 +30,8 @@ export class InviteItemComponent {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteInvite(invite:Invite): boolean {
-    this.service.delete(invite)
-      .subscribe(
-        response => this.currentResponse,
-        error => this.errorMessage = <any>error,
-        () => invite.uuid = ''
-      );
+    invite.deleted = true;
+    this.message.startProcess('invite_delete',{invite:invite});
     return false;
   }
 
