@@ -7,8 +7,8 @@ import { TaskItemComponent, TaskListComponent, TaskService } from './index';
 
 @NgModule({
     imports: [CommonModule, FormsModule, SharedModule, CoreModule],
-    declarations: [TaskItemComponent, TaskListComponent],
-    exports: [],
+    declarations: [TaskItemComponent,TaskListComponent],
+    exports: [TaskListComponent],
     providers: [TaskService]
 })
 export class TaskModule { }

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpModule } from '@angular/http';
-import { AppComponent } from './app.component';
 import { routing, appRoutingProviders } from './app.routes';
 
 import { CoreModule } from './core/core.module';
@@ -17,6 +16,8 @@ import { SharedModule } from './shared/shared.module';
 import { NavModule } from './nav/nav.module';
 import { MessageService } from './core/index';
 import { HelperService } from './shared/index';
+
+import { AppComponent } from './app.component';
 
 @NgModule({
   imports: [

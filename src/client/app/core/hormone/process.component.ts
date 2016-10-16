@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { BaseWorkerComponent } from '../index';
 import { GoalWorkerComponent } from '../../goal/index';
 import { TaskWorkerComponent } from '../../task/index';
 
@@ -12,6 +11,6 @@ import { TaskWorkerComponent } from '../../task/index';
   templateUrl: 'process.component.html',
   directives: [GoalWorkerComponent, TaskWorkerComponent]
 })
-export class ProcessComponent extends BaseWorkerComponent {
+export class ProcessComponent {
 
 }
