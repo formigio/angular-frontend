@@ -32,9 +32,9 @@ export class InviteWorkerComponent implements OnInit {
             'deleteInvite',
             {invite:'Invite'}
         ),
-        goal_delete_init: new ProcessTask(
+        remove_tasks_complete: new ProcessTask(
             'gather_goal_invites',
-            'goal_delete_init',
+            'remove_tasks_complete',
             'Gather Goal Invites',
             'gatherInvites',
             {goal:'string'}
@@ -82,7 +82,6 @@ export class InviteWorkerComponent implements OnInit {
 
   public gatherInvites(control_uuid: string, params: any): Observable<any> {
     let goal: string = params.goal;
-    console.log('Fetching Invite Count for: ' + goal);
     let obs = new Observable((observer:any) => {
       this.service.list(goal).subscribe(
         invites => {
@@ -103,7 +102,6 @@ export class InviteWorkerComponent implements OnInit {
         },
         () => observer.complete()
       );
-      return () => console.log('Observer Created for Working.');
     });
 
     return obs;
@@ -190,12 +188,12 @@ export class InviteWorkerComponent implements OnInit {
         let context = this.createContextParams(params);
 
         if(!this.routines.hasOwnProperty(identifier)) {
-            this.message.setFlash('Error - Initiating Process: ' + identifier + ' No Routine Found.','warning');
+            // this.message.setFlash('Error - Initiating Process: ' + identifier + ' No Routine Found.','warning');
             return false;
         }
 
         let processRoutine: ProcessRoutine = (<any>this.routines)[identifier];
-        this.message.addProcessMessage('Initiating Process: ' + processRoutine.description);
+        // this.message.addProcessMessage('Initiating Process: ' + processRoutine.description);
         processRoutine.control_uuid = control_uuid;
         processRoutine.context = context;
         localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
@@ -211,7 +209,6 @@ export class InviteWorkerComponent implements OnInit {
 
       // Verify the Worker has a Task
       if(!this.tasks.hasOwnProperty(signal)) {
-          console.log('No Task: ' + signal + ' Found in the Goal Worker Class.');
           return false;
       }
 
@@ -221,18 +218,19 @@ export class InviteWorkerComponent implements OnInit {
       // Initiate ProcessTask
       let processTask: ProcessTask = (<any>this.tasks)[signal];
 
-      this.message.addProcessMessage('Initiating Task: ' + processTask.description + ' Process: '
-          + processRoutine.identifier + ' Context: ' + JSON.stringify(processRoutine.context));
+      // this.message.addProcessMessage('Initiating Task: ' + processTask.description + ' Process: '
+          // + processRoutine.identifier + ' Context: ' + JSON.stringify(processRoutine.context));
 
       // Verify Required Process Params are in place
       let paramProcessor: Observable<any> = processTask.processRoutineHasRequiredParams(processRoutine);
       paramProcessor.subscribe(
-          result => console.log('Subscribe Result:' + result),
+          null,
           error => {
-              this.message.addProcessMessage('missing required params: ' + error);
+              // this.message.addProcessMessage('missing required params: ' + error);
+              this.message.setFlash('Error - Missing Param for Process: ' + error ,'warning');
           },
           () => {
-              this.message.addProcessMessage('required params checked.');
+              // this.message.addProcessMessage('required params checked.');
               let workerMethod: Observable<any> = (<any>this)[processTask.method](
                   processRoutine.control_uuid, processRoutine.context.params);
               let workerResponse: WorkerResponse;
@@ -242,7 +240,7 @@ export class InviteWorkerComponent implements OnInit {
                   response => workerResponse = response,
                   error => {
                       workerMessage.signal = processTask.identifier + '_error';
-                      this.message.addProcessMessage('Worker Error: ' + JSON.stringify(error.message));
+                      // this.message.addProcessMessage('Worker Error: ' + JSON.stringify(error.message));
                       this.message.processSignal(workerMessage);
                   },
                   () => {

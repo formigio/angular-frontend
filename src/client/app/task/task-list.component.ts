@@ -58,7 +58,6 @@ export class TaskListComponent implements OnInit {
         this.service.getListReplay()
                 .subscribe(
                   tasks => {
-                    console.log('Getting New Tasks from Service: count: ' + tasks.length);
                     this.tasks = <Task[]>tasks;
                   }
                 );
@@ -68,7 +67,6 @@ export class TaskListComponent implements OnInit {
   }
 
   fetchTasks() {
-    console.log('Fetching Tasks for: ' + this.goal);
     this.service.refreshTasks(this.goal);
   }
 

@@ -4,12 +4,10 @@ import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class HelperService {
+
     public runtimestorage: {} = {};
-    private localId: string = '';
-    constructor(public router: Router) {
-        this.localId = Date.now().toString();
-        console.log('Loading Helper Service: ' + this.localId);
-    }
+
+    constructor(public router: Router) {}
 
     sortBy(arr:any[],property:string) {
         arr.sort((a,b) => {

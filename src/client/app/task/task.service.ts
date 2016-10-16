@@ -16,24 +16,19 @@ export class TaskService {
   public taskListReplay: ReplaySubject<any> = new ReplaySubject(1);
 
   private tasks: Task[] = [];
-  private localId: string = '';
 
   /**
    * Creates a new NameListService with the injected Http.
    * @param {Http} http - The injected Http.
    * @constructor
    */
-  constructor(private http: Http, private helper: HelperService) {
-    this.localId = Date.now().toString();
-    console.log('Loading: ' + this.localId);
-  }
+  constructor(private http: Http, private helper: HelperService) {}
 
   getListReplay(): ReplaySubject<any> {
     return this.taskListReplay;
   }
 
   refreshTasks(guid:string) {
-    console.log('Task Service Refresh Tasks:' + this.localId);
     this.list(guid).subscribe(
       tasks => this.tasks = tasks,
       error => console.log(error),
@@ -45,7 +40,6 @@ export class TaskService {
   }
 
   addTask(task:Task) {
-    console.log('-- Add Task --' + this.tasks.length);
     this.post(task).subscribe(
       null,
       error => console.log(error),

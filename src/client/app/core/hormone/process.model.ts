@@ -24,18 +24,15 @@ export class ProcessTask {
             let paramsChecked: string[] = [];
             params.forEach((param) => {
                 if(processRoutine.context.params.hasOwnProperty(param)) {
-                    console.log('Checked Param: ' + param);
                     paramsChecked.push(param);
                 } else {
-                    console.log('Missing Param: ' + param);
                     observer.error(param);
                 }
                 if(paramCount === paramsChecked.length) {
-                    console.log('Param Counts: ' + paramCount + ' Checked: ' + paramsChecked.length);
                     observer.complete();
                 }
             });
-            return () => console.log('Observer Created for Param Checking.');
+            return;
         });
 
         return obs;
@@ -47,28 +44,24 @@ export class ProcessTask {
         let paramsProcessed: string[] = [];
         let obs = new Observable((observer:any) => {
             if(params.length === 0) {
-                console.log('Param Counts: ' + params.length + ' Checked: ' + paramsProcessed.length);
                 localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
                 observer.complete();
             }
             params.forEach((param) => {
                 if(processRoutine.context.params.hasOwnProperty(param)) {
-                    console.log('Updated Existing Param: ' + param);
                     processRoutine.context.params[param] = (<any>context.params)[param];
                     paramsProcessed.push(param);
                 } else if(param) {
-                    console.log('Added New Param: ' + param);
                     processRoutine.context.params[param] = (<any>context.params)[param];
                     paramsProcessed.push(param);
                 }
                 if(params.length === paramsProcessed.length) {
-                    console.log('Param Counts: ' + params.length + ' Checked: ' + paramsProcessed.length);
                     localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
                     observer.complete();
                 }
 
             });
-            return () => console.log('Observer Created for Param Checking.');
+            return;
         });
         return obs;
     }
