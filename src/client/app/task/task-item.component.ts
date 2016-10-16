@@ -17,7 +17,6 @@ export class TaskItemComponent {
 
   @Input() task:Task;
   @Input() editable: boolean;
-  @Input() service: TaskService;
 
   errorMessage: string = '';
   success: string = '';
@@ -29,7 +28,8 @@ export class TaskItemComponent {
    * @param
    */
   constructor(
-    public message: MessageService
+    protected service: TaskService,
+    protected message: MessageService
   ) {}
 
   makeEditable() {
@@ -46,14 +46,16 @@ export class TaskItemComponent {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteTask(task:Task) {
+    task.deleted = true;
+    this.message.startProcess('task_delete',{task:task});
     // this.service.removeTask(task);
     // this.process.initProcess('task_delete',{task:task});
-    this.service.delete(task)
-      .subscribe(
-        success => this.success,
-        error => this.errorMessage = <any>error,
-        () => this.task.uuid = ''
-      );
+    // this.service.delete(task)
+    //   .subscribe(
+    //     success => this.success,
+    //     error => this.errorMessage = <any>error,
+    //     () => this.task.uuid = ''
+    //   );
     return false;
   }
 

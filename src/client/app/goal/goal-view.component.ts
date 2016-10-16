@@ -45,12 +45,6 @@ export class GoalViewComponent implements OnInit {
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
        let id = params['guid'];
-      //  this.service.get(id)
-      //                 .subscribe(
-      //                   goal => this.goal = <Goal>goal,
-      //                   error =>  this.errorMessage = <any>error,
-      //                   () => console.log('Goal Loaded')
-      //                   );
       this.service.getGoal(id).subscribe(
         goal => this.goal = goal
       );
@@ -62,28 +56,8 @@ export class GoalViewComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteGoal(goal:Goal): boolean {
-
     this.message.startProcess('goal_delete',{goal:goal.guid});
-
-    // if(this.tasks.length === 0 && this.invites.length === 0) {
-      // this.service.delete(goal.guid)
-      //   .subscribe(
-      //     response => this.currentResponse,
-      //     error => this.errorMessage = <any>error,
-      //     () => this.router.navigate(['/goals'])
-      //   );
-    // }
-    //  else {
-    //   this.tasks.forEach((task) => this.deleteTask(task));
-    //   this.invites.forEach((invite) => this.deleteInvite(invite));
-    // }
-
     return false;
-  }
-
-  goalHasChildren(): boolean {
-    // return this.tasks.length > 0 || this.invites.length > 0;
-    return true;
   }
 
   /**

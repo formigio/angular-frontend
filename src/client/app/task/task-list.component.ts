@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { TaskService, Task } from './index';
 
-// import { HelperService } from '../shared/index';
+import { HelperService } from '../shared/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -42,9 +42,12 @@ export class TaskListComponent implements OnInit {
    * @param
    */
   constructor(
+      protected helper: HelperService,
       protected service: TaskService,
       protected route: ActivatedRoute
-  ) {}
+  ) {
+    this.service = this.helper.getServiceInstance(this.service,'TaskService');
+  }
 
  /**
    * Get the names OnInit
@@ -54,7 +57,10 @@ export class TaskListComponent implements OnInit {
       if(this.goal = params['guid']) {
         this.service.getListReplay()
                 .subscribe(
-                  tasks => this.tasks = <Task[]>tasks
+                  tasks => {
+                    console.log('Getting New Tasks from Service: count: ' + tasks.length);
+                    this.tasks = <Task[]>tasks;
+                  }
                 );
         this.fetchTasks();
       }
@@ -84,18 +90,9 @@ export class TaskListComponent implements OnInit {
           deleted: false
         };
         this.service.addTask(newTask);
-        // this.service.post(newTask)
-        //   .subscribe(
-        //     response => this.currentResponse,
-        //     error => this.errorMessage = <any>error,
-        //     () => {
-        //       this.task.title = '';
-        //       this.tasks.push(newTask);
-        //       this.helper.sortBy(this.tasks,'title');
-        //     }
-        //   );
       } // If Task Title
     }); // Task Lines foreach
+    this.task.title = '';
   }
 
 } // Component end

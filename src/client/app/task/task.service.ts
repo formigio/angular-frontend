@@ -16,19 +16,24 @@ export class TaskService {
   public taskListReplay: ReplaySubject<any> = new ReplaySubject(1);
 
   private tasks: Task[] = [];
+  private localId: string = '';
 
   /**
    * Creates a new NameListService with the injected Http.
    * @param {Http} http - The injected Http.
    * @constructor
    */
-  constructor(private http: Http, private helper: HelperService) {}
+  constructor(private http: Http, private helper: HelperService) {
+    this.localId = Date.now().toString();
+    console.log('Loading: ' + this.localId);
+  }
 
   getListReplay(): ReplaySubject<any> {
     return this.taskListReplay;
   }
 
   refreshTasks(guid:string) {
+    console.log('Task Service Refresh Tasks:' + this.localId);
     this.list(guid).subscribe(
       tasks => this.tasks = tasks,
       error => console.log(error),
@@ -50,39 +55,6 @@ export class TaskService {
         this.taskListReplay.next(this.tasks);
       }
     );
-  }
-
-  removeTask(task:Task) {
-    // this.refreshTasks(task.goal);
-    // console.log('-- Remove Task --' + this.tasks.length);
-    // let taskToDelete:Task;
-    // this.findTask(task).subscribe(
-    //   task => {
-    //     console.log('-- Found Task --');
-    //     taskToDelete = task
-    //   },
-    //   error => console.log(error),
-    //   () => {
-        this.delete(task).subscribe(
-          null,
-          error => console.log(error),
-          () => {
-            task.uuid = '';
-            // this.tasks = this.tasks.filter(this.isDeleted);
-            // console.log('-- Sending in Tasklist --');
-            // this.taskListReplay.next(this.tasks)
-          }
-        );
-    //   }
-    // );
-  }
-
-  isDeleted(task:Task) {
-    console.log('-- Is Deleted --');
-    if(task.deleted === true) {
-      return true;
-    }
-    return false;
   }
 
   sortTasks() {
@@ -149,7 +121,7 @@ export class TaskService {
   /**
     * Handle HTTP error
     */
-  private handleError (error: any) {
+  private handleError(error: any) {
     // In a real world app, we might use a remote logging infrastructure
     // We'd also dig deeper into the error to get a better message
     let errMsg = (error.message) ? error.message :

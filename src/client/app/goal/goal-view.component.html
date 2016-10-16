@@ -9,8 +9,7 @@
           <span *ngIf="goal.accomplished!=='true'">In Progress</span>
       </button>
       <button *ngIf="editable===true" type="button" (click)="deleteGoal(goal)" class="btn btn-xs btn-danger pull-right">
-          <span *ngIf="goalHasChildren()===true">Clear</span>
-          <span *ngIf="goalHasChildren()===false">Delete</span>
+          <span>Delete</span>
       </button>
   </div>
   <div class="col-lg-12" *ngIf="goal">
