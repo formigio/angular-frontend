@@ -8,9 +8,11 @@ import { routing, appRoutingProviders } from './app.routes';
 import { CoreModule } from './core/core.module';
 import { AboutModule } from './+about/about.module';
 import { HomeModule } from './+home/home.module';
+import { TeamModule } from './team/team.module';
 import { GoalModule } from './goal/goal.module';
 import { TaskModule } from './task/task.module';
 import { InviteModule } from './invite/invite.module';
+import { TeamPagesModule } from './+teams/team-pages.module';
 import { GoalPagesModule } from './+goals/goal-pages.module';
 import { LoginModule } from './+login/login.module';
 import { SharedModule } from './shared/shared.module';
@@ -21,7 +23,7 @@ import { HelperService } from './shared/index';
 @NgModule({
   imports: [
     BrowserModule, HttpModule, routing, CoreModule,
-    LoginModule, GoalModule, TaskModule, InviteModule,
+    LoginModule, TeamModule, GoalModule, TaskModule, InviteModule, TeamPagesModule,
     GoalPagesModule, AboutModule, HomeModule, NavModule, SharedModule.forRoot()],
   declarations: [AppComponent],
   providers: [
