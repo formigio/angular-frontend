@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-lg-12">
     <div class="list-group">
-      <div class="list-group-item" *ngFor="let team of teams">
+      <div class="list-group-item" *ngFor="let team of teams" [class.list-group-item-warning]="team.isNew===true">
         <team-item [team]="team"></team-item>
       </div>
       <div class="list-group-item">

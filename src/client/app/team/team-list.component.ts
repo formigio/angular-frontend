@@ -21,7 +21,9 @@ export class TeamListComponent implements OnInit {
   team: Team = {
     uuid: '',
     title: '',
-    identity: ''
+    identity: '',
+    isDeleted: false,
+    isNew: true
   };
 
   /**
@@ -51,21 +53,30 @@ export class TeamListComponent implements OnInit {
     this.service.publishTeams();
   }
 
+  refreshTeams() {
+    this.service.publishTeams();
+  }
+
   /**
    * Pushes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addTeam(): boolean {
     this.team.uuid = Math.random().toString().split('.').pop();
-    this.service.post(this.team)
+    let newTeam: Team = JSON.parse(JSON.stringify(this.team));
+    this.teams.push(newTeam);
+    this.helper.sortBy(this.teams,'title');
+    this.service.post(newTeam)
       .subscribe(
         null,
         null,
-        () => this.service.publishTeams()
+        () => {
+          // this.service.publishTeams()
+          newTeam.isNew = false;
+          this.team.title = '';
+          this.team.uuid = '';
+        }
       );
-    this.teams.push(this.team);
-    this.helper.sortBy(this.teams,'title');
-    this.team.title = '';
     return false;
   }
 
