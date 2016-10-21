@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { GoalListService, Goal } from './index';
+import { GoalService, Goal } from './index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -9,7 +9,7 @@ import { GoalListService, Goal } from './index';
   moduleId: module.id,
   selector: 'goal-item',
   templateUrl: 'goal-item.component.html',
-  providers: [ GoalListService ]
+  providers: [ GoalService ]
 })
 
 export class GoalItemComponent {
@@ -22,10 +22,10 @@ export class GoalItemComponent {
 
   /**
    *
-   * @param 
+   * @param
    */
   constructor(
-      public service: GoalListService,
+      public service: GoalService,
       public router: Router
   ) {}
 

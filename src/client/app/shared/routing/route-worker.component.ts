@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessTask, WorkerComponent } from '../../core/index';
+import { MessageService, ProcessRoutine, ProcessTask, WorkerComponent } from '../../core/index';
 import { HelperService } from '../index';
 
 /**
@@ -9,14 +10,28 @@ import { HelperService } from '../index';
 @Component({
   moduleId: module.id,
   selector: 'route-worker',
-  template: `<div>Route Worker</div>`,
+  template: `<div></div>`,
   providers: [ ]
 })
 export class RouteWorkerComponent implements OnInit, WorkerComponent {
 
-  public routines: {} = {};
+  public routines: {} = {
+    navigate_to: new ProcessRoutine(
+      'navigate_to',
+      'Navigate to a Route',
+      {params:{}},
+      ''
+    )
+  };
 
   public tasks: {} = {
+      navigate_to_init: new ProcessTask(
+          'navigate',
+          'navigate_to',
+          'Navigate to a Route',
+          'navigateTo',
+          {navigate_to:'string'}
+      ),
       remove_goal_complete: new ProcessTask(
           'navigate',
           'remove_goal_complete',
@@ -28,7 +43,8 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
 
   constructor(
     public message: MessageService,
-    protected helper: HelperService
+    protected helper: HelperService,
+    protected route: ActivatedRoute
   ) {}
 
   /**
@@ -53,6 +69,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           }
         );
       }
+
   }
 
   public navigateTo(control_uuid: string, params: any): Observable<any> {

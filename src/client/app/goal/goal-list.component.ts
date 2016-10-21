@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { GoalListService, Goal, GoalItemComponent } from './index';
-import { AuthenticationService } from '../+login/index';
+import { Router, ActivatedRoute } from '@angular/router';
+import { MessageService } from '../core/index';
 import { HelperService } from '../shared/index';
+import { GoalService, Goal, GoalItemComponent } from './index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -12,7 +12,7 @@ import { HelperService } from '../shared/index';
   selector: 'goal-list',
   directives: [ GoalItemComponent ],
   templateUrl: 'goal-list.component.html',
-  providers: [ GoalListService, HelperService ]
+  providers: [ GoalService, HelperService ]
 })
 
 export class GoalListComponent implements OnInit {
@@ -22,6 +22,7 @@ export class GoalListComponent implements OnInit {
   newAccomplished: string = 'false';
   errorMessage: string;
   goals: Goal[] = [];
+  team: string = '';
 
   /**
    * Creates an instance of the HomeComponent with the injected
@@ -30,30 +31,32 @@ export class GoalListComponent implements OnInit {
    * @param {GoalListService} goalListService - The injected GoalListService.
    */
   constructor(
-    public auth: AuthenticationService,
-    public service: GoalListService,
+    public service: GoalService,
     public helper: HelperService,
-    public router: Router
-  ) {}
+    public message: MessageService,
+    public router: Router,
+    public route: ActivatedRoute
+  ) {
+    this.service = this.helper.getServiceInstance(this.service,'GoalService');
+  }
 
   /**
    * Get the names OnInit
    */
   ngOnInit() {
-    this.auth.enforceAuthentication();
-    this.getGoals();
+    this.service.getListSubscription().subscribe(
+      goals => this.goals = <Goal[]>goals
+    );
+    this.route.params.subscribe(params => {
+      console.log('GoalList Route Params:');
+      console.log(params);
+      this.team = params['uuid'];
+      this.service.publishGoals(this.team);
+    });
   }
 
-  /**
-   * Handle the nameListService observable
-   */
-  getGoals() {
-    this.service.get()
-                     .subscribe(
-                       goals => this.goals = goals,
-                       error =>  this.errorMessage = <any>error,
-                       () => this.helper.sortBy(this.goals,'goal')
-                       );
+  refreshGoals() {
+    this.service.publishGoals(this.team);
   }
 
   /**

@@ -29,6 +29,9 @@ export class ProcessTask {
         let paramCount = params.length;
         let obs = new Observable((observer:any) => {
             let paramsChecked: string[] = [];
+            if(params.length === 0) {
+                observer.complete();
+            }
             params.forEach((param) => {
                 if(processRoutine.context.params.hasOwnProperty(param)) {
                     paramsChecked.push(param);
@@ -170,7 +173,7 @@ export class WorkerMessage {
                   },
                   () => {
                       workerMessage.signal = processTask.identifier + '_complete';
-                      worker.message.addProcessMessage('Worker Response: ' + JSON.stringify(workerResponse.message));
+                      worker.message.setFlash(workerResponse.message,'success');
                       processTask.updateProcessAfterWork(control_uuid, workerResponse.context).subscribe(
                           null,
                           null,

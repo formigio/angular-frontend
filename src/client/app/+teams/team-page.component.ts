@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { TeamViewComponent } from '../team/index';
 import { GoalListComponent } from '../goal/index';
 import { AuthenticationService } from '../+login/index';
 
 /**
- * This class represents the lazy loaded GoalsPageComponent.
+ * This class represents the lazy loaded TeamPageComponent.
  */
 @Component({
   moduleId: module.id,
-  selector: 'goals-page',
-  directives: [ GoalListComponent ],
-  templateUrl: 'goals-page.component.html'
+  selector: 'team-page',
+  directives: [ TeamViewComponent, GoalListComponent ],
+  templateUrl: 'team-page.component.html'
 })
 
-export class GoalsPageComponent implements OnInit {
+export class TeamPageComponent implements OnInit {
 
   /**
-   * Creates an instance of the GoalsPageComponent with the injected
+   * Creates an instance of the TeamPageComponent with the injected
    * AuthenticationService.
    *
    * @param {AuthenticationService} auth - The injected AuthenticationService.

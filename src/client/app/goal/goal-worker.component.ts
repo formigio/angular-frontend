@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { HelperService } from '../shared/index';
 import { GoalService } from './index';
 
 /**
@@ -9,7 +10,7 @@ import { GoalService } from './index';
 @Component({
   moduleId: module.id,
   selector: 'goal-worker',
-  template: `<div>Goal Worker</div>`,
+  template: `<div></div>`,
   providers: [ GoalService ]
 })
 export class GoalWorkerComponent implements OnInit, WorkerComponent {
@@ -18,6 +19,12 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       goal_delete: new ProcessRoutine(
           'goal_delete',
           'The Process Used to Control the Deletion of Goals',
+          new ProcessContext,
+          ''
+      ),
+      goal_view: new ProcessRoutine(
+          'goal_view',
+          'The Process Used to Control the Viewing of Goals',
           new ProcessContext,
           ''
       )
@@ -30,13 +37,23 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'Delete Goal',
           'removeGoal',
           {goal:'string', invite_count:'string', task_count:'string'}
+      ),
+      goal_view_init: new ProcessTask(
+          'load_goal',
+          'goal_view_init',
+          'Load Goal',
+          'loadGoal',
+          {uuid:'string'}
       )
   };
 
   constructor(
     public service: GoalService,
-    public message: MessageService
-  ) {}
+    public message: MessageService,
+    public helper: HelperService
+  ) {
+    this.service = this.helper.getServiceInstance(this.service,'GoalService');
+  }
 
   /**
    * Get the OnInit
@@ -97,4 +114,18 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
+  public loadGoal(control_uuid: string, params: any): Observable<any> {
+    let uuid: string = params.uuid;
+    let obs = new Observable((observer:any) => {
+      this.service.publishGoal(uuid);
+      observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Goal loaded successfully.',
+            context:{params:{goal_loaded:uuid}}
+      });
+      observer.complete();
+    });
+    return obs;
+  }
 }

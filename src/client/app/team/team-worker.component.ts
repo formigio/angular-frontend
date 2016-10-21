@@ -10,7 +10,7 @@ import { Team, TeamService } from './index';
 @Component({
   moduleId: module.id,
   selector: 'team-worker',
-  template: `<div>Team Worker</div>`,
+  template: `<div></div>`,
   providers: [ TeamService ]
 })
 export class TeamWorkerComponent implements OnInit, WorkerComponent {
@@ -21,7 +21,14 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'The Process Used to Control the Deletion of Teams',
             new ProcessContext,
             ''
+        ),
+        team_view: new ProcessRoutine(
+            'team_view',
+            'The Process Used to Loading of Team Entity from View Url',
+            new ProcessContext,
+            ''
         )
+
     };
 
     public tasks: {} = {
@@ -31,6 +38,13 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'Delete Team',
             'deleteTeam',
             {team:'Team'}
+        ),
+        team_view_init: new ProcessTask(
+            'load_team',
+            'team_view_init',
+            'Load Team',
+            'loadTeam',
+            {uuid:'string'}
         )
     };
 
@@ -92,4 +106,18 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
+  public loadTeam(control_uuid: string, params: any): Observable<any> {
+    let uuid: string = params.uuid;
+    let obs = new Observable((observer:any) => {
+      this.service.publishTeam(uuid);
+      observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Team loaded successfully.',
+            context:{params:{team_loaded:uuid}}
+      });
+      observer.complete();
+    });
+    return obs;
+  }
 }

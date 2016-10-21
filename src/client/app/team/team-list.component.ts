@@ -71,7 +71,6 @@ export class TeamListComponent implements OnInit {
         null,
         null,
         () => {
-          // this.service.publishTeams()
           newTeam.isNew = false;
           this.team.title = '';
           this.team.uuid = '';

@@ -3,7 +3,7 @@ import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Goal } from './index';
-import { Config } from '../shared/index';
+import { Config, HelperService } from '../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -13,20 +13,63 @@ import 'rxjs/add/operator/catch';
 @Injectable()
 export class GoalService {
 
-  public goal: ReplaySubject<any> = new ReplaySubject(1);
+  public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
+  public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
+
+  goal: Goal;
+  goals: Goal[];
 
   /**
    * Creates a new NameListService with the injected Http.
    * @param {Http} http - The injected Http.
    * @constructor
    */
-  constructor(private http: Http) {}
+  constructor(private http: Http, private helper: HelperService) {}
 
-  getGoal(guid:string): ReplaySubject<any> {
-    this.get(guid).subscribe(
-      goal => this.goal.next(goal)
+
+  getItemSubscription(): ReplaySubject<any> {
+    return this.itemSubscription;
+  }
+
+  getListSubscription(): ReplaySubject<any> {
+    return this.listSubscription;
+  }
+
+  publishGoal(uuid:string) {
+    this.get(uuid).subscribe(
+      goal => this.itemSubscription.next(goal)
     );
-    return this.goal;
+  }
+
+  publishGoals(team:string = '') {
+    console.log('Publishing Goals for Team: ' + team);
+    this.list(team).subscribe(
+      goals => this.goals = goals,
+      error => console.log(error),
+      () => {
+        this.sort();
+        this.listSubscription.next(this.goals);
+      }
+    );
+  }
+
+  sort() {
+    this.helper.sortBy(this.goals,'title');
+  }
+
+  /**
+   * Returns an Observable for the HTTP GET request for the JSON resource.
+   * @return {string[]} The Observable for the HTTP request.
+   */
+  list(team:string = ''): Observable<Goal[]> {
+    let url = '/goals';
+    if(team) {
+      url = url + '?team=' + team;
+    }
+    console.log('Fetching Goals from: ' + url + ' Team:' + team);
+    return this.http.get(Config.API + url)
+                    .map((res: Response) => res.json())
+                    .catch(this.handleError);
   }
 
   /**

@@ -10,7 +10,7 @@ import { Task, TaskService } from './index';
 @Component({
   moduleId: module.id,
   selector: 'task-worker',
-  template: `<div>Task Worker</div>`,
+  template: `<div></div>`,
   providers: [ TaskService ]
 })
 export class TaskWorkerComponent implements OnInit, WorkerComponent {

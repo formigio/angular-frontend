@@ -10,7 +10,7 @@ import { Invite, InviteService } from './index';
 @Component({
   moduleId: module.id,
   selector: 'invite-worker',
-  template: `<div>Invite Worker</div>`,
+  template: `<div></div>`,
   providers: [ InviteService ]
 })
 export class InviteWorkerComponent implements OnInit, WorkerComponent {

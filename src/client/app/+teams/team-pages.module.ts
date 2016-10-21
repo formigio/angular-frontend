@@ -1,22 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
-import {
-    TeamsPageComponent
-    // ,
-    // GoalPageComponent,
-    } from './index';
+import { GoalModule } from '../goal/goal.module';
+import { TeamsPageComponent, TeamPageComponent } from './index';
 
 @NgModule({
-    imports: [SharedModule, CoreModule],
+    imports: [SharedModule, CoreModule, GoalModule],
     declarations: [
-        TeamsPageComponent
-        // ,
-        // GoalPageComponent
+        TeamsPageComponent,
+        TeamPageComponent
         ],
     exports: [
-        TeamsPageComponent
-        // , GoalPageComponent, GoalReadonlyComponent
+        TeamsPageComponent,
+        TeamPageComponent
         ]
 })
 

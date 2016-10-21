@@ -3,5 +3,6 @@
  */
 // export * from './goal-page.component';
 export * from './teams-page.component';
+export * from './team-page.component';
 export * from './team-pages.routes';
 

@@ -3,7 +3,7 @@ import { TeamListComponent } from '../team/index';
 import { AuthenticationService } from '../+login/index';
 
 /**
- * This class represents the lazy loaded GoalsPageComponent.
+ * This class represents the lazy loaded TeamsPageComponent.
  */
 @Component({
   moduleId: module.id,
@@ -15,7 +15,7 @@ import { AuthenticationService } from '../+login/index';
 export class TeamsPageComponent implements OnInit {
 
   /**
-   * Creates an instance of the GoalsPageComponent with the injected
+   * Creates an instance of the TeamsPageComponent with the injected
    * AuthenticationService.
    *
    * @param {AuthenticationService} auth - The injected AuthenticationService.

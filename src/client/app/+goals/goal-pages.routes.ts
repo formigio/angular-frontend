@@ -1,13 +1,9 @@
 import { Route } from '@angular/router';
-import { GoalPageComponent, GoalsPageComponent, GoalReadonlyComponent } from './index';
+import { GoalPageComponent, GoalReadonlyComponent } from './index';
 
 export const GoalPagesRoutes: Route[] = [
   {
-    path: 'goals',
-    component: GoalsPageComponent
-  },
-  {
-    path: 'goal/:guid',
+    path: 'goal/:uuid',
     component: GoalPageComponent
   },
   {

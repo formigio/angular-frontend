@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
 import {
-    // GoalPageComponent,
+    TeamPageComponent,
     TeamsPageComponent
 } from './index';
 
@@ -8,10 +8,9 @@ export const TeamPagesRoutes: Route[] = [
   {
     path: 'teams',
     component: TeamsPageComponent
+  },
+  {
+    path: 'team/:uuid',
+    component: TeamPageComponent
   }
-//   ,
-//   {
-//     path: 'goal/:guid',
-//     component: GoalPageComponent
-//   }
 ];

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class HelperService {
 
     public runtimestorage: {} = {};
 
-    constructor(public router: Router) {}
+    constructor(public router: Router, public route: ActivatedRoute) {}
 
     sortBy(arr:any[],property:string) {
         arr.sort((a,b) => {

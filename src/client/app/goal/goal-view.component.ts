@@ -1,10 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Router, ActivatedRoute } from '@angular/router';
-
+import { ActivatedRoute } from '@angular/router';
 import { GoalService, Goal } from './index';
-
 import { MessageService } from '../core/index';
+import { HelperService } from '../shared/index';
 
 /**
  * This class represents the lazy loaded GoalViewComponent.
@@ -21,9 +19,11 @@ export class GoalViewComponent implements OnInit {
 
   errorMessage: string;
   currentResponse: {};
-  goal: Goal;
-
-  private sub: Subscription;
+  goal: Goal = {
+    guid: '',
+    goal: '',
+    accomplished: 'false'
+  };
 
   /**
    * Creates an instance of the GoalViewComponent with the injected
@@ -36,19 +36,22 @@ export class GoalViewComponent implements OnInit {
   constructor(
     protected service: GoalService,
     protected route: ActivatedRoute,
-    protected router: Router,
-    protected message: MessageService) {}
+    protected message: MessageService,
+    protected helper: HelperService
+  ) {
+    this.service = this.helper.getServiceInstance(this.service,'GoalService');
+  }
 
   /**
    * Get the names OnInit
    */
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-       let id = params['guid'];
-      this.service.getGoal(id).subscribe(
-        goal => this.goal = goal
-      );
-     });
+    this.service.getItemSubscription().subscribe(
+      goal => this.goal = <Goal>goal
+    );
+    this.route.params.subscribe(params => {
+      this.message.startProcess('goal_view',params);
+    });
   }
 
   /**

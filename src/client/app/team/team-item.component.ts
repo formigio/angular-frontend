@@ -62,4 +62,7 @@ export class TeamItemComponent {
     return false;
   }
 
+  navigateTo(team:Team) {
+    this.message.startProcess('navigate_to',{navigate_to:'team/' + team.uuid});
+  }
 }
