@@ -13,6 +13,10 @@
       </button>
   </div>
   <div class="col-lg-12" *ngIf="goal">
-      <h2><small>Goal ID: {{goal.guid}}</small> <br> <span [innerHtml]="goal.goal"></span> </h2>
+      <button type="button" name="back" class="btn btn-xs btn-default" (click)="navigateToTeam()">
+          <span>&lt; Back to Team</span>
+      </button>
+      <small>Goal ID: {{goal.guid}}</small>
+      <h2><span [innerHtml]="goal.goal"></span> </h2>
   </div>
 </div>

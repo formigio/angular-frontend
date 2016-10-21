@@ -42,7 +42,6 @@ export class GoalService {
   }
 
   publishGoals(team:string = '') {
-    console.log('Publishing Goals for Team: ' + team);
     this.list(team).subscribe(
       goals => this.goals = goals,
       error => console.log(error),
@@ -66,7 +65,6 @@ export class GoalService {
     if(team) {
       url = url + '?team=' + team;
     }
-    console.log('Fetching Goals from: ' + url + ' Team:' + team);
     return this.http.get(Config.API + url)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
@@ -86,7 +84,7 @@ export class GoalService {
    * Returns an Observable for the HTTP POST request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  post(goal:Goal): Observable<string[]> {
+  post(goal:Goal): Observable<{}> {
     goal.goal = this.htmlEntities(goal.goal);
     let body = JSON.stringify(goal);
     let headers = new Headers({ 'Content-Type': 'application/json' });

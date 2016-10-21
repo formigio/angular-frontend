@@ -7,7 +7,7 @@
       <div class="list-group-item">
         <form (submit)="addGoal()" class="form-inline">
         <div class="form-group">
-          <input [(ngModel)]="newGoal" name="newGoal" class="form-control" placeholder="End Goal">
+          <input [(ngModel)]="newGoal" name="newGoal" class="form-control" placeholder="Enter Goal Title">
           <button type="submit" class="btn btn-primary">Add</button>
           <button type="button" class="btn btn-secondary" (click)="refreshGoals()"><span class="glyphicon glyphicon-refresh"></span></button>
         </div>

@@ -22,7 +22,8 @@ export class GoalViewComponent implements OnInit {
   goal: Goal = {
     guid: '',
     goal: '',
-    accomplished: 'false'
+    accomplished: 'false',
+    team: ''
   };
 
   /**
@@ -75,6 +76,11 @@ export class GoalViewComponent implements OnInit {
         error => this.errorMessage = <any>error,
         () => console.log('Goal Successfully saved.')
       );
+    return false;
+  }
+
+  navigateToTeam(): boolean {
+    this.message.startProcess('navigate_to',{navigate_to:'/team/' + this.goal.team});
     return false;
   }
 

@@ -48,8 +48,6 @@ export class GoalListComponent implements OnInit {
       goals => this.goals = <Goal[]>goals
     );
     this.route.params.subscribe(params => {
-      console.log('GoalList Route Params:');
-      console.log(params);
       this.team = params['uuid'];
       this.service.publishGoals(this.team);
     });
@@ -65,13 +63,18 @@ export class GoalListComponent implements OnInit {
    */
   addGoal(): boolean {
     let guid = Math.random().toString().split('.').pop();
-    this.service.post({goal:this.newGoal,accomplished:this.newAccomplished,guid:guid})
-      .subscribe(
-        response => this.successObject,
+    let newGoal: Goal = {
+      goal:this.newGoal,
+      accomplished:this.newAccomplished,
+      guid:guid,
+      team:this.team
+    };
+    this.service.post(newGoal).subscribe(
+        response => this.successObject = <any>response,
         error => this.errorMessage = <any>error,
         () => this.router.navigate(['/goal/' + guid])
       );
-    this.goals.push({guid:guid,goal:this.newGoal,accomplished:this.newAccomplished});
+    this.goals.push(newGoal);
     this.helper.sortBy(this.goals,'goal');
     this.newGoal = '';
     this.newAccomplished = 'false';
