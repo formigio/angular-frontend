@@ -53,7 +53,7 @@ export class GoalService {
   }
 
   sort() {
-    this.helper.sortBy(this.goals,'title');
+    this.helper.sortBy(this.goals,'goal');
   }
 
   /**
