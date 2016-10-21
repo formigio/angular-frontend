@@ -1,36 +1,21 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TestBed } from '@angular/core/testing';
-
 import {
-  async
+  async,
+  TestBed
 } from '@angular/core/testing';
-import {
-  RouterModule,
-  Route
-} from '@angular/router';
-
-// import {provideFakeRouter} from '../testing/router/router-testing-providers';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './+home/home.component';
-import { AboutComponent } from './+about/about.component';
+
+import { RouterLinkStubDirective } from '../testing/router/router-stubs';
 
 export function main() {
 
   describe('App component', () => {
-    // Disable old forms
-
-    let config: Route[] = [
-      { path: '', component: HomeComponent },
-      { path: 'about', component: AboutComponent }
-    ];
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [RouterModule.forRoot(config), FormsModule],
-        declarations: [TestComponent, AppComponent, HomeComponent, AboutComponent],
-        providers:[
-        ]
+        imports: [],
+        declarations: [TestComponent, RouterLinkStubDirective],
+        providers: []
       });
     });
 
@@ -54,8 +39,4 @@ export function main() {
   directives: [AppComponent]
 })
 
-class TestComponent {
-}
-
-
-
+class TestComponent { }

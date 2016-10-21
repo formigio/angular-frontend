@@ -1,0 +1,13 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+}
+#flash_message {
+    position: fixed;
+    top: 0;
+    height: 60px;
+    right: 0;
+    margin: 3px;
+    max-width: 33%;
+}

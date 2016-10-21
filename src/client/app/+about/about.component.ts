@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '../+login/index';
+import { Component } from '@angular/core';
 
 /**
  * This class represents the lazy loaded AboutComponent.
@@ -7,18 +6,8 @@ import { AuthenticationService } from '../+login/index';
 @Component({
   moduleId: module.id,
   selector: 'sd-about',
-  templateUrl: 'about.component.html',
-  styleUrls: ['about.component.css'],
-  providers: [AuthenticationService]
+  templateUrl: 'about.component.html'
 })
-export class AboutComponent implements OnInit {
+export class AboutComponent {
 
-  constructor(private auth:AuthenticationService) { }
-
-  /**
-   * Get the names OnInit
-   */
-  ngOnInit() {
-    this.auth.enforceAuthentication();
-  }
 }

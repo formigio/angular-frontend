@@ -1,7 +1,7 @@
 /**
  * This barrel file provides the exports for the shared resources (services, components).
  */
-export * from './goal/index';
-export * from './navbar/index';
-export * from './toolbar/index';
+
 export * from './config/env.config';
+export * from './util/helper.service';
+export * from './routing/route-worker.component';

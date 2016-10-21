@@ -1,76 +1,44 @@
-import { Component, provide } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Component } from '@angular/core';
 import {
-  async
+  async,
+  TestBed
 } from '@angular/core/testing';
-import {
-  BaseRequestOptions,
-  ConnectionBackend,
-  Http,
-  HTTP_PROVIDERS
-} from '@angular/http';
-import { MockBackend } from '@angular/http/testing';
-import { getDOM } from '@angular/platform-browser/src/dom/dom_adapter';
+import { provideFakeRouter } from '../../testing/router/router-testing-providers';
 
-import { NameListService } from '../shared/index';
-import { HomeComponent } from './home.component';
+import { HomeComponent } from './index';
+import { AuthenticationService } from '../+login/index';
+
+import { LoginStubService } from '../../testing/login/login.service';
 
 export function main() {
-  describe('Home component', () => {
-    // setting module for testing
-    // Disable old forms
+   describe('Home component', () => {
+
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [FormsModule, RouterModule],
         declarations: [TestComponent],
         providers: [
-          HTTP_PROVIDERS,
-          NameListService,
-          BaseRequestOptions,
-          MockBackend,
-          provide(Http, {
-            useFactory: function (backend: ConnectionBackend, defaultOptions: BaseRequestOptions) {
-              return new Http(backend, defaultOptions);
-            },
-            deps: [MockBackend, BaseRequestOptions]
-          }),
+          {provide: provideFakeRouter(TestComponent, [{path: '',component:HomeComponent}])},
+          {provide: AuthenticationService, useClass: LoginStubService }
         ]
       });
     });
 
-    it('should work',
+    it('should build',
       async(() => {
-
         TestBed
           .compileComponents()
           .then(() => {
             let fixture = TestBed.createComponent(TestComponent);
-            fixture.detectChanges();
-
-            let homeInstance = fixture.debugElement.children[0].componentInstance;
-            let homeDOMEl = fixture.debugElement.children[0].nativeElement;
-
-            expect(homeInstance.nameListService).toEqual(jasmine.any(NameListService));
-            expect(getDOM().querySelectorAll(homeDOMEl, 'li').length).toEqual(0);
-
-            homeInstance.newName = 'Minko';
-            homeInstance.addName();
-
-            fixture.detectChanges();
-
-            expect(getDOM().querySelectorAll(homeDOMEl, 'li').length).toEqual(1);
-            expect(getDOM().querySelectorAll(homeDOMEl, 'li')[0].textContent).toEqual('Minko');
+            let compiled = fixture.nativeElement;
+            expect(compiled).toBeTruthy();
           });
-
-      }));
-  });
+        }));
+});
 }
 
 @Component({
   selector: 'test-cmp',
-  template: '<sd-home></sd-home>',
-  directives: [HomeComponent]
+  directives: [HomeComponent],
+  template: '<sd-home></sd-home>'
 })
-class TestComponent { }
+class TestComponent {}

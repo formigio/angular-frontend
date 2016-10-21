@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { Config } from './shared/index';
+//import { Config } from './shared/index';
+import { ToolbarComponent, NavbarComponent } from './nav/index';
+import { MessageComponent, ProcessComponent } from './core/index';
 
 /**
  * This class represents the main application component. Within the @Routes annotation is the configuration of the
@@ -9,10 +11,11 @@ import { Config } from './shared/index';
   moduleId: module.id,
   selector: 'sd-app',
   templateUrl: 'app.component.html',
+  directives: [ToolbarComponent,NavbarComponent,MessageComponent,ProcessComponent]
 })
 
 export class AppComponent {
   constructor() {
-    console.log('Environment config', Config);
+    //console.log('Environment config', Config);
   }
 }
