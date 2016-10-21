@@ -57,7 +57,7 @@ export class GoalReadonlyComponent implements OnInit {
                       () => this.message.setFlash('Valid Invite Found','success')
                     );
             } else {
-              this.message.setFlash('Invite has expired, or been removed.','danger')
+              this.message.setFlash('Invite has expired, or been removed.','danger');
               this.auth.enforceAuthentication();
             }
           }
