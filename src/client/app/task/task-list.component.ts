@@ -54,7 +54,7 @@ export class TaskListComponent implements OnInit {
    */
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
-      if(this.goal = params['uuid']) {
+      if(this.goal = params['goal_uuid']) {
         this.service.getListReplay()
                 .subscribe(
                   tasks => {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-
+import { MessageService } from '../core/index';
 import { GoalViewComponent } from '../goal/index';
 import { TaskListComponent } from '../task/index';
 import { InviteService, Invite } from '../invite/index';
@@ -33,7 +33,8 @@ export class GoalReadonlyComponent implements OnInit {
   constructor(
     protected auth: AuthenticationService,
     protected service: InviteService,
-    protected route: ActivatedRoute
+    protected route: ActivatedRoute,
+    protected message: MessageService
   ) {}
 
   /**
@@ -41,24 +42,22 @@ export class GoalReadonlyComponent implements OnInit {
    */
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
-      let id = params['guid'];
-      let token = params['uuid'];
-      // @TODO: Verify the Invite is still valid
+      let id = params['goal_uuid'];
+      let token = params['invite_uuid'];
       this.service
         .check(id,token).subscribe(
           invite => this.validInvite = <Invite>invite,
-          error => this.errorMessage = error,
+          error => this.message.setFlash('Invite has expired, or been removed.','danger'),
           () => {
             if(this.validInvite.uuid) {
                 this.service.get(id)
                     .subscribe(
                       success => this.success,
                       error =>  this.errorMessage = <any>error,
-                      () => console.log('Valid Invite Found')
+                      () => this.message.setFlash('Valid Invite Found','success')
                     );
             } else {
-              // @TODO: User Message Service for Explaining
-              // this.errorMessage = 'Invite has expired, or been removed.';
+              this.message.setFlash('Invite has expired, or been removed.','danger')
               this.auth.enforceAuthentication();
             }
           }

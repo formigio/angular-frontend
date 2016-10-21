@@ -10,7 +10,7 @@
     <div class="col-xs-10">
         <div style="display:inline-block;" *ngIf="state==='view'">
             <span [innerHTML]="task.title"></span>
-            <button type="button" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+            <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
         </div>
         <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistTask()" *ngIf="state==='edit'">
             <input [(ngModel)]="task.title" name="task" type="text" style="min-width:75%">

@@ -43,7 +43,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'goal_view_init',
           'Load Goal',
           'loadGoal',
-          {uuid:'string'}
+          {goal_uuid:'string'}
       )
   };
 
@@ -115,7 +115,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public loadGoal(control_uuid: string, params: any): Observable<any> {
-    let uuid: string = params.uuid;
+    let uuid: string = params.goal_uuid;
     let obs = new Observable((observer:any) => {
       this.service.publishGoal(uuid);
       observer.next({
