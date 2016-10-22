@@ -10,4 +10,19 @@ import { Component } from '@angular/core';
   styleUrls: ['navbar.component.css']
 })
 
-export class NavbarComponent { }
+export class NavbarComponent {
+
+  open:boolean = false;
+
+  toggle() {
+    if(this.open === true) {
+      this.open = false;
+    } else {
+      this.open = true;
+    }
+  }
+
+  close() {
+    this.open = false;
+  }
+}

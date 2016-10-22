@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TeamListComponent } from '../team/index';
-import { AuthenticationService } from '../+login/index';
+import { UserService } from '../user/index';
 
 /**
  * This class represents the lazy loaded TeamsPageComponent.
@@ -21,7 +21,7 @@ export class TeamsPageComponent implements OnInit {
    * @param {AuthenticationService} auth - The injected AuthenticationService.
    */
   constructor(
-    public auth: AuthenticationService
+    public auth: UserService
   ) {}
 
   /**

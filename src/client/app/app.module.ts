@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { routing, appRoutingProviders } from './app.routes';
 
 import { CoreModule } from './core/core.module';
-import { AboutModule } from './+about/about.module';
 import { HomeModule } from './+home/home.module';
 import { TeamModule } from './team/team.module';
 import { GoalModule } from './goal/goal.module';
@@ -15,6 +14,7 @@ import { InviteModule } from './invite/invite.module';
 import { TeamPagesModule } from './+teams/team-pages.module';
 import { GoalPagesModule } from './+goals/goal-pages.module';
 import { LoginModule } from './+login/login.module';
+import { UserModule } from './user/user.module';
 import { SharedModule } from './shared/shared.module';
 import { NavModule } from './nav/nav.module';
 import { MessageService } from './core/index';
@@ -22,9 +22,9 @@ import { HelperService } from './shared/index';
 
 @NgModule({
   imports: [
-    BrowserModule, HttpModule, routing, CoreModule,
-    LoginModule, TeamModule, GoalModule, TaskModule, InviteModule, TeamPagesModule,
-    GoalPagesModule, AboutModule, HomeModule, NavModule, SharedModule.forRoot()],
+    BrowserModule, HttpModule, routing, CoreModule, LoginModule,
+    UserModule, TeamModule, GoalModule, TaskModule, InviteModule, TeamPagesModule,
+    GoalPagesModule, HomeModule, NavModule, SharedModule.forRoot()],
   declarations: [AppComponent],
   providers: [
     MessageService,

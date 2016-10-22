@@ -1,7 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AboutRoutes } from './+about/index';
 import { HomeRoutes } from './+home/index';
 import { TeamPagesRoutes } from './+teams/index';
 import { GoalPagesRoutes } from './+goals/index';
@@ -9,7 +8,6 @@ import { LoginRoutes } from './+login/index';
 
 export const routes: Routes = [
   ...HomeRoutes,
-  ...AboutRoutes,
   ...TeamPagesRoutes,
   ...GoalPagesRoutes,
   ...LoginRoutes

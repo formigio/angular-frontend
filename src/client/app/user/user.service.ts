@@ -4,17 +4,10 @@ import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { MessageService } from '../core/index';
 import { Config } from '../shared/index';
-
-export class User {
-    constructor(
-        public uuid: string,
-        public email: string,
-        public password_hash: string,
-        public password: string) { }
-}
+import { User } from './index';
 
 @Injectable()
-export class AuthenticationService {
+export class UserService {
 
     errorMsg: string = '';
     successMsg: string = '';
@@ -29,30 +22,6 @@ export class AuthenticationService {
     logout() {
         localStorage.removeItem('user');
         this._router.navigate(['/login']);
-    }
-
-    login(user:User) {
-        let hash = this.password(user);
-        hash.subscribe(
-                response => user.password_hash = response.password_hash,
-                error =>  this.errorMsg = <any>error,
-                () => { user.password = user.password_hash;
-                    user.password_hash = '';
-                    this.authenticateUser(user).subscribe(
-                        response => this.response = <User>response,
-                        error => this.messaging.setFlash('There has been a problem processing your request.','danger'),
-                        () => {
-                            if(this.response.uuid) {
-                                let user = this.response;
-                                localStorage.setItem('user', JSON.stringify(user));
-                                this.messaging.setFlash('Login Successful.','success');
-                                this._router.navigate(['/']);
-                            } else {
-                                this.messaging.setFlash('Login Unsuccessful. Bad Credentials, perhaps?','danger');
-                            }
-                        });
-                    }
-                );
     }
 
     register(user:User) {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, ProcessRoutine, ProcessTask, WorkerComponent } from '../../core/index';
 import { HelperService } from '../index';
@@ -38,13 +38,20 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           'Navigate to Goals after Goal Delete',
           'navigateTo',
           {navigate_to:'string'}
+      ),
+      store_user_complete: new ProcessTask(
+          'navigate',
+          'store_user_complete',
+          'Navigate to Home after Login',
+          'navigateTo',
+          {navigate_to:'string'}
       )
   };
 
   constructor(
+    public router: Router,
     public message: MessageService,
-    protected helper: HelperService,
-    protected route: ActivatedRoute
+    protected helper: HelperService
   ) {}
 
   /**
@@ -75,7 +82,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
   public navigateTo(control_uuid: string, params: any): Observable<any> {
     let navigate_to: string = params.navigate_to;
     let obs = new Observable((observer:any) => {
-        this.helper.router.navigate([navigate_to]);
+        this.router.navigate([navigate_to]);
       observer.next({control_uuid: control_uuid, outcome: 'success', message:'Nagivated.',context:{params:{}}});
       observer.complete();
     });

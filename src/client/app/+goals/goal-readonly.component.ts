@@ -5,7 +5,7 @@ import { MessageService } from '../core/index';
 import { GoalViewComponent } from '../goal/index';
 import { TaskListComponent } from '../task/index';
 import { InviteService, Invite } from '../invite/index';
-import { AuthenticationService } from '../+login/index';
+import { UserService } from '../user/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -31,7 +31,7 @@ export class GoalReadonlyComponent implements OnInit {
    * @param {GoalListService} goalListService - The injected GoalListService.
    */
   constructor(
-    protected auth: AuthenticationService,
+    protected auth: UserService,
     protected service: InviteService,
     protected route: ActivatedRoute,
     protected message: MessageService

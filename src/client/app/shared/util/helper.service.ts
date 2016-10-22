@@ -1,12 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+
+export class AppState {
+    constructor(
+        public state: any,
+        public services: any
+    ) {}
+}
 
 @Injectable()
 export class HelperService {
 
-    public runtimestorage: {} = {};
+    public runtimestorage: AppState = {
+        state: {},
+        services: {}
+    };
 
-    constructor(public router: Router, public route: ActivatedRoute) {}
+    constructor() {}
 
     sortBy(arr:any[],property:string) {
         arr.sort((a,b) => {
@@ -19,13 +28,21 @@ export class HelperService {
     }
 
     getServiceInstance(service:any,alias:string): any {
-        if(!this.runtimestorage.hasOwnProperty('services')) {
-            this.runtimestorage = {services:{}};
+        if(!this.runtimestorage.services.hasOwnProperty(alias)) {
+            this.runtimestorage.services[alias] = service;
         }
-        if(!(<any>this.runtimestorage)['services'].hasOwnProperty(alias)) {
-            (<any>this.runtimestorage)['services'][alias] = service;
+        return this.runtimestorage.services[alias];
+    }
+
+    getAppState(location:string): any {
+        if(<any>this.runtimestorage.state.hasOwnProperty(location)) {
+            return this.runtimestorage.state[location];
         }
-        return (<any>this.runtimestorage)['services'][alias];
+    }
+
+    setAppState(location:string,value:any): boolean {
+        this.runtimestorage.state[location] = value;
+        return true;
     }
 
 }

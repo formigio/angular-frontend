@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { User, AuthenticationService } from './login.service';
+import { MessageService } from '../core/index';
+import { User, UserService } from '../user/index';
 
 /**
  * This class represents the lazy loaded LoginComponent.
@@ -9,7 +10,7 @@ import { User, AuthenticationService } from './login.service';
   selector: 'login-form',
   templateUrl: 'login.component.html',
   styleUrls: ['login.component.css'],
-  providers: [ AuthenticationService ]
+  providers: [ UserService ]
 })
 export class LoginComponent implements OnInit {
 
@@ -24,7 +25,10 @@ export class LoginComponent implements OnInit {
   };
   errorMsg = '';
 
-  constructor(public auth:AuthenticationService) { }
+  constructor(
+    public service:UserService,
+    public message:MessageService
+  ) { }
 
   ngOnInit() {
     if(this.loggedin()) {
@@ -33,17 +37,16 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    if(!this.auth.login(this.user)) {
-      // this.errorMsg = 'Failed to Login';
-    }
+    // this.service.login(this.user)
+    this.message.startProcess('user_login',{user:this.user});
   }
 
   logout() {
-    this.auth.logout();
+    this.service.logout();
   }
 
   register() {
-    this.auth.register(this.user);
+    this.service.register(this.user);
   }
 
   toggleState() {
@@ -55,7 +58,7 @@ export class LoginComponent implements OnInit {
   }
 
   loggedin() {
-    return this.auth.checkCredentials();
+    return this.service.checkCredentials();
   }
 
 }

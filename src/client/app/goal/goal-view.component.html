@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-lg-12 text-center" *ngIf="goal">
+  <div class="col-xs-12 text-center" *ngIf="goal">
       <button *ngIf="editable===true" type="button" (click)="accomplishGoal(goal)" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
           <span *ngIf="goal.accomplished==='true'">Complete</span>
           <span *ngIf="goal.accomplished!=='true'">In Progress</span>
@@ -12,7 +12,7 @@
           <span>Delete</span>
       </button>
   </div>
-  <div class="col-lg-12" *ngIf="goal">
+  <div class="col-xs-12" *ngIf="goal">
       <button *ngIf="editable===true" type="button" name="back" class="btn btn-xs btn-default" (click)="navigateToTeam()">
           <span>&lt; Back to Team</span>
       </button>

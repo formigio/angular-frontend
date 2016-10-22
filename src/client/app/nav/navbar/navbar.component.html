@@ -1,16 +1,31 @@
 <div class="row">
-  <div class="col-md-12">
-    <nav id="navbar" class="navbar-collapse collapse">
-      <div class="navbar-header">
-        <a [routerLink]="['/']" class="navbar-brand"><img alt="Formigio" src="/assets/favicon-32x32.png" /></a>
-      </div>
-      <ul class="nav navbar-nav">
-        <li><a [routerLink]="['/teams']" >Teams</a></li>
-        <li><a [routerLink]="['/about']" >About</a></li>
-        <li><a [routerLink]="['/login']" >Login</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-      </ul>
+  <div class="col-xs-12">
+
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="btn btn-default navbar-toggle collapsed" (click)="toggle()">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a [routerLink]="['/']" class="navbar-brand"><img alt="Formigio" src="/assets/favicon-32x32.png" /></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div [class.visable-xs]="open===true"
+          [class.hidden-xs]="open===false"
+          [class.collapse]="open===false"
+          [class.navbar-collapse]="open===false">
+          <ul class="nav navbar-nav">
+            <li><a [routerLink]="['/teams']" (click)="close()" >Teams</a></li>
+            <li><a [routerLink]="['/login']" (click)="close()" >Login</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
     </nav>
+
   </div>
 </div>
