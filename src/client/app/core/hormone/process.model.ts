@@ -168,7 +168,7 @@ export class WorkerMessage {
                   response => workerResponse = response,
                   error => {
                       workerMessage.signal = processTask.identifier + '_error';
-                      // this.message.addProcessMessage('Worker Error: ' + JSON.stringify(error.message));
+                      worker.message.setFlash('Worker Error: ' + JSON.stringify(error.message),'danger');
                       worker.message.processSignal(workerMessage);
                   },
                   () => {

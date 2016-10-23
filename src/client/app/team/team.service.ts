@@ -3,6 +3,7 @@ import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Team } from './index';
+import { MessageService } from '../core/index';
 import { Config, HelperService } from '../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -24,7 +25,10 @@ export class TeamService {
    * @param {Http} http - The injected Http.
    * @constructor
    */
-  constructor(private http: Http, private helper: HelperService) {}
+  constructor(
+    private http: Http,
+    private message: MessageService,
+    private helper: HelperService) {}
 
   getItemSubscription(): ReplaySubject<any> {
     return this.itemSubscription;
@@ -43,7 +47,7 @@ export class TeamService {
   publishTeams() {
     this.list().subscribe(
       teams => this.teams = teams,
-      error => console.log(error),
+      error => this.message.setFlash(error),
       () => {
         this.sort();
         this.listSubscription.next(this.teams);

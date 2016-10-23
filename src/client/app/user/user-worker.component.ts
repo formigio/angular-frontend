@@ -21,16 +21,42 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'The Process Used to Control the Login',
             new ProcessContext,
             ''
+        ),
+        user_load_for_app: new ProcessRoutine(
+            'user_load_for_app',
+            'The Process Used to Control the Initiation of App User',
+            new ProcessContext,
+            ''
+        ),
+        user_logout: new ProcessRoutine(
+            'user_logout',
+            'The Process Used to Control the Logout',
+            new ProcessContext,
+            ''
         )
     };
 
     public tasks: {} = {
+        user_load_for_app_init: new ProcessTask(
+            'load_user_for_app',
+            'user_load_for_app_init',
+            'Load User into the App',
+            'loadUserIntoApp',
+            {}
+        ),
         user_login_init: new ProcessTask(
             'get_hash',
             'user_login_init',
             'Login User',
             'getHash',
             {user:'User'}
+        ),
+        user_logout_init: new ProcessTask(
+            'user_logout',
+            'user_logout_init',
+            'Logout User',
+            'logoutUser',
+            {}
         ),
         get_hash_complete: new ProcessTask(
             'login_user',
@@ -45,6 +71,20 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Store User in LocalStorage',
             'storeUser',
             {logged_in:'string',user:'User'}
+        ),
+        team_save_init: new ProcessTask(
+            'get_user_for_save_team',
+            'user_save_init',
+            'Put User in Process Context',
+            'getUser',
+            {}
+        ),
+        team_create_init: new ProcessTask(
+            'get_user_for_create_team',
+            'user_save_init',
+            'Put User in Process Context',
+            'getUser',
+            {}
         )
     };
 
@@ -65,6 +105,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       if(Object.keys(this.tasks).length > 0) {
         this.message.getWorkerQueue().subscribe(
           message => {
+            console.log(message.signal);
             // Process Signals
             message.processSignal(this);
           }
@@ -73,6 +114,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       if(Object.keys(this.routines).length > 0) {
         this.message.getProcessQueue().subscribe(
           message => {
+            console.log(message.routine);
             // Process Inits
             message.initProcess(this);
           }
@@ -114,11 +156,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       let auth = this.service.authenticateUser(user);
       auth.subscribe(
         response => {
+          user.uuid = response.uuid;
+          this.service.publishUser(user);
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Credentials Tested.',
-            context:{params:{logged_in:response.uuid,navigate_to:'/'}}
+            context:{params:{logged_in:response.uuid,navigate_to:'/',user:user}}
           });
         },
         error => {
@@ -137,7 +181,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
   public storeUser(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
-    let logged_in: string = params.logged_in;
     let obs = new Observable((observer:any) => {
       localStorage.setItem('user', JSON.stringify(user));
       this.helper.setAppState('user',user);
@@ -147,7 +190,61 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         message:'Login Successful.',
         context:{params:{}}
       });
-      observer.complete()
+      observer.complete();
+    });
+    return obs;
+  }
+
+  public getUser(control_uuid: string, params: any): Observable<any> {
+    let obs = new Observable((observer:any) => {
+      let user:User = JSON.parse(localStorage.getItem('user'));
+      if(!user.uuid) {
+        observer.error({
+          control_uuid: control_uuid,
+          outcome: 'error',
+          message:'Cannot Get User from Local Storage. ' + JSON.stringify(user),
+          context:{params:{}}
+        });
+      } else {
+        observer.next({
+          control_uuid: control_uuid,
+          outcome: 'success',
+          message:'User Retrieved',
+          context:{params:{user:user}}
+        });
+        observer.complete();
+      }
+    });
+    return obs;
+  }
+
+  public loadUserIntoApp(control_uuid: string, params: any): Observable<any> {
+    let obs = new Observable((observer:any) => {
+      let user:User = JSON.parse(localStorage.getItem('user'));
+      this.service.publishUser(user);
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message:'User Loaded',
+        context:{params:{user:user}}
+      });
+      observer.complete();
+    });
+    return obs;
+  }
+
+  public logoutUser(control_uuid: string, params: any): Observable<any> {
+    let user: User;
+    let obs = new Observable((observer:any) => {
+      this.service.logout();
+      this.service.publishUser(user);
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message:'Logout Successful.',
+        context:{params:{}}
+      });
+      observer.complete();
     });
     return obs;
   }

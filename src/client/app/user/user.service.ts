@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable, ReplaySubject } from 'rxjs/Rx';
 import { MessageService } from '../core/index';
 import { Config } from '../shared/index';
 import { User } from './index';
@@ -13,11 +13,21 @@ export class UserService {
     successMsg: string = '';
     response: User;
 
+    public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
+
     constructor(
         private _router: Router,
         private http: Http,
         private messaging: MessageService
     ) { }
+
+    getItemSubscription(): ReplaySubject<any> {
+        return this.itemSubscription;
+    }
+
+    publishUser(user:User) {
+        this.itemSubscription.next(user);
+    }
 
     logout() {
         localStorage.removeItem('user');

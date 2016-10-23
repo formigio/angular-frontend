@@ -15,8 +15,6 @@ export class HelperService {
         services: {}
     };
 
-    constructor() {}
-
     sortBy(arr:any[],property:string) {
         arr.sort((a,b) => {
                     if(a[property] < b[property])

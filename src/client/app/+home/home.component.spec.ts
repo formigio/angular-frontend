@@ -6,7 +6,7 @@ import {
 import { provideFakeRouter } from '../../testing/router/router-testing-providers';
 
 import { HomeComponent } from './index';
-import { AuthenticationService } from '../+login/index';
+import { UserService } from '../user/index';
 
 import { LoginStubService } from '../../testing/login/login.service';
 
@@ -18,7 +18,7 @@ export function main() {
         declarations: [TestComponent],
         providers: [
           {provide: provideFakeRouter(TestComponent, [{path: '',component:HomeComponent}])},
-          {provide: AuthenticationService, useClass: LoginStubService }
+          {provide: UserService, useClass: LoginStubService }
         ]
       });
     });

@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { TeamService, Team } from './index';
 import { MessageService } from '../core/index';
+import { HelperService } from '../shared/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -28,7 +29,8 @@ export class TeamItemComponent {
    */
   constructor(
     public service: TeamService,
-    public message: MessageService
+    public message: MessageService,
+    public helper: HelperService
   ) {}
 
 
@@ -54,12 +56,8 @@ export class TeamItemComponent {
    * Puts the Goal Object to the Goal List Service
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  saveTeam(team:Team): boolean {
-    this.service.put(team)
-      .subscribe(
-        error => this.errorMessage = <any>error
-      );
-    return false;
+  saveTeam(team:Team) {
+    this.message.startProcess('team_save',{team:team});
   }
 
   navigateTo(team:Team) {

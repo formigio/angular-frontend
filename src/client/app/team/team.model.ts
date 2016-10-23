@@ -4,6 +4,6 @@ export class Team {
   constructor(
     public uuid: string,
     public title: string,
-    public identity: string
+    public user: string
   ) {}
 }

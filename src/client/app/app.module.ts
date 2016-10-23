@@ -15,10 +15,11 @@ import { TeamPagesModule } from './+teams/team-pages.module';
 import { GoalPagesModule } from './+goals/goal-pages.module';
 import { LoginModule } from './+login/login.module';
 import { UserModule } from './user/user.module';
+import { HelperService } from './shared/index';
 import { SharedModule } from './shared/shared.module';
 import { NavModule } from './nav/nav.module';
 import { MessageService } from './core/index';
-import { HelperService } from './shared/index';
+
 
 @NgModule({
   imports: [

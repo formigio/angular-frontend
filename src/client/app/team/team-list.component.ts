@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TeamService, Team, TeamItemComponent } from './index';
+import { MessageService } from '../core/index';
 import { HelperService } from '../shared/index';
 
 /**
@@ -21,7 +22,7 @@ export class TeamListComponent implements OnInit {
   team: Team = {
     uuid: '',
     title: '',
-    identity: '',
+    user: '',
     isDeleted: false,
     isNew: true
   };
@@ -34,6 +35,7 @@ export class TeamListComponent implements OnInit {
    */
   constructor(
     public service: TeamService,
+    public message: MessageService,
     public helper: HelperService,
     public router: Router
   ) {
@@ -66,16 +68,9 @@ export class TeamListComponent implements OnInit {
     let newTeam: Team = JSON.parse(JSON.stringify(this.team));
     this.teams.push(newTeam);
     this.helper.sortBy(this.teams,'title');
-    this.service.post(newTeam)
-      .subscribe(
-        null,
-        null,
-        () => {
-          newTeam.isNew = false;
-          this.team.title = '';
-          this.team.uuid = '';
-        }
-      );
+    this.message.startProcess('team_create',{team:newTeam});
+    this.team.title = '';
+    this.team.uuid = '';
     return false;
   }
 

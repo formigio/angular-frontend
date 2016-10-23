@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 import { ToolbarComponent } from './toolbar/index';
 import { NavbarComponent } from './navbar/index';
@@ -9,7 +10,7 @@ import { NavbarComponent } from './navbar/index';
  */
 
 @NgModule({
-  imports: [SharedModule, CommonModule],
+  imports: [CoreModule, SharedModule, CommonModule],
   declarations: [ToolbarComponent, NavbarComponent],
   exports: [ToolbarComponent, NavbarComponent]
 })
