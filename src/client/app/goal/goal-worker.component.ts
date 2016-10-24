@@ -104,7 +104,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
               control_uuid: control_uuid,
               outcome: 'success',
               message:'Goal removed successfully.',
-              context:{params:{navigate_to:'/goals'}}
+              context:{params:{navigate_to:'/teams'}}
             });
             observer.complete();
           }

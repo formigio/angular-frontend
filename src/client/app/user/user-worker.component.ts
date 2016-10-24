@@ -74,14 +74,21 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         ),
         team_save_init: new ProcessTask(
             'get_user_for_save_team',
-            'user_save_init',
+            'team_save_init',
             'Put User in Process Context',
             'getUser',
             {}
         ),
         team_create_init: new ProcessTask(
             'get_user_for_create_team',
-            'user_save_init',
+            'team_create_init',
+            'Put User in Process Context',
+            'getUser',
+            {}
+        ),
+        team_fetch_user_teams_init: new ProcessTask(
+            'get_user_for_fetch_teams',
+            'team_fetch_user_teams_init',
             'Put User in Process Context',
             'getUser',
             {}

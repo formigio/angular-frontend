@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Team } from './index';
+import { Team, TeamMembership } from './index';
 import { MessageService } from '../core/index';
 import { Config, HelperService } from '../shared/index';
 import 'rxjs/add/operator/map';
@@ -44,15 +44,10 @@ export class TeamService {
     );
   }
 
-  publishTeams() {
-    this.list().subscribe(
-      teams => this.teams = teams,
-      error => this.message.setFlash(error),
-      () => {
-        this.sort();
-        this.listSubscription.next(this.teams);
-      }
-    );
+  publishTeams(teams:Team[]) {
+    this.teams = teams;
+    this.sort();
+    this.listSubscription.next(this.teams);
   }
 
   sort() {
@@ -63,8 +58,8 @@ export class TeamService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(): Observable<Team[]> {
-    return this.http.get(Config.API + '/teams')
+  list(user:string): Observable<Team[]> {
+    return this.http.get(Config.API + '/teams?user=' + user)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -92,6 +87,20 @@ export class TeamService {
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
+
+  /**
+   * Returns an Observable for the HTTP POST request for the JSON resource.
+   * @return {string[]} The Observable for the HTTP request.
+   */
+  postMembership(membership:TeamMembership): Observable<string[]> {
+    let body = JSON.stringify(membership);
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+    return this.http.post(Config.API + '/teams/membership',body, options)
+                    .map((res: Response) => res.json())
+                    .catch(this.handleError);
+  }
+
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.

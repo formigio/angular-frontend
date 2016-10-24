@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
 import { HelperService } from '../shared/index';
-import { Team, TeamService } from './index';
+import { Team, TeamMembership, TeamService } from './index';
 import { User } from '../user/index';
 
 /**
@@ -37,7 +37,13 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
         ),
         team_view: new ProcessRoutine(
             'team_view',
-            'The Process Used to Loading of Team Entity from View Url',
+            'The Process Used for Loading of Team Entity from View Url',
+            new ProcessContext,
+            ''
+        ),
+        team_fetch_user_teams: new ProcessRoutine(
+            'team_fetch_user_teams',
+            'The Process Used to Teams for the Logged in User',
             new ProcessContext,
             ''
         )
@@ -57,13 +63,27 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_save_team_complete',
             'Save Team',
             'saveTeam',
-            {team:'Team', user:'User'}
+            {team:'Team'}
         ),
         get_user_for_create_team_complete: new ProcessTask(
             'create_team',
             'get_user_for_create_team_complete',
             'Create Team',
             'createTeam',
+            {team:'Team'}
+        ),
+        create_team_complete: new ProcessTask(
+            'create_team_membership',
+            'create_team_complete',
+            'Create Team Membership',
+            'saveTeamMembership',
+            {team:'Team', user:'User'}
+        ),
+        save_team_complete: new ProcessTask(
+            'save_team_membership',
+            'save_team_complete',
+            'Save Team Membership',
+            'saveTeamMembership',
             {team:'Team', user:'User'}
         ),
         team_view_init: new ProcessTask(
@@ -72,6 +92,13 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'Load Team',
             'loadTeam',
             {uuid:'string'}
+        ),
+        get_user_for_fetch_teams_complete: new ProcessTask(
+            'fetch_teams',
+            'get_user_for_fetch_teams_complete',
+            'Fetch Teams',
+            'fetchUserTeams',
+            {user:'User'}
         )
     };
 
@@ -125,7 +152,6 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             message:'Team removed successfully.',
             context:{params:{team_deleted:team.uuid}}
           });
-          this.service.publishTeams();
           observer.complete();
         }
       );
@@ -136,7 +162,6 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
   public saveTeam(control_uuid: string, params: any): Observable<any> {
     let team: Team = params.team;
     let user: User = params.user;
-    team.user = user.uuid;
     let obs = new Observable((observer:any) => {
       this.service.put(team).subscribe(
         null,
@@ -162,8 +187,6 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
 
   public createTeam(control_uuid: string, params: any): Observable<any> {
     let team: Team = params.team;
-    let user: User = params.user;
-    team.user = user.uuid;
     let obs = new Observable((observer:any) => {
       this.service.post(team).subscribe(
         response => team.isNew = false,
@@ -174,12 +197,43 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           context:{params:{}}
         }),
         () => {
-          this.service.publishTeams();
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Team Created successfully.',
             context:{params:{team_created:team.uuid}}
+          });
+          observer.complete();
+        }
+      );
+    });
+    return obs;
+  }
+
+  public saveTeamMembership(control_uuid: string, params: any): Observable<any> {
+    let team: Team = params.team;
+    let user: User = params.user;
+    let membership: TeamMembership = {
+      team_uuid: team.uuid,
+      user_uuid: user.uuid,
+      team_doc: team,
+      user_doc: user
+    }
+    let obs = new Observable((observer:any) => {
+      this.service.postMembership(membership).subscribe(
+        null,
+        error => observer.error({
+          control_uuid: control_uuid,
+          outcome: 'error',
+          message:'Error has occured while saving team membership.',
+          context:{params:{}}
+        }),
+        () => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Team Membership Saved.',
+            context:{params:{team_membership_saved: true}}
           });
           observer.complete();
         }
@@ -202,4 +256,34 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     });
     return obs;
   }
+
+  public fetchUserTeams(control_uuid: string, params: any): Observable<any> {
+    let user: string = params.user.uuid;
+    let loadedTeams: Team[];
+    let obs = new Observable((observer:any) => {
+      this.service.list(user).subscribe(
+        teams => {
+          loadedTeams = teams;
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Teams loaded successfully.',
+            context:{params:{teams_loaded:true}}
+          })
+        },
+        error => observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Teams load failed: ' + error,
+            context:{params:{}}
+        }),
+        () => {
+          this.service.publishTeams(loadedTeams);
+          observer.complete()
+        }
+      );
+    });
+    return obs;
+  }
+
 }

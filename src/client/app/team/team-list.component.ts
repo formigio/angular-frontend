@@ -22,7 +22,6 @@ export class TeamListComponent implements OnInit {
   team: Team = {
     uuid: '',
     title: '',
-    user: '',
     isDeleted: false,
     isNew: true
   };
@@ -48,15 +47,13 @@ export class TeamListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription()
             .subscribe(
-                teams => {
-                this.teams = <Team[]>teams;
-                }
+                teams => this.teams = teams
             );
-    this.service.publishTeams();
+    this.refreshTeams();
   }
 
   refreshTeams() {
-    this.service.publishTeams();
+    this.message.startProcess('team_fetch_user_teams',{});
   }
 
   /**
