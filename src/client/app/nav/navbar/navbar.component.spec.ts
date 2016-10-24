@@ -6,8 +6,13 @@ import {
 import { By } from '@angular/platform-browser';
 
 import { NavbarComponent } from './navbar.component';
+import { MessageService } from '../../core/index';
+import { HelperService } from '../../shared/index';
+import { UserService } from '../../user/index';
 
 import { RouterLinkStubDirective } from '../../../testing/router/router-stubs';
+import { UtilStubService } from '../../../testing/util/stub.service';
+import { HelperStubService } from '../../../testing/util/helper-stub.service';
 
 export function main() {
   describe('Navbar component', () => {
@@ -15,7 +20,11 @@ export function main() {
       TestBed.configureTestingModule({
           imports: [],
           declarations: [ TestComponent, RouterLinkStubDirective ],
-          providers: []
+          providers: [
+            {provide: MessageService, useClass: UtilStubService },
+            {provide: HelperService, useClass: HelperStubService },
+            {provide: UserService, useClass: UtilStubService }
+          ]
       });
     });
 
@@ -42,7 +51,7 @@ export function main() {
             let links = linkDes
                 .map(de => de.injector.get(RouterLinkStubDirective) as RouterLinkStubDirective);
 
-            expect(links.length).toBe(4, 'should have 4 links');
+            expect(links.length).toBe(2, 'should have 2 links');
           });
         }));
 

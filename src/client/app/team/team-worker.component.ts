@@ -161,7 +161,6 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
 
   public saveTeam(control_uuid: string, params: any): Observable<any> {
     let team: Team = params.team;
-    let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.put(team).subscribe(
         null,
@@ -218,7 +217,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
       user_uuid: user.uuid,
       team_doc: team,
       user_doc: user
-    }
+    };
     let obs = new Observable((observer:any) => {
       this.service.postMembership(membership).subscribe(
         null,
@@ -269,7 +268,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             outcome: 'success',
             message:'Teams loaded successfully.',
             context:{params:{teams_loaded:true}}
-          })
+          });
         },
         error => observer.error({
             control_uuid: control_uuid,
@@ -279,7 +278,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
         }),
         () => {
           this.service.publishTeams(loadedTeams);
-          observer.complete()
+          observer.complete();
         }
       );
     });

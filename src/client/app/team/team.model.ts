@@ -1,4 +1,4 @@
-import { User } from '../user/index'
+import { User } from '../user/index';
 
 export class Team {
   isDeleted: boolean = false;
