@@ -107,6 +107,9 @@ export class ProcessMessage {
         let params = this.params;
         let control_uuid: string = Math.random().toString().split('.').pop().toString();
         let context = this.createContextParams(params);
+        // We can potentially create a ReplaySubject here
+        // Then the initiator of the process can subscribe to Process Events
+        // We can then push next/error/complete to the subject, and the subscriber can react.
 
         if(!worker.routines.hasOwnProperty(identifier)) {
             // this.message.setFlash('Error - Initiating Process: ' + identifier + ' No Routine Found.','warning');
