@@ -20,18 +20,21 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'user_login',
             'The Process Used to Control the Login',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         ),
         user_load_for_app: new ProcessRoutine(
             'user_load_for_app',
             'The Process Used to Control the Initiation of App User',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         ),
         user_logout: new ProcessRoutine(
             'user_logout',
             'The Process Used to Control the Logout',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         )
     };

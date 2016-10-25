@@ -20,18 +20,21 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
             'teammember_delete',
             'The Process Used to Control the Deletion of TeamMember',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         ),
         teammember_add: new ProcessRoutine(
             'teammember_add',
             'The Process Used to Control the Adding of a TeamMember',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         ),
         teammember_fetch_team_members: new ProcessRoutine(
             'teammember_fetch',
             'The Process Used to Control the Fetching of TeamMembers',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         )
     };

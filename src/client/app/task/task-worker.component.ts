@@ -20,6 +20,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'task_delete',
             'The Process Used to Control the Deletion of Tasks',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         )
     };

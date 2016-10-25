@@ -20,6 +20,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'invite_delete',
             'The Process Used to Control the Deletion of Invites',
             new ProcessContext,
+            (context:ProcessContext) => { return (<any>context.params).invite_deleted; },
             ''
         )
     };

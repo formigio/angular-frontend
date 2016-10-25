@@ -21,30 +21,35 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'team_delete',
             'The Process Used to Control the Deletion of Teams',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         ),
         team_save: new ProcessRoutine(
             'team_save',
             'The Process Used to Control the Saving of Teams',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         ),
         team_create: new ProcessRoutine(
             'team_create',
             'The Process Used to Control the Creating of Teams',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         ),
         team_view: new ProcessRoutine(
             'team_view',
             'The Process Used for Loading of Team Entity from View Url',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         ),
         team_fetch_user_teams: new ProcessRoutine(
             'team_fetch_user_teams',
             'The Process Used to Teams for the Logged in User',
             new ProcessContext,
+            (context:ProcessContext) => { return false; },
             ''
         )
 

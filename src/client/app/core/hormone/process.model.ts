@@ -11,6 +11,7 @@ export class ProcessRoutine {
         public identifier: string,
         public description: string,
         public context: ProcessContext,
+        public complete: Function,
         public control_uuid: string
     ) {}
 }
@@ -55,6 +56,7 @@ export class ProcessTask {
         let obs = new Observable((observer:any) => {
             if(params.length === 0) {
                 localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
+                observer.next(context);
                 observer.complete();
             }
             params.forEach((param) => {
@@ -67,6 +69,7 @@ export class ProcessTask {
                 }
                 if(params.length === paramsProcessed.length) {
                     localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
+                    observer.next(processRoutine.context);
                     observer.complete();
                 }
 
@@ -178,7 +181,7 @@ export class WorkerMessage {
                       workerMessage.signal = processTask.identifier + '_complete';
                       worker.message.setFlash(workerResponse.message,'success');
                       processTask.updateProcessAfterWork(control_uuid, workerResponse.context).subscribe(
-                          null,
+                          context => console.log(processRoutine.complete(context)),
                           null,
                           () => worker.message.processSignal(workerMessage)
                       );

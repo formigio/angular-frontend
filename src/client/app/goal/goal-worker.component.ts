@@ -20,12 +20,14 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'goal_delete',
           'The Process Used to Control the Deletion of Goals',
           new ProcessContext,
+          (context:ProcessContext) => { return (<any>context.params).goal_deleted; },
           ''
       ),
       goal_view: new ProcessRoutine(
           'goal_view',
           'The Process Used to Control the Viewing of Goals',
           new ProcessContext,
+          (context:ProcessContext) => { return (<any>context.params).goal_loaded; },
           ''
       )
   };
@@ -104,7 +106,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
               control_uuid: control_uuid,
               outcome: 'success',
               message:'Goal removed successfully.',
-              context:{params:{navigate_to:'/teams'}}
+              context:{params:{goal_deleted:true, navigate_to:'/teams'}}
             });
             observer.complete();
           }

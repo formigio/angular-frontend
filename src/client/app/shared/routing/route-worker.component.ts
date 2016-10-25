@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessTask, WorkerComponent } from '../../core/index';
+import { MessageService, ProcessRoutine, ProcessTask, ProcessContext, WorkerComponent } from '../../core/index';
 import { HelperService } from '../index';
 
 /**
@@ -19,7 +19,8 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
     navigate_to: new ProcessRoutine(
       'navigate_to',
       'Navigate to a Route',
-      {params:{}},
+      new ProcessContext,
+      (context:ProcessContext) => { return false; },
       ''
     )
   };
