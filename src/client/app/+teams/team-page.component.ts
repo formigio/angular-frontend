@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TeamViewComponent } from '../team/index';
 import { GoalListComponent } from '../goal/index';
+import { TeamMemberListComponent } from '../team-member/index';
 import { UserService } from '../user/index';
 
 /**
@@ -9,7 +10,7 @@ import { UserService } from '../user/index';
 @Component({
   moduleId: module.id,
   selector: 'team-page',
-  directives: [ TeamViewComponent, GoalListComponent ],
+  directives: [ TeamViewComponent, GoalListComponent, TeamMemberListComponent ],
   templateUrl: 'team-page.component.html'
 })
 

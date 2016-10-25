@@ -1,0 +1,8 @@
+<div class="row" *ngIf="member.user_name">
+    <div class="col-xs-12">
+        <button class="btn btn-xs btn-default" type="button">
+            <span class="glyphicon glyphicon-user"></span>
+        </button>
+        <span [innerHTML]="member.user_name"></span>
+    </div>
+</div>

@@ -7,6 +7,9 @@
       <li class="list-group-item" *ngIf="editable===true">
         <form (submit)="addTask()" class="form-inline">
         <div class="form-group">
+          <button class="btn btn-xs btn-default" type="button">
+              <span class="glyphicon glyphicon-plus"></span>
+          </button>
           <textarea [(ngModel)]="task.title" name="newTaskTitle" class="form-control"
               placeholder="Enter Tasks, Will create a task for each new line" ></textarea>
           <button type="submit" class="btn btn-primary">Add</button>

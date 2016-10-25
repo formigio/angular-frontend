@@ -8,6 +8,7 @@ import { routing, appRoutingProviders } from './app.routes';
 import { CoreModule } from './core/core.module';
 import { HomeModule } from './+home/home.module';
 import { TeamModule } from './team/team.module';
+import { TeamMemberModule } from './team-member/team-member.module';
 import { GoalModule } from './goal/goal.module';
 import { TaskModule } from './task/task.module';
 import { InviteModule } from './invite/invite.module';
@@ -24,8 +25,9 @@ import { MessageService } from './core/index';
 @NgModule({
   imports: [
     BrowserModule, HttpModule, routing, CoreModule, LoginModule,
-    UserModule, TeamModule, GoalModule, TaskModule, InviteModule, TeamPagesModule,
-    GoalPagesModule, HomeModule, NavModule, SharedModule.forRoot()],
+    UserModule, TeamModule, TeamMemberModule, GoalModule, TaskModule,
+    InviteModule, TeamPagesModule, GoalPagesModule, HomeModule,
+    NavModule, SharedModule.forRoot()],
   declarations: [AppComponent],
   providers: [
     MessageService,

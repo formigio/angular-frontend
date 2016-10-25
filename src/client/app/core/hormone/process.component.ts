@@ -5,6 +5,7 @@ import { TaskWorkerComponent } from '../../task/index';
 import { InviteWorkerComponent } from '../../invite/index';
 import { RouteWorkerComponent } from '../../shared/index';
 import { UserWorkerComponent } from '../../user/index';
+import { TeamMemberWorkerComponent } from '../../team-member/index';
 
 /**
  * This class represents the toolbar component.
@@ -15,7 +16,8 @@ import { UserWorkerComponent } from '../../user/index';
   templateUrl: 'process.component.html',
   directives: [TeamWorkerComponent, GoalWorkerComponent,
     TaskWorkerComponent, InviteWorkerComponent,
-    RouteWorkerComponent, UserWorkerComponent]
+    RouteWorkerComponent, UserWorkerComponent,
+    TeamMemberWorkerComponent]
 })
 export class ProcessComponent {
 
