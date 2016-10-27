@@ -104,6 +104,8 @@ export class TaskService {
    * @return {string[]} The Observable for the HTTP request.
    */
   put(task:Task): Observable<string[]> {
+    task.title = this.htmlEntities(task.title);
+    task.notes = this.htmlEntities(task.notes).split('\n').join('|');
     let body = JSON.stringify(task);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });

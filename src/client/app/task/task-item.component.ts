@@ -36,10 +36,12 @@ export class TaskItemComponent {
   makeEditable() {
     this.state = 'edit';
     this.showNotes = true;
+    this.task.notes = this.task.notes.split('|').join('\n');
   }
 
   toggleNotes() {
     if(this.showNotes === false) {
+      this.task.notes = this.task.notes.split('|').join('\n');
       this.showNotes = true;
     } else {
       this.showNotes = false;
