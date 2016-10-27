@@ -5,17 +5,17 @@
       <div class="panel panel-default">
         <div class="panel-heading">
             <form class="form-inline">
-              <button type="button" class="btn" [class.btn-success]="state==='registered'" 
+              <button type="button" class="btn" [class.btn-success]="state==='registered'"
                 [class.btn-default]="state==='new'" (click)="toggleState()">
                 <span>Sign In</span>
               </button>
-<!--
-              <button type="button" class="btn" [class.btn-success]="state==='new'" 
+
+              <button type="button" class="btn" [class.btn-success]="state==='new'"
                 [class.btn-default]="state==='registered'" (click)="toggleState()">
                 <span>Sign Up</span>
               </button>
--->
-            </form>    
+
+            </form>
         </div>
         <div class="panel-body">
             <div class="well well-lg">
@@ -26,7 +26,7 @@
                   <button type="submit" class="btn btn-primary">Login</button>
                 </div>
               </form>
-<!--
+
               <form (submit)="register()" class="form-inline" *ngIf="state==='new'">
                 <div class="form-group">
                   <input [(ngModel)]="user.email" type="email" name="email" class="form-control" placeholder="Email">
@@ -34,7 +34,7 @@
                   <button type="submit" class="btn btn-primary">Register</button>
                 </div>
               </form>
--->
+
               <span>{{errorMsg}}</span>
             </div>
         </div>
@@ -44,7 +44,7 @@
   </div>
   <div class="row" *ngIf="loggedin()===true">
     <div class="col-md-12">
-      <p>Welcome {{user.email}}</p> 
+      <p>Welcome {{user.email}}</p>
       <button type="button" (click)="logout()" class="btn btn-xs btn-danger pull-right">
         <span>Logout</span>
       </button>

@@ -35,4 +35,7 @@ export class InviteItemComponent {
     return false;
   }
 
+  copyLink() {
+    window.prompt("Copy to clipboard: Ctrl+C, Enter", 'https://proto.formigio.com/goal/' + this.invite.goal + '/invite/' + this.invite.uuid);
+  }
 }

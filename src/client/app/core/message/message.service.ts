@@ -17,6 +17,8 @@ export class Message {
 @Injectable()
 export class MessageService {
 
+// Add Notices, messages that must be dismissed. Notices stack.
+
     public flashMessage: ReplaySubject<any> = new ReplaySubject(1);
     public processMessage: ReplaySubject<any> = new ReplaySubject(1);
     public workerQueue: ReplaySubject<any> = new ReplaySubject(1);

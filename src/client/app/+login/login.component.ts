@@ -37,7 +37,6 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    // this.service.login(this.user)
     this.message.startProcess('user_login',{user:this.user});
   }
 
@@ -46,7 +45,7 @@ export class LoginComponent implements OnInit {
   }
 
   register() {
-    this.service.register(this.user);
+    this.message.startProcess('user_register',{user:this.user});
   }
 
   toggleState() {

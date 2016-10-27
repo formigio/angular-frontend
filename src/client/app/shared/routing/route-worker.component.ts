@@ -45,6 +45,13 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           'Navigate to Home after Login',
           'navigateTo',
           {navigate_to:'string'}
+      ),
+      register_user_complete: new ProcessTask(
+          'navigate',
+          'register_user_complete',
+          'Navigate to Login after Register',
+          'navigateTo',
+          {navigate_to:'string'}
       )
   };
 

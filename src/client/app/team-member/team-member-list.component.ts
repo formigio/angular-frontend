@@ -22,7 +22,7 @@ export class TeamMemberListComponent implements OnInit {
   member: TeamMember = {
     team_uuid: '',
     user_uuid: '',
-    user_name: ''
+    user_email: ''
   };
 
   team: string; // Team UUID from URL
@@ -66,9 +66,10 @@ export class TeamMemberListComponent implements OnInit {
    */
   addTeamMember(): boolean {
     let newMember: TeamMember = JSON.parse(JSON.stringify(this.member));
+    newMember.team_uuid = this.team;
     this.members.push(newMember);
-    this.helper.sortBy(this.members,'user_name');
-    this.message.startProcess('teammember_add',{teammember:newMember});
+    this.helper.sortBy(this.members,'user_email');
+    this.message.startProcess('teammember_add',{team_uuid:this.team,user_email:newMember.user_email});
     return false;
   }
 

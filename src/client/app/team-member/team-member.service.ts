@@ -52,7 +52,7 @@ export class TeamMemberService {
   }
 
   sort() {
-    this.helper.sortBy(this.teammembers,'user_name');
+    this.helper.sortBy(this.teammembers,'user_email');
   }
 
   /**

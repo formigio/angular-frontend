@@ -22,6 +22,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             new ProcessContext,
             ''
         ),
+        user_register: new ProcessRoutine(
+            'user_register',
+            'The Process Used to Control the Registration of New Users',
+            new ProcessContext,
+            ''
+        ),
         user_load_for_app: new ProcessRoutine(
             'user_load_for_app',
             'The Process Used to Control the Initiation of App User',
@@ -45,8 +51,15 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             {}
         ),
         user_login_init: new ProcessTask(
-            'get_hash',
+            'get_hash_for_login',
             'user_login_init',
+            'Login User',
+            'getHash',
+            {user:'User'}
+        ),
+        user_register_init: new ProcessTask(
+            'get_hash_for_register',
+            'user_register_init',
             'Login User',
             'getHash',
             {user:'User'}
@@ -58,11 +71,18 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'logoutUser',
             {}
         ),
-        get_hash_complete: new ProcessTask(
+        get_hash_for_login_complete: new ProcessTask(
             'login_user',
-            'get_hash_complete',
+            'get_hash_for_login_complete',
             'Login User',
             'loginUser',
+            {user:'User',password_hash:'string'}
+        ),
+        get_hash_for_register_complete: new ProcessTask(
+            'register_user',
+            'get_hash_for_register_complete',
+            'Register User',
+            'createUser',
             {user:'User',password_hash:'string'}
         ),
         login_user_complete: new ProcessTask(
@@ -92,6 +112,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Put User in Process Context',
             'getUser',
             {}
+        ),
+        teammember_add_init: new ProcessTask(
+            'validate_user_as_teammember',
+            'teammember_add_init',
+            'Put User in Process Context',
+            'validateUser',
+            {user_email:'string'}
         )
     };
 
@@ -177,6 +204,66 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'error',
             message:'Login Failed.',
+            context:{params:{}}
+          });
+        },
+        () => observer.complete()
+      );
+    });
+    return obs;
+  }
+
+  public validateUser(control_uuid: string, params: any): Observable<any> {
+    let userEmail: string = params.user_email;
+    let obs = new Observable((observer:any) => {
+      let auth = this.service.validateUser(userEmail);
+      auth.subscribe(
+        response => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Team Member Validated.',
+            context:{params:{user_uuid:response.uuid}}
+          });
+        },
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'User Not Found.',
+            context:{params:{}}
+          });
+        },
+        () => observer.complete()
+      );
+    });
+    return obs;
+  }
+
+  public createUser(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    user.password = params.password_hash;
+    let obs = new Observable((observer:any) => {
+      user.password_hash = '';
+      user.uuid = Math.random().toString().split('.').pop();
+      let create = this.service.createUser(user);
+      create.subscribe(
+        response => {
+          user.uuid = response.uuid;
+          user.password = '';
+          this.service.publishUser(user);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'User Credentials Saved, Login to Continue.',
+            context:{params:{user_created:response.uuid,navigate_to:'/login',user:user}}
+          });
+        },
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'User Registration Failed.',
             context:{params:{}}
           });
         },

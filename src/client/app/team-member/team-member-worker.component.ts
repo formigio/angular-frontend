@@ -44,13 +44,6 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
             'deleteTeamMember',
             {teammember:'TeamMember'}
         ),
-        teammember_add_init: new ProcessTask(
-            'add_teammember',
-            'teammember_add_init',
-            'Add TeamMember',
-            'addTeamMember',
-            {teammember:'TeamMember'}
-        ),
         teammember_fetch_team_members_init: new ProcessTask(
             'fetch_team_members',
             'teammember_fetch_init',
@@ -108,7 +101,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Team Member removed successfully.',
-            context:{params:{teammember_deleted:teammember.user_name}}
+            context:{params:{teammember_deleted:teammember.user_email}}
           });
           observer.complete();
         }
@@ -119,6 +112,8 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
 
   public addTeamMember(control_uuid: string, params: any): Observable<any> {
     let teammember: TeamMember = params.teammember;
+    let user_uuid: string = params.user_uuid;
+    teammember.user_uuid = user_uuid;
     let obs = new Observable((observer:any) => {
       this.service.post(teammember).subscribe(
         null,
@@ -133,7 +128,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Team Member added successfully.',
-            context:{params:{teammember_added:teammember.user_name}}
+            context:{params:{teammember_added:teammember.user_email}}
           });
           observer.complete();
         }

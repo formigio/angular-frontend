@@ -3,6 +3,7 @@ import { Goal } from '../goal/index';
 
 export class Commitment {
   constructor(
+    public uuid: string,
     public when: string, // Timedate
     public hours: string, // Float
     public task_doc: Task,

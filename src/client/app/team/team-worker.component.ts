@@ -86,6 +86,20 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'saveTeamMembership',
             {team:'Team', user:'User'}
         ),
+        prepare_team_membership_complete: new ProcessTask(
+            'save_team_member',
+            'prepare_team_membership_complete',
+            'Save Team Member',
+            'saveTeamMembership',
+            {team:'Team', user:'User'}
+        ),
+        validate_user_as_teammember_complete: new ProcessTask(
+            'prepare_team_membership',
+            'validate_user_as_teammember_complete',
+            'Prepare Team Membership Data',
+            'prepareTeamMembership',
+            {team_uuid:'string', user_uuid:'string', user_email:'string'}
+        ),
         team_view_init: new ProcessTask(
             'load_team',
             'team_view_init',
@@ -233,6 +247,36 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             outcome: 'success',
             message:'Team Membership Saved.',
             context:{params:{team_membership_saved: true}}
+          });
+          observer.complete();
+        }
+      );
+    });
+    return obs;
+  }
+
+  public prepareTeamMembership(control_uuid: string, params: any): Observable<any> {
+    let team_uuid: string = params.team_uuid;
+    let user_uuid: string = params.user_uuid;
+    let user_email: string = params.user_email;
+    let userDoc: User = JSON.parse(JSON.stringify({uuid:user_uuid,email:user_email}));
+    let teamDoc: Team;
+
+    let obs = new Observable((observer:any) => {
+      this.service.get(team_uuid).subscribe(
+        team => teamDoc = team,
+        error => observer.error({
+          control_uuid: control_uuid,
+          outcome: 'error',
+          message:'Error has occured while preparing team membership.',
+          context:{params:{}}
+        }),
+        () => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Team Membership Prepared.',
+            context:{params:{user: userDoc, team: teamDoc}}
           });
           observer.complete();
         }

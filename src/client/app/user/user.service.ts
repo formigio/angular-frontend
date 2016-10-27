@@ -58,6 +58,15 @@ export class UserService {
             .catch(this.handleError);
     }
 
+    validateUser(user_email:string) {
+        let body = JSON.stringify({user_email:user_email});
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post(Config.API + '/users/validate',body, options)
+            .map((res: Response) => res.json())
+            .catch(this.handleError);
+    }
+
     createUser(user:User) {
         let body = JSON.stringify(user);
         let headers = new Headers({ 'Content-Type': 'application/json' });
