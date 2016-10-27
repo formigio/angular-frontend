@@ -30,6 +30,7 @@ export class TaskListComponent implements OnInit {
     uuid: '',
     title: '',
     goal: '',
+    notes: '',
     deleted: false
   };
 
@@ -85,6 +86,7 @@ export class TaskListComponent implements OnInit {
           uuid: uuid,
           title: taskTitle,
           goal: this.task.goal,
+          notes: '',
           deleted: false
         };
         this.service.addTask(newTask);

@@ -11,9 +11,12 @@
         <div style="display:inline-block;" *ngIf="state==='view'">
             <span [innerHTML]="task.title"></span>
             <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+            <button type="button" (click)="toggleNotes()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-align-left"></span></button>
+            <div [innerHTML]="task.notes" *ngIf="showNotes===true"></div>
         </div>
         <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistTask()" *ngIf="state==='edit'">
-            <input [(ngModel)]="task.title" name="task" type="text" style="min-width:75%">
+            <input [(ngModel)]="task.title" name="task.title" type="text" style="min-width:75%">
+            <textarea [(ngModel)]="task.notes" name="task.notes" type="text" style="min-width:75%" *ngIf="showNotes===true"></textarea>
             <button type="submit" class="btn btn-success btn-xs">Save</button>
         </form>
     </div>

@@ -22,6 +22,7 @@ export class TaskItemComponent {
   success: string = '';
   state: string = 'view';
   response: any;
+  showNotes: boolean = false;
 
   /**
    *
@@ -34,10 +35,20 @@ export class TaskItemComponent {
 
   makeEditable() {
     this.state = 'edit';
+    this.showNotes = true;
+  }
+
+  toggleNotes() {
+    if(this.showNotes === false) {
+      this.showNotes = true;
+    } else {
+      this.showNotes = false;
+    }
   }
 
   persistTask() {
     this.state='view';
+    this.showNotes = false;
     this.saveTask(this.task);
   }
 
