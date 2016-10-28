@@ -190,14 +190,23 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       let auth = this.service.authenticateUser(user);
       auth.subscribe(
         response => {
-          user.uuid = response.uuid;
-          this.service.publishUser(user);
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Credentials Tested.',
-            context:{params:{logged_in:response.uuid,navigate_to:'/',user:user}}
-          });
+          if(response.uuid === '') {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'Login Failed.',
+              context:{params:{}}
+            });
+          } else {
+            user.uuid = response.uuid;
+            this.service.publishUser(user);
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Credentials Tested.',
+              context:{params:{logged_in:response.uuid,navigate_to:'/',user:user}}
+            });
+          }
         },
         error => {
           observer.error({
