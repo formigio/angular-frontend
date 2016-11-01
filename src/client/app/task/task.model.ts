@@ -20,6 +20,7 @@ export class Task {
 /*
   - pending_commitment - New Tasks that haven't been claimed (Default State)
   - committed_to - Claimed by a worker and commitment promised (Derived from Commitment)
+  - ready - Required context is set (Derived from Rule - Evaluation of Ready Rule)
   - work_started - Worker Marked as work started (Stored Flag, worker marks as started)
   - work_paused - Worker Marked as work paused (Stored Flag, worker marks as paused)
   - work_blocked - Worker Marked as complete (Stored Flag, worker marks as blocked)
@@ -31,13 +32,14 @@ export class Task {
 // State Chart
 /*
 
-|| State              | Committed | Started | Paused | Blocked | Completed | Done |
-|| pending_commitment | N         | -       | -      | -       | N         | N    |
-|| committed_to       | Y         | -       | -      | N       | N         | N    |
-|| work_started       | Y         | Y       | -      | -       | N         | N    |
-|| work_paused        | Y         | Y       | Y      | -       | N         | N    |
-|| work_blocked       | Y         | -       | -      | Y       | N         | N    |
-|| work_completed     | -         | -       | -      | -       | Y         | N    |
-|| done               | -         | -       | -      | -       | -         | Y    |
+|| State              | Committed | Ready | Started | Paused | Blocked | Completed | Done ||
+|| pending_commitment | N         | -     | -       | -      | -       | N         | N    ||
+|| committed_to       | Y         | -     | -       | -      | N       | N         | N    ||
+|| ready              | Y         | Y     | N       | N      | N       | N         | N    ||
+|| work_started       | Y         | -     | Y       | -      | -       | N         | N    ||
+|| work_paused        | Y         | -     | Y       | Y      | -       | N         | N    ||
+|| work_blocked       | Y         | -     | -       | -      | Y       | N         | N    ||
+|| work_completed     | -         | -     | -       | -      | -       | Y         | N    ||
+|| done               | -         | -     | -       | -      | -       | -         | Y    ||
 
 */
