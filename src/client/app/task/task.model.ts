@@ -18,13 +18,13 @@ export class Task {
 
 // Potential Task State Codes
 /*
-  - pending_commitment - New Tasks that haven't been claimed
-  - committed_to - Claimed by a worker and commitment promised
-  - work_started - Worker Marked as work started
-  - work_paused - Worker Marked as work paused
-  - work_blocked - Worker Marked as complete
-  - work_completed - Worker Marked as complete
-  - done - State Calculated as Done
+  - pending_commitment - New Tasks that haven't been claimed (Default State)
+  - committed_to - Claimed by a worker and commitment promised (Derived from Commitment)
+  - work_started - Worker Marked as work started (Stored Flag, worker marks as started)
+  - work_paused - Worker Marked as work paused (Stored Flag, worker marks as paused)
+  - work_blocked - Worker Marked as complete (Stored Flag, worker marks as blocked)
+  - work_completed - Worker Marked as complete (Stored Flag, worker marks as completed)
+  - done - State Calculated as Done (Derived from Rule - Evaluation of Doneness Rule)
 */
 
 
