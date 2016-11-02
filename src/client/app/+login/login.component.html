@@ -35,7 +35,12 @@
                 </div>
               </form>
 
-              <span>{{errorMsg}}</span>
+              <form (submit)="confirm()" class="form-inline" *ngIf="confirmForm===true">
+                <div class="form-group">
+                  <input [(ngModel)]="user.confirm_code" type="text" name="confirm_code" class="form-control" placeholder="Confirmation Code">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
             </div>
         </div>
       </div>

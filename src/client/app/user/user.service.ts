@@ -76,6 +76,18 @@ export class UserService {
             .catch(this.handleError);
     }
 
+    testAuth(token:string) {
+        let headers = new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer: ' + token
+        });
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(Config.API + '/authenticated', options)
+            // .map((res: Response) => res.json())
+            // .catch(this.handleError)
+            ;
+    }
+
     password(user:User) {
         let body = JSON.stringify(user);
         let headers = new Headers({ 'Content-Type': 'application/json' });

@@ -4,6 +4,8 @@ import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComp
 import { HelperService } from '../shared/index';
 import { User, UserService } from './index';
 
+declare let AWSCognito: any;
+
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
  */
@@ -25,6 +27,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         user_register: new ProcessRoutine(
             'user_register',
             'The Process Used to Control the Registration of New Users',
+            new ProcessContext,
+            ''
+        ),
+        user_confirm: new ProcessRoutine(
+            'user_confirm',
+            'The Process Used to Control the Confirmation of New Users',
             new ProcessContext,
             ''
         ),
@@ -50,18 +58,46 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'loadUserIntoApp',
             {}
         ),
+        // user_login_init: new ProcessTask(
+        //     'get_hash_for_login',
+        //     'user_login_init',
+        //     'Login User',
+        //     'getHash',
+        //     {user:'User'}
+        // ),
         user_login_init: new ProcessTask(
-            'get_hash_for_login',
+            'login_cognito_user',
             'user_login_init',
             'Login User',
-            'getHash',
+            'loginCognitoUser',
             {user:'User'}
         ),
+        login_cognito_user_complete: new ProcessTask(
+          'test_authenticated',
+          'login_cognito_user_complete',
+          'Check Authenticated Call',
+          'testAuthenticated',
+          {id_token:'string'}
+        ),
+        // user_register_init: new ProcessTask(
+        //     'get_hash_for_register',
+        //     'user_register_init',
+        //     'Login User',
+        //     'getHash',
+        //     {user:'User'}
+        // ),
         user_register_init: new ProcessTask(
-            'get_hash_for_register',
+            'create_cognito_user',
             'user_register_init',
             'Login User',
-            'getHash',
+            'createCognitoUser',
+            {user:'User'}
+        ),
+        user_confirm_init: new ProcessTask(
+            'confirm_cognito_user',
+            'user_confirm_init',
+            'Confirm User',
+            'confirmCognitoUser',
             {user:'User'}
         ),
         user_logout_init: new ProcessTask(
@@ -278,6 +314,173 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         },
         () => observer.complete()
       );
+    });
+    return obs;
+  }
+
+  public createCognitoUser(control_uuid: string, params: any): Observable<any> {
+
+    let user: User = params.user;
+
+    AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
+
+    let poolData = { UserPoolId : 'us-east-1_7RCFagOlU',
+        ClientId : '78d58jq7eindb8ripbc3e4iuu8'
+    };
+    let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+
+    let attributeList:any[] = [];
+
+    let dataEmail = {
+        Name : 'email',
+        Value : user.email
+    };
+    var attributeEmail = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataEmail);
+
+    attributeList.push(attributeEmail);
+
+    let obs = new Observable((observer:any) => {
+      user.password_hash = '';
+      user.uuid = Math.random().toString().split('.').pop();
+
+      userPool.signUp(user.email, user.password, attributeList, null, (err:any, result:any) => {
+          if (err) {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'User Registration Failed. ('+err+')',
+              context:{params:{}}
+            });
+            return;
+          } else {
+          let cognitoUser = result.user;
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Cognito User is Registered.',
+              context:{params:{user_created:cognitoUser.getUsername(),navigate_to:'/login',user:user}}
+            });
+            console.log('user name is ' + cognitoUser.getUsername());
+            observer.complete()
+          }
+      });
+    });
+    return obs;
+  }
+
+  public loginCognitoUser(control_uuid: string, params: any): Observable<any> {
+
+    let user: User = params.user;
+
+    var authenticationData = {
+        Username : user.email,
+        Password : user.password,
+    };
+    var authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
+
+    AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
+
+    let poolData = { UserPoolId : 'us-east-1_7RCFagOlU',
+        ClientId : '78d58jq7eindb8ripbc3e4iuu8'
+    };
+    let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+
+    var userData = {
+        Username : user.email,
+        Pool : userPool
+    };
+    var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
+
+    let obs = new Observable((observer:any) => {
+
+      cognitoUser.authenticateUser(authenticationDetails, {
+          onSuccess: function (result:any) {
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Cognito User is Authenticated.',
+              context:{params:{id_token:result.getIdToken().getJwtToken(),navigate_to:'/login',user:user}}
+            });
+            observer.complete();
+          },
+          onFailure: function(err:any) {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'User Registration Failed. ('+err+')',
+              context:{params:{}}
+            });
+          }
+      });
+    });
+    return obs;
+  }
+
+  public testAuthenticated(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let token: string = params.id_token;
+    let obs = new Observable((observer:any) => {
+      let create = this.service.testAuth(token);
+      create.subscribe(
+        response => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Authenticated Route Hit.',
+            context:{params:{}}
+          });
+        },
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Authenticated Call Failed.' + error,
+            context:{params:{}}
+          });
+        },
+        () => observer.complete()
+      );
+    });
+    return obs;
+  }
+
+  public confirmCognitoUser(control_uuid: string, params: any): Observable<any> {
+
+    let user: User = params.user;
+
+    AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
+
+    let poolData = { UserPoolId : 'us-east-1_7RCFagOlU',
+        ClientId : '78d58jq7eindb8ripbc3e4iuu8'
+    };
+    let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+
+    var userData = {
+        Username : user.email,
+        Pool : userPool
+    };
+    var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
+
+    let obs = new Observable((observer:any) => {
+
+      cognitoUser.confirmRegistration(user.confirm_code, false, function(err:any, result:any) {
+          if (err) {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'User Confirm Failed. ('+err+')',
+              context:{params:{}}
+            });
+            return;
+          }
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Cognito User is Confirmed.',
+            context:{params:{confirm_result:result,navigate_to:'/login',user:user}}
+          });
+          observer.complete();
+        });
     });
     return obs;
   }

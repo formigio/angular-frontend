@@ -16,12 +16,14 @@ export class LoginComponent implements OnInit {
 
   states: String[] = ['new','registered'];
   state: string = 'registered';
+  confirmForm: boolean = false;
 
   user: User = {
     uuid: '',
     email: '',
     password_hash: '',
-    password: ''
+    password: '',
+    confirm_code: ''
   };
   errorMsg = '';
 
@@ -46,6 +48,12 @@ export class LoginComponent implements OnInit {
 
   register() {
     this.message.startProcess('user_register',{user:this.user});
+    this.confirmForm = true;
+  }
+
+  confirm() {
+    this.message.startProcess('user_confirm',{user:this.user});
+    console.log(this.user);
   }
 
   toggleState() {
