@@ -11,35 +11,85 @@ export class Task {
     public notes?: string
   ) {}
 
-  getState() {
+  getWorkState() {
     // Calculate State based on flags
+    return 'work_pending';
   }
+
+  getSystemState() {
+    // Calculate State based on flags
+    return 'pending';
+  }
+
+  getTaskState() {
+    // Calculate State based on flags
+    return 'task_pending';
+  }
+
+  done() {
+    return (this.getWorkState() === 'work_completed')
+  }
+
+  ready() {
+    return (this.getSystemState() === 'ready');
+  }
+
 }
 
 // Potential Task State Codes
 /*
-  - pending_commitment - New Tasks that haven't been claimed (Default State)
-  - committed_to - Claimed by a worker and commitment promised (Derived from Commitment)
-  - ready - Required context is set (Derived from Rule - Evaluation of Ready Rule)
-  - work_started - Worker Marked as work started (Stored Flag, worker marks as started)
-  - work_paused - Worker Marked as work paused (Stored Flag, worker marks as paused)
-  - work_blocked - Worker Marked as complete (Stored Flag, worker marks as blocked)
-  - work_completed - Worker Marked as complete (Stored Flag, worker marks as completed)
-  - done - State Calculated as Done (Derived from Rule - Evaluation of Doneness Rule)
+
+ Possible Statuses
+  - system_status      - System Status is set by the Platform, can have 3 possible values
+  - - pending   - Default Status
+  - - ready     - Required context is set (Ready Rule returns true)
+  - - queued    - Claimed by a worker and commitment promised (Derived from Commitment)
+  - - closed    - System considers this closable (Done Rule returns true)
+  - worker_status      - Worker Status set by Worker, can have 5 possible values
+  - - notstarted - Default Status
+  - - started    - Worker Marked as work started (Stored Flag, worker marks as started)
+  - - paused     - Worker Marked as work paused (Stored Flag, worker marks as paused)
+  - - blocked    - Worker Marked as complete (Stored Flag, worker marks as blocked)
+  - - completed  - Worker Marked as complete (Stored Flag, worker marks as completed)
+  - done               - State Calculated as Done (Derived from Rule - Evaluation of Doneness Rule)
+
+
+States
+  - worker_status      - Worker Status set by Worker, can have 5 possible values
+
+
+
+
 */
 
 
-// State Chart
+// States and Status
 /*
 
-|| State              | Committed | Ready | Started | Paused | Blocked | Completed | Done ||
-|| pending_commitment | N         | -     | -       | -      | -       | N         | N    ||
-|| committed_to       | Y         | -     | -       | -      | N       | N         | N    ||
-|| ready              | Y         | Y     | N       | N      | N       | N         | N    ||
-|| work_started       | Y         | -     | Y       | -      | -       | N         | N    ||
-|| work_paused        | Y         | -     | Y       | Y      | -       | N         | N    ||
-|| work_blocked       | Y         | -     | -       | -      | Y       | N         | N    ||
-|| work_completed     | -         | -     | -       | -      | -       | Y         | N    ||
-|| done               | -         | -     | -       | -      | -       | -         | Y    ||
+|| System State | Ready Rule | Commitment | Done Rule ||
+--------------------------------------------------------
+|| pending      | false      | false      | false     ||
+|| ready        | true       | false      | false     ||
+|| queued       | true       | true       | false     ||
+|| closed       | -          | -          | true      ||
+
+|| Task State      | System Status | Worker Status ||
+-----------------------------------------------------
+|| task_pending    | pending       | -             ||
+|| task_ready      | ready         | -             ||
+|| task_waiting    | queued        | notstarted    ||
+|| task_waiting    | queued        | paused        ||
+|| task_waiting    | queued        | complete      ||
+|| task_waiting    | queued        | blocked       ||
+|| task_progress   | queued        | started       ||
+|| task_done       | closed        | -             ||
+
+|| Work State      | System Status | Worker Status ||
+-----------------------------------------------------
+|| work_pending    | queued        | notstarted    ||
+|| work_started    | queued        | started       ||
+|| work_paused     | queued        | paused        ||
+|| work_blocked    | queued        | blocked       ||
+|| work_completed  | queued        | completed     ||
 
 */
