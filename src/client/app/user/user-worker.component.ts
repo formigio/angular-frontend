@@ -5,6 +5,8 @@ import { HelperService } from '../shared/index';
 import { User, UserService } from './index';
 
 declare let AWSCognito: any;
+declare let AWS: any;
+declare let apigClientFactory: any;
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
@@ -73,6 +75,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             {user:'User'}
         ),
         login_cognito_user_complete: new ProcessTask(
+          'swap_token',
+          'login_cognito_user_complete',
+          'Swap the Tokens',
+          'swapToken',
+          {id_token:'string'}
+        ),
+        swap_token_complete: new ProcessTask(
           'test_authenticated',
           'login_cognito_user_complete',
           'Check Authenticated Call',
@@ -340,8 +349,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     attributeList.push(attributeEmail);
 
     let obs = new Observable((observer:any) => {
-      user.password_hash = '';
-      user.uuid = Math.random().toString().split('.').pop();
 
       userPool.signUp(user.email, user.password, attributeList, null, (err:any, result:any) => {
           if (err) {
@@ -416,30 +423,103 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  public testAuthenticated(control_uuid: string, params: any): Observable<any> {
-    let user: User = params.user;
+  public swapToken(control_uuid: string, params: any): Observable<any> {
+
     let token: string = params.id_token;
+
+    AWS.config.region = 'us-east-1'; //This is required to derive the endpoint
+    AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
+
+    let url = 'cognito-idp.us-east-1.amazonaws.com/us-east-1_7RCFagOlU';
+    let logins:{} = {};
+    (<any>logins)[url] = token;
+    let loginparams = {
+      IdentityPoolId: 'us-east-1:cbdbe8a3-7cb5-43c2-84c7-f3a2187e23ee', /* required */
+      Logins: logins
+    };
+
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials(loginparams);
+    AWSCognito.config.credentials = new AWS.CognitoIdentityCredentials(loginparams);
+
     let obs = new Observable((observer:any) => {
-      let create = this.service.testAuth(token);
-      create.subscribe(
-        response => {
+
+      AWS.config.credentials.get((err:any) => {
+          if(err) {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'User Registration Failed. ('+err+')',
+              context:{params:{}}
+            });
+          }
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Authenticated Route Hit.',
-            context:{params:{}}
+            message:'Cognito User is Authenticated.',
+            context:{params:{
+              accessKey:AWS.config.credentials.accessKeyId,
+              secretKey:AWS.config.credentials.secretAccessKey,
+              sessionToken:AWS.config.credentials.sessionToken
+            }}
           });
-        },
-        error => {
-          observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'Authenticated Call Failed.' + error,
-            context:{params:{}}
-          });
-        },
-        () => observer.complete()
-      );
+          observer.complete();
+      });
+    });
+    return obs;
+  }
+
+  public testAuthenticated(control_uuid: string, params: any): Observable<any> {
+    let accessKey:string = params.accessKey;
+    let secretKey:string = params.secretKey;
+    let sessionToken:string = params.sessionToken;
+    let api = apigClientFactory.newClient({
+      accessKey: accessKey,
+      secretKey: secretKey,
+      sessionToken: sessionToken
+    });
+    let obs = new Observable((observer:any) => {
+
+      api.authenticatedGet().then((result:any) => {
+        console.log('200 Response from Gateway');
+        console.log(result);
+      //     observer.next({
+      //       control_uuid: control_uuid,
+      //       outcome: 'success',
+      //       message:'Authenticated Route Hit.',
+      //       context:{params:{}}
+      //     });
+      // observer.complete()
+      }).catch((result:any) => {
+        console.log('Error Response from Gateway');
+        console.log(result);
+      //     observer.error({
+      //       control_uuid: control_uuid,
+      //       outcome: 'error',
+      //       message:'Authenticated Call Failed.' + error,
+      //       context:{params:{}}
+      //     });
+
+      });
+      // let create = this.service.testAuth(token);
+      // create.subscribe(
+      //   response => {
+      //     observer.next({
+      //       control_uuid: control_uuid,
+      //       outcome: 'success',
+      //       message:'Authenticated Route Hit.',
+      //       context:{params:{}}
+      //     });
+      //   },
+      //   error => {
+      //     observer.error({
+      //       control_uuid: control_uuid,
+      //       outcome: 'error',
+      //       message:'Authenticated Call Failed.' + error,
+      //       context:{params:{}}
+      //     });
+      //   },
+      //   () => observer.complete()
+      // );
     });
     return obs;
   }
