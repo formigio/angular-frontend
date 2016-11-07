@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { apigClientFactory } from 'aws-api-gateway-client';
 import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
 import { HelperService } from '../shared/index';
 import { User, UserService } from './index';
 
 declare let AWSCognito: any;
 declare let AWS: any;
-declare let apigClientFactory: any;
+// declare let apigClientFactory: any;
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
