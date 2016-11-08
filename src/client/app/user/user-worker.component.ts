@@ -26,6 +26,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             new ProcessContext,
             ''
         ),
+        user_login_google: new ProcessRoutine(
+            'user_login_google',
+            'The Process Used to Control the Login with Google',
+            new ProcessContext,
+            ''
+        ),
         user_register: new ProcessRoutine(
             'user_register',
             'The Process Used to Control the Registration of New Users',
@@ -74,6 +80,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'loginCognitoUser',
             {user:'User'}
         ),
+        user_login_google_init: new ProcessTask(
+            'login_google_user',
+            'user_login_google_init',
+            'Login Google User',
+            'loginGoogleUser',
+            {token:'string'}
+        ),
         login_cognito_user_complete: new ProcessTask(
           'swap_token',
           'login_cognito_user_complete',
@@ -81,12 +94,27 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'swapToken',
           {id_token:'string'}
         ),
+        login_google_user_complete: new ProcessTask(
+          'test_authenticated',
+          'login_google_user_complete',
+          'Check Authenticated Call',
+          'testAuthenticated',
+          {
+            accessKey:'string',
+            secretKey:'string',
+            sessionToken:'string'
+          }
+        ),
         swap_token_complete: new ProcessTask(
           'test_authenticated',
           'login_cognito_user_complete',
           'Check Authenticated Call',
           'testAuthenticated',
-          {id_token:'string'}
+          {
+            accessKey:'string',
+            secretKey:'string',
+            sessionToken:'string'
+          }
         ),
         // user_register_init: new ProcessTask(
         //     'get_hash_for_register',
@@ -370,6 +398,48 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             console.log('user name is ' + cognitoUser.getUsername());
             observer.complete()
           }
+      });
+    });
+    return obs;
+  }
+
+  public loginGoogleUser(control_uuid: string, params: any): Observable<any> {
+    let token: string = params.token;
+
+    AWS.config.region = 'us-east-1'; //This is required to derive the endpoint
+
+    let url = 'accounts.google.com';
+    let logins:{} = {};
+    (<any>logins)[url] = token;
+    let loginparams = {
+      IdentityPoolId: 'us-east-1:cbdbe8a3-7cb5-43c2-84c7-f3a2187e23ee', /* required */
+      Logins: logins
+    };
+
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials(loginparams);
+
+    let obs = new Observable((observer:any) => {
+
+      AWS.config.credentials.get((err:any) => {
+          if(err) {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'User Registration Failed. ('+err+')',
+              context:{params:{}}
+            });
+          }
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Cognito User is Authenticated.',
+            context:{params:{
+              accessKey:AWS.config.credentials.accessKeyId,
+              secretKey:AWS.config.credentials.secretAccessKey,
+              sessionToken:AWS.config.credentials.sessionToken
+            }}
+          });
+          observer.complete();
       });
     });
     return obs;

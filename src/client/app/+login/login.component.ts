@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { MessageService } from '../core/index';
 import { User, UserService } from '../user/index';
+
+declare let gapi:any;
 
 /**
  * This class represents the lazy loaded LoginComponent.
@@ -12,7 +14,7 @@ import { User, UserService } from '../user/index';
   styleUrls: ['login.component.css'],
   providers: [ UserService ]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
 
   states: String[] = ['new','registered'];
   state: string = 'registered';
@@ -32,10 +34,27 @@ export class LoginComponent implements OnInit {
     public message:MessageService
   ) { }
 
+  ngAfterViewInit() {
+    console.log('ngAfterViewInit');
+    gapi.signin2.render(
+      'g-signin2',
+      {
+        "onSuccess": this.handleGoogleLogin,
+        "scope": "email"
+      });
+  }
+
   ngOnInit() {
+    console.log('ngOnInit');
     if(this.loggedin()) {
       this.user = JSON.parse(localStorage.getItem('user'));
     }
+  }
+
+  handleGoogleLogin = (loggedInUser:any) => {
+    console.log(loggedInUser);
+    //user_login_google
+    this.message.startProcess('user_login_google',{token:loggedInUser.getAuthResponse().id_token});
   }
 
   login() {
