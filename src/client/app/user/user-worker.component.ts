@@ -116,6 +116,15 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             sessionToken:'string'
           }
         ),
+        test_authenticated_complete: new ProcessTask(
+          'store_google_user',
+          'test_authenticated_complete',
+          'Store the Google User for the app',
+          'storeUser',
+          {
+            user:'User'
+          }
+        ),
         // user_register_init: new ProcessTask(
         //     'get_hash_for_register',
         //     'user_register_init',
@@ -396,7 +405,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
               context:{params:{user_created:cognitoUser.getUsername(),navigate_to:'/login',user:user}}
             });
             console.log('user name is ' + cognitoUser.getUsername());
-            observer.complete()
+            observer.complete();
           }
       });
     });
@@ -405,6 +414,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
   public loginGoogleUser(control_uuid: string, params: any): Observable<any> {
     let token: string = params.token;
+    let user: User = params.user;
 
     AWS.config.region = 'us-east-1'; //This is required to derive the endpoint
 
@@ -429,11 +439,17 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
               context:{params:{}}
             });
           }
+
+          (<any>user.credentials).accessKey = AWS.config.credentials.accessKeyId;
+          (<any>user.credentials).secretKey = AWS.config.credentials.secretAccessKey;
+          (<any>user.credentials).sessionToken = AWS.config.credentials.sessionToken;
+
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Cognito User is Authenticated.',
             context:{params:{
+              user:user,
               accessKey:AWS.config.credentials.accessKeyId,
               secretKey:AWS.config.credentials.secretAccessKey,
               sessionToken:AWS.config.credentials.sessionToken
@@ -496,6 +512,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   public swapToken(control_uuid: string, params: any): Observable<any> {
 
     let token: string = params.id_token;
+    let user: User = params.user;
 
     AWS.config.region = 'us-east-1'; //This is required to derive the endpoint
     AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
@@ -522,11 +539,15 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
               context:{params:{}}
             });
           }
+
+          user.credentials = AWS.config.credentials;
+
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Cognito User is Authenticated.',
+            message:'User Keys Obtained.',
             context:{params:{
+              user:user,
               accessKey:AWS.config.credentials.accessKeyId,
               secretKey:AWS.config.credentials.secretAccessKey,
               sessionToken:AWS.config.credentials.sessionToken
@@ -548,48 +569,26 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       sessionToken: sessionToken
     });
     let obs = new Observable((observer:any) => {
-
       api.authenticatedGet().then((result:any) => {
         console.log('200 Response from Gateway');
         console.log(result);
-      //     observer.next({
-      //       control_uuid: control_uuid,
-      //       outcome: 'success',
-      //       message:'Authenticated Route Hit.',
-      //       context:{params:{}}
-      //     });
-      // observer.complete()
+        observer.next({
+          control_uuid: control_uuid,
+          outcome: 'success',
+          message:'Authenticated Route Hit.',
+          context:{params:{}}
+        });
+        observer.complete();
       }).catch((result:any) => {
         console.log('Error Response from Gateway');
         console.log(result);
-      //     observer.error({
-      //       control_uuid: control_uuid,
-      //       outcome: 'error',
-      //       message:'Authenticated Call Failed.' + error,
-      //       context:{params:{}}
-      //     });
-
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Authenticated Call Failed.' + result,
+            context:{params:{}}
+          });
       });
-      // let create = this.service.testAuth(token);
-      // create.subscribe(
-      //   response => {
-      //     observer.next({
-      //       control_uuid: control_uuid,
-      //       outcome: 'success',
-      //       message:'Authenticated Route Hit.',
-      //       context:{params:{}}
-      //     });
-      //   },
-      //   error => {
-      //     observer.error({
-      //       control_uuid: control_uuid,
-      //       outcome: 'error',
-      //       message:'Authenticated Call Failed.' + error,
-      //       context:{params:{}}
-      //     });
-      //   },
-      //   () => observer.complete()
-      // );
     });
     return obs;
   }

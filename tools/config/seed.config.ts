@@ -431,6 +431,7 @@ export class SeedConfig {
     'browser-sync': {
       middleware: [require('connect-history-api-fallback')({ index: `${this.APP_BASE}index.html` })],
       port: this.PORT,
+      host: 'local.formigio.com',
       startPath: this.APP_BASE,
       open: argv['b'] ? false : true,
       injectChanges: false,

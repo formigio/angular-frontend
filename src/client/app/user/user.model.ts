@@ -4,5 +4,16 @@ export class User {
         public email: string,
         public password_hash: string,
         public password: string,
-        public confirm_code?: string) { }
+        public confirm_code?: string,
+        public identity_provider?: string,
+        public credentials?: UserCredentials
+    ) { }
+}
+
+export class UserCredentials {
+    constructor(
+        public accessKey?: string,
+        public secretKey?: string,
+        public sessionToken?: string
+    ) { }
 }

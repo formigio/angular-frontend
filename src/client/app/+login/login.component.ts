@@ -25,7 +25,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
     email: '',
     password_hash: '',
     password: '',
-    confirm_code: ''
+    identity_provider: '',
+    confirm_code: '',
+    credentials: {
+      accessKey:'',
+      secretKey:'',
+      sessionToken:''
+    }
   };
   errorMsg = '';
 
@@ -36,12 +42,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit');
-    gapi.signin2.render(
-      'g-signin2',
-      {
-        "onSuccess": this.handleGoogleLogin,
-        "scope": "email"
-      });
+    if(!localStorage.getItem('user')) {
+      gapi.signin2.render(
+        'g-signin2',
+        {
+          onSuccess: this.handleGoogleLogin,
+          scope: 'email'
+        }
+      );
+    }
   }
 
   ngOnInit() {
@@ -52,9 +61,23 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   handleGoogleLogin = (loggedInUser:any) => {
-    console.log(loggedInUser);
-    //user_login_google
-    this.message.startProcess('user_login_google',{token:loggedInUser.getAuthResponse().id_token});
+    let profile:any = loggedInUser.getBasicProfile();
+    this.message.startProcess('user_login_google',{
+      navigate_to:'/',
+      token:loggedInUser.getAuthResponse().id_token,
+      user: new User(
+        profile.getId(),
+        profile.getEmail(),
+        '','',
+        '',
+        'Google',
+        {
+          accessKey:'',
+          secretKey:'',
+          sessionToken:''
+        }
+      )
+    });
   }
 
   login() {

@@ -3,10 +3,13 @@ import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Team, TeamMembership } from './index';
+import { User } from '../user/index';
 import { MessageService } from '../core/index';
 import { Config, HelperService } from '../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+
+declare let apigClientFactory: any;
 
 /**
  * This class provides the NameList service with methods to read names and add names.
@@ -58,10 +61,21 @@ export class TeamService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(user:string): Observable<Team[]> {
-    return this.http.get(Config.API + '/teams?user=' + user)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+  list(user:User): Observable<Team[]> {
+    // return this.http.get(Config.API + '/teams?user=' + user)
+    //                 .map((res: Response) => res.json())
+    //                 .catch(this.handleError);
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.teamsGet()
+      .map((result:any) => result.json())
+      .catch((result:any) => {
+        console.log('Error Response from Gateway');
+        console.log(result);
+      });
   }
 
   /**

@@ -36,7 +36,7 @@ export function serveDocs() {
   );
 
   server.listen(DOCS_PORT, () =>
-    openResource('http://localhost:' + DOCS_PORT + APP_BASE)
+    openResource('http://local.formigio.com:' + DOCS_PORT + APP_BASE)
   );
 }
 
@@ -54,7 +54,7 @@ export function serveCoverage() {
   );
 
   server.listen(COVERAGE_PORT, () =>
-    openResource('http://localhost:' + COVERAGE_PORT + APP_BASE)
+    openResource('http://local.formigio.com:' + COVERAGE_PORT + APP_BASE)
   );
 }
 
@@ -72,6 +72,6 @@ export function serveProd() {
   server.use(fallback('index.html', { root }));
 
   server.listen(PORT, () =>
-    openResource('http://localhost:' + PORT + APP_BASE)
+    openResource('http://local.formigio.com:' + PORT + APP_BASE)
   );
 };

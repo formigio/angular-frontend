@@ -301,7 +301,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public fetchUserTeams(control_uuid: string, params: any): Observable<any> {
-    let user: string = params.user.uuid;
+    let user: User = params.user;
     let loadedTeams: Team[];
     let obs = new Observable((observer:any) => {
       this.service.list(user).subscribe(
