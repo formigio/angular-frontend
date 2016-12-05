@@ -370,8 +370,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
     AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
 
-    let poolData = { UserPoolId : 'us-east-1_7RCFagOlU',
-        ClientId : '78d58jq7eindb8ripbc3e4iuu8'
+    let poolData = {
+      UserPoolId : 'us-east-1_0UqEwkU0H',
+      ClientId : '3mj2tpe89ihqo412m9ckml6jk'
     };
     let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
 
@@ -422,7 +423,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     let logins:{} = {};
     (<any>logins)[url] = token;
     let loginparams = {
-      IdentityPoolId: 'us-east-1:cbdbe8a3-7cb5-43c2-84c7-f3a2187e23ee', /* required */
+      IdentityPoolId: 'us-east-1:38c1785e-4101-4eb4-b489-6fe8608406d0', /* required */
       Logins: logins
     };
 
@@ -473,8 +474,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
     AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
 
-    let poolData = { UserPoolId : 'us-east-1_7RCFagOlU',
-        ClientId : '78d58jq7eindb8ripbc3e4iuu8'
+    let poolData = {
+      UserPoolId : 'us-east-1_0UqEwkU0H',
+      ClientId : '3mj2tpe89ihqo412m9ckml6jk'
     };
     let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
 
@@ -517,11 +519,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     AWS.config.region = 'us-east-1'; //This is required to derive the endpoint
     AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
 
-    let url = 'cognito-idp.us-east-1.amazonaws.com/us-east-1_7RCFagOlU';
+    let url = 'cognito-idp.us-east-1.amazonaws.com/us-east-1_0UqEwkU0H';
     let logins:{} = {};
     (<any>logins)[url] = token;
     let loginparams = {
-      IdentityPoolId: 'us-east-1:cbdbe8a3-7cb5-43c2-84c7-f3a2187e23ee', /* required */
+      IdentityPoolId: 'us-east-1:38c1785e-4101-4eb4-b489-6fe8608406d0', /* required */
       Logins: logins
     };
 
@@ -599,8 +601,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
     AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
 
-    let poolData = { UserPoolId : 'us-east-1_7RCFagOlU',
-        ClientId : '78d58jq7eindb8ripbc3e4iuu8'
+    let poolData = {
+      UserPoolId : 'us-east-1_0UqEwkU0H',
+      ClientId : '3mj2tpe89ihqo412m9ckml6jk'
     };
     let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
 
