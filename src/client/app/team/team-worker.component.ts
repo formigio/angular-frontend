@@ -304,8 +304,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     let user: User = params.user;
     let loadedTeams: Team[];
     let obs = new Observable((observer:any) => {
-      this.service.list(user).subscribe(
-        teams => {
+      this.service.list(user).then((teams:Team[]) => {
           loadedTeams = teams;
           observer.next({
             control_uuid: control_uuid,
@@ -313,18 +312,14 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             message:'Teams loaded successfully.',
             context:{params:{teams_loaded:true}}
           });
-        },
-        error => observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'Teams load failed: ' + error,
-            context:{params:{}}
-        }),
-        () => {
           this.service.publishTeams(loadedTeams);
           observer.complete();
-        }
-      );
+        }).catch((error:any) => observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Teams load failed: ' + JSON.stringify(error),
+            context:{params:{error:error}}
+        }));
     });
     return obs;
   }

@@ -58,24 +58,16 @@ export class TeamService {
   }
 
   /**
-   * Returns an Observable for the HTTP GET request for the JSON resource.
-   * @return {string[]} The Observable for the HTTP request.
+   * Returns an Promise for the HTTP GET request for the JSON resource.
+   * @return {Team[]} The Promise for the HTTP request.
    */
-  list(user:User): Observable<Team[]> {
-    // return this.http.get(Config.API + '/teams?user=' + user)
-    //                 .map((res: Response) => res.json())
-    //                 .catch(this.handleError);
+  list(user:User): Promise<Team[]> {
     let api = apigClientFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.teamsGet()
-      .map((result:any) => result.json())
-      .catch((result:any) => {
-        console.log('Error Response from Gateway');
-        console.log(result);
-      });
+    return api.teamsGet();
   }
 
   /**
