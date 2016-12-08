@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit');
-    if(!localStorage.getItem('user')) {
+    if(!this.service.checkCredentials()) {
       gapi.signin2.render(
         'g-signin2',
         {
@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     console.log('ngOnInit');
     if(this.loggedin()) {
-      this.user = JSON.parse(localStorage.getItem('user'));
+      this.user = this.service.retrieveUser();
     }
   }
 
@@ -106,7 +106,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
   }
 
-  loggedin() {
+  loggedin(): boolean {
     return this.service.checkCredentials();
   }
 

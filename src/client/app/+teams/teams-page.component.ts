@@ -16,9 +16,9 @@ export class TeamsPageComponent implements OnInit {
 
   /**
    * Creates an instance of the TeamsPageComponent with the injected
-   * AuthenticationService.
+   * UserService.
    *
-   * @param {AuthenticationService} auth - The injected AuthenticationService.
+   * @param {UserService} auth - The injected UserService.
    */
   constructor(
     public auth: UserService

@@ -31,7 +31,7 @@ export class UserService {
 
     logout() {
         localStorage.removeItem('user');
-        this._router.navigate(['/login']);
+        this._router.navigate(['/']);
     }
 
     register(user:User) {
@@ -97,8 +97,25 @@ export class UserService {
                         .catch(this.handleError);
     }
 
-    checkCredentials() {
-        return localStorage.getItem('user') !== null;
+    retrieveUser(): User {
+        let user: User = JSON.parse(localStorage.getItem('user'));
+        return user;
+    }
+
+    storeUser(user:User) {
+        localStorage.setItem('user', JSON.stringify(user));
+        this.publishUser(user);
+    }
+
+    checkCredentials(): boolean {
+        let user = this.retrieveUser();
+        if(user == null) {
+            return false;
+        }
+        if(user.credentials.accessKey && user.credentials.secretKey) {
+            return true;
+        }
+        return false;
     }
 
     enforceAuthentication() {

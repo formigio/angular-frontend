@@ -21,8 +21,8 @@
           [class.navbar-collapse]="open===false">
           <ul class="nav navbar-nav">
             <li><a [routerLink]="['/teams']" (click)="close()" >Teams</a></li>
-            <li><a [routerLink]="['/login']" (click)="close()" *ngIf="!user">Login</a></li>
-            <li><a (click)="logout()" *ngIf="user">Logout</a></li>
+            <li><a [routerLink]="['/login']" (click)="close()" *ngIf="user==null">Login</a></li>
+            <li><a (click)="logout()" *ngIf="user">Logout ({{user.email}})</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->

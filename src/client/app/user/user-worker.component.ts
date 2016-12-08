@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
-import { HelperService } from '../shared/index';
+import { HelperService, Config } from '../shared/index';
 import { User, UserService } from './index';
 
 declare let AWSCognito: any;
@@ -95,14 +95,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           {id_token:'string'}
         ),
         login_google_user_complete: new ProcessTask(
-          'test_authenticated',
+          'store_user',
           'login_google_user_complete',
-          'Check Authenticated Call',
-          'testAuthenticated',
+          'Store Authenticated User',
+          'storeUser',
           {
-            accessKey:'string',
-            secretKey:'string',
-            sessionToken:'string'
+            user:'User'
           }
         ),
         swap_token_complete: new ProcessTask(
@@ -125,13 +123,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             user:'User'
           }
         ),
-        // user_register_init: new ProcessTask(
-        //     'get_hash_for_register',
-        //     'user_register_init',
-        //     'Login User',
-        //     'getHash',
-        //     {user:'User'}
-        // ),
         user_register_init: new ProcessTask(
             'create_cognito_user',
             'user_register_init',
@@ -368,11 +359,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
     let user: User = params.user;
 
-    AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
+    AWSCognito.config.region = Config.AWS_REGION; //This is required to derive the endpoint
 
     let poolData = {
-      UserPoolId : 'us-east-1_0UqEwkU0H',
-      ClientId : '3mj2tpe89ihqo412m9ckml6jk'
+      UserPoolId : Config.COGNITO_USERPOOL,
+      ClientId : Config.COGNITO_CLIENT_ID
     };
     let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
 
@@ -417,13 +408,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     let token: string = params.token;
     let user: User = params.user;
 
-    AWS.config.region = 'us-east-1'; //This is required to derive the endpoint
+    AWS.config.region = Config.AWS_REGION; //This is required to derive the endpoint
 
     let url = 'accounts.google.com';
     let logins:{} = {};
     (<any>logins)[url] = token;
     let loginparams = {
-      IdentityPoolId: 'us-east-1:38c1785e-4101-4eb4-b489-6fe8608406d0', /* required */
+      IdentityPoolId: Config.COGNITO_IDENTITYPOOL, /* required */
       Logins: logins
     };
 
@@ -441,19 +432,16 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             });
           }
 
-          (<any>user.credentials).accessKey = AWS.config.credentials.accessKeyId;
-          (<any>user.credentials).secretKey = AWS.config.credentials.secretAccessKey;
-          (<any>user.credentials).sessionToken = AWS.config.credentials.sessionToken;
+          user.credentials.accessKey = AWS.config.credentials.accessKeyId;
+          user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
+          user.credentials.sessionToken = AWS.config.credentials.sessionToken;
 
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Cognito User is Authenticated.',
+            message:'Google User is Authenticated.',
             context:{params:{
-              user:user,
-              accessKey:AWS.config.credentials.accessKeyId,
-              secretKey:AWS.config.credentials.secretAccessKey,
-              sessionToken:AWS.config.credentials.sessionToken
+              user:user
             }}
           });
           observer.complete();
@@ -472,11 +460,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     };
     var authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
 
-    AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
+    AWSCognito.config.region = Config.AWS_REGION; //This is required to derive the endpoint
 
     let poolData = {
-      UserPoolId : 'us-east-1_0UqEwkU0H',
-      ClientId : '3mj2tpe89ihqo412m9ckml6jk'
+      UserPoolId : Config.COGNITO_USERPOOL,
+      ClientId : Config.COGNITO_CLIENT_ID
     };
     let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
 
@@ -516,14 +504,14 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     let token: string = params.id_token;
     let user: User = params.user;
 
-    AWS.config.region = 'us-east-1'; //This is required to derive the endpoint
-    AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
+    AWS.config.region = Config.AWS_REGION; //This is required to derive the endpoint
+    AWSCognito.config.region = Config.AWS_REGION; //This is required to derive the endpoint
 
-    let url = 'cognito-idp.us-east-1.amazonaws.com/us-east-1_0UqEwkU0H';
+    let url = 'cognito-idp.us-east-1.amazonaws.com/' + Config.COGNITO_USERPOOL;
     let logins:{} = {};
     (<any>logins)[url] = token;
     let loginparams = {
-      IdentityPoolId: 'us-east-1:38c1785e-4101-4eb4-b489-6fe8608406d0', /* required */
+      IdentityPoolId: Config.COGNITO_IDENTITYPOOL, /* required */
       Logins: logins
     };
 
@@ -562,13 +550,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public testAuthenticated(control_uuid: string, params: any): Observable<any> {
-    let accessKey:string = params.accessKey;
-    let secretKey:string = params.secretKey;
-    let sessionToken:string = params.sessionToken;
+    let user: User;
     let api = apigClientFactory.newClient({
-      accessKey: accessKey,
-      secretKey: secretKey,
-      sessionToken: sessionToken
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
     });
     let obs = new Observable((observer:any) => {
       api.authenticatedGet().then((result:any) => {
@@ -599,11 +585,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
     let user: User = params.user;
 
-    AWSCognito.config.region = 'us-east-1'; //This is required to derive the endpoint
+    AWSCognito.config.region = Config.AWS_REGION; //This is required to derive the endpoint
 
     let poolData = {
-      UserPoolId : 'us-east-1_0UqEwkU0H',
-      ClientId : '3mj2tpe89ihqo412m9ckml6jk'
+      UserPoolId : Config.COGNITO_USERPOOL,
+      ClientId : Config.COGNITO_CLIENT_ID
     };
     let userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
 
@@ -640,8 +626,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   public storeUser(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      localStorage.setItem('user', JSON.stringify(user));
-      this.helper.setAppState('user',user);
+      this.service.storeUser(user);
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
@@ -655,7 +640,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
   public getUser(control_uuid: string, params: any): Observable<any> {
     let obs = new Observable((observer:any) => {
-      let user:User = JSON.parse(localStorage.getItem('user'));
+      let user:User = this.service.retrieveUser();
       if(!user.uuid) {
         observer.error({
           control_uuid: control_uuid,
@@ -678,15 +663,24 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
   public loadUserIntoApp(control_uuid: string, params: any): Observable<any> {
     let obs = new Observable((observer:any) => {
-      let user:User = JSON.parse(localStorage.getItem('user'));
-      this.service.publishUser(user);
-      observer.next({
-        control_uuid: control_uuid,
-        outcome: 'success',
-        message:'User Loaded',
-        context:{params:{user:user}}
-      });
-      observer.complete();
+      let user:User = this.service.retrieveUser();
+      if(!user.credentials.accessKey){
+        observer.error({
+          control_uuid: control_uuid,
+          outcome: 'error',
+          message:'Login Required',
+          context:{params:{}}
+        });
+      } else {
+        this.service.publishUser(user);
+        observer.next({
+          control_uuid: control_uuid,
+          outcome: 'success',
+          message:'User Loaded',
+          context:{params:{user:user}}
+        });
+        observer.complete();
+      }
     });
     return obs;
   }
