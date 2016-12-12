@@ -72,20 +72,13 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'createTeam',
             {team:'Team'}
         ),
-        create_team_complete: new ProcessTask(
-            'create_team_membership',
-            'create_team_complete',
-            'Create Team Membership',
-            'saveTeamMembership',
-            {team:'Team', user:'User'}
-        ),
-        save_team_complete: new ProcessTask(
-            'save_team_membership',
-            'save_team_complete',
-            'Save Team Membership',
-            'saveTeamMembership',
-            {team:'Team', user:'User'}
-        ),
+        // create_team_complete: new ProcessTask(
+        //     'create_team_membership',
+        //     'create_team_complete',
+        //     'Create Team Membership',
+        //     'saveTeamMembership',
+        //     {team:'Team', user:'User'}
+        // ),
         prepare_team_membership_complete: new ProcessTask(
             'save_team_member',
             'prepare_team_membership_complete',
@@ -200,25 +193,27 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
 
   public createTeam(control_uuid: string, params: any): Observable<any> {
     let team: Team = params.team;
+    let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      this.service.post(team).subscribe(
-        response => team.isNew = false,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while saving team.',
-          context:{params:{}}
-        }),
-        () => {
+      this.service.setUser(user);
+      this.service.post(team)
+        .then((response:any) => {
+          team.isNew = false;
           observer.next({
             control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Team Created successfully.',
-            context:{params:{team_created:team.uuid}}
+           outcome: 'success',
+           message:'Team Created successfully.',
+           context:{params:{team_created:team.uuid}}
           });
           observer.complete();
-        }
-      );
+        }).catch((response:any) => {
+          observer.error({
+           control_uuid: control_uuid,
+           outcome: 'error',
+           message:'Error has occured while saving team.',
+           context:{params:{}}
+          });
+        });
     });
     return obs;
   }
