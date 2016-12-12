@@ -12,6 +12,19 @@ export class UserService {
     errorMsg: string = '';
     successMsg: string = '';
     response: User;
+    user: User = new User(
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        {
+            accessKey:'',
+            secretKey:'',
+            sessionToken:''
+        }
+    )
 
     public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
@@ -99,6 +112,9 @@ export class UserService {
 
     retrieveUser(): User {
         let user: User = JSON.parse(localStorage.getItem('user'));
+        if(user==null) {
+            return this.user;
+        }
         return user;
     }
 

@@ -20,6 +20,7 @@ export class TeamViewComponent implements OnInit {
   team: Team = {
     uuid: '',
     title: '',
+    identity: '',
     isDeleted: false,
     isNew: true
   };

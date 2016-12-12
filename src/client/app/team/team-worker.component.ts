@@ -304,8 +304,8 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     let user: User = params.user;
     let loadedTeams: Team[];
     let obs = new Observable((observer:any) => {
-      this.service.list(user).then((teams:Team[]) => {
-          loadedTeams = teams;
+      this.service.list(user).then((response:any) => {
+          loadedTeams = response.data;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',

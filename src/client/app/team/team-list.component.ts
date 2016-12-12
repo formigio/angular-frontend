@@ -22,6 +22,7 @@ export class TeamListComponent implements OnInit {
   team: Team = {
     uuid: '',
     title: '',
+    identity: '',
     isDeleted: false,
     isNew: true
   };

@@ -5,6 +5,7 @@ export class Team {
   isNew: boolean = true;
   constructor(
     public uuid: string,
+    public identity: string,
     public title: string
   ) {}
 }

@@ -21,6 +21,7 @@ export class TeamService {
   public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
   team: Team;
+  user: User;
   teams: Team[];
 
   /**
@@ -51,6 +52,14 @@ export class TeamService {
     this.teams = teams;
     this.sort();
     this.listSubscription.next(this.teams);
+  }
+
+  setUser(user:User) {
+    this.user = user;
+  }
+
+  getUser(): User {
+    return this.user;
   }
 
   sort() {
@@ -86,12 +95,19 @@ export class TeamService {
    */
   post(team:Team): Observable<string[]> {
     team.title = this.htmlEntities(team.title);
+    let user = this.getUser();
     let body = JSON.stringify(team);
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    return this.http.post(Config.API + '/teams',body, options)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+    // let headers = new Headers({ 'Content-Type': 'application/json' });
+    // let options = new RequestOptions({ headers: headers });
+    // return this.http.post(Config.API + '/teams',body, options)
+    //                 .map((res: Response) => res.json())
+    //                 .catch(this.handleError);
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.teamsPost({},body);
   }
 
   /**
