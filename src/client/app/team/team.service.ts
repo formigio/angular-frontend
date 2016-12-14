@@ -80,6 +80,25 @@ export class TeamService {
   }
 
   /**
+   * Returns an Promise for the HTTP GET request for the JSON resource.
+   * @return {Team[]} The Promise for the HTTP request.
+   */
+  auth(user:User): Promise<Team[]> {
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    let params = {
+      'Content-Type': 'application/json',
+      'x-amz-security-token': '',
+      'x-amz-date': '',
+      'Authorization': ''
+    };
+    return api.authGet(params);
+  }
+
+  /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */

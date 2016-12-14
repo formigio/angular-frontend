@@ -101,6 +101,42 @@ apigClientFactory.newClient = function (config) {
     };
     
     
+    apigClient.authGet = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, ['Content-Type', 'x-amz-security-token', 'Authorization', 'x-amz-date'], ['body']);
+        
+        var authGetRequest = {
+            verb: 'get'.toUpperCase(),
+            path: pathComponent + uritemplate('/auth').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, ['Content-Type', 'x-amz-security-token', 'Authorization', 'x-amz-date']),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(authGetRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.authOptions = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
+        
+        var authOptionsRequest = {
+            verb: 'options'.toUpperCase(),
+            path: pathComponent + uritemplate('/auth').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(authOptionsRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
     apigClient.goalsGet = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         

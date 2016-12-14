@@ -79,20 +79,20 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
         //     'saveTeamMembership',
         //     {team:'Team', user:'User'}
         // ),
-        prepare_team_membership_complete: new ProcessTask(
-            'save_team_member',
-            'prepare_team_membership_complete',
-            'Save Team Member',
-            'saveTeamMembership',
-            {team:'Team', user:'User'}
-        ),
-        validate_user_as_teammember_complete: new ProcessTask(
-            'prepare_team_membership',
-            'validate_user_as_teammember_complete',
-            'Prepare Team Membership Data',
-            'prepareTeamMembership',
-            {team_uuid:'string', user_uuid:'string', user_email:'string'}
-        ),
+        // prepare_team_membership_complete: new ProcessTask(
+        //     'save_team_member',
+        //     'prepare_team_membership_complete',
+        //     'Save Team Member',
+        //     'saveTeamMembership',
+        //     {team:'Team', user:'User'}
+        // ),
+        // validate_user_as_teammember_complete: new ProcessTask(
+        //     'prepare_team_membership',
+        //     'validate_user_as_teammember_complete',
+        //     'Prepare Team Membership Data',
+        //     'prepareTeamMembership',
+        //     {team_uuid:'string', user_uuid:'string', user_email:'string'}
+        // ),
         team_view_init: new ProcessTask(
             'load_team',
             'team_view_init',
@@ -105,6 +105,13 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_fetch_teams_complete',
             'Fetch Teams',
             'fetchUserTeams',
+            {user:'User'}
+        ),
+        fetch_teams_error: new ProcessTask(
+            'handle_team_fetch_error',
+            'fetch_teams_error',
+            'Fetch Teams - Error Handler',
+            'handleFetchTeamsError',
             {user:'User'}
         )
     };
@@ -207,6 +214,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           });
           observer.complete();
         }).catch((response:any) => {
+          console.log(response);
           observer.error({
            control_uuid: control_uuid,
            outcome: 'error',
@@ -309,12 +317,49 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           });
           this.service.publishTeams(loadedTeams);
           observer.complete();
-        }).catch((error:any) => observer.error({
+        }).catch((error:any) => {
+          let message = 'Teams Load Failed.';
+          observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Teams load failed: ' + JSON.stringify(error),
-            context:{params:{error:error}}
-        }));
+            message: message,
+            context:{
+              params:{}
+            }
+        })});
+    });
+    return obs;
+  }
+
+  public handleFetchTeamsError(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.auth(user).then((response:any) => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Auth successful.',
+            context:{params:{}}
+          });
+          observer.complete();
+        }).catch((error:any) => {
+          let message = 'Auth Test Failed.';
+          let error_message = '';
+          if(error.status == 403) {
+            message = 'User Login Required';
+            this.message.startProcess('user_logout',{});
+          }
+          if(error.status == 0){
+            message = 'Network Error';
+          }
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message: message,
+            context:{
+              params:{}
+            }
+        })});
     });
     return obs;
   }
