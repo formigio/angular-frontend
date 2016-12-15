@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2016-12-14T20:10:44Z"
+  version: "2016-12-15T06:23:40Z"
   title: "formigio.alpha"
 host: "d4el2racxe.execute-api.us-east-1.amazonaws.com"
 basePath: "/mock"
@@ -23,7 +23,6 @@ paths:
             Access-Control-Allow-Headers:
               type: "string"
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -34,6 +33,7 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}\n"
         passthroughBehavior: "when_no_match"
+        type: "mock"
   /auth:
     get:
       produces:
@@ -66,7 +66,6 @@ paths:
             Access-Control-Allow-Origin:
               type: "string"
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           200:
             statusCode: "200"
@@ -74,7 +73,7 @@ paths:
             statusCode: "403"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-        uri: "https://d4el2racxe.execute-api.us-east-1.amazonaws.com/mock/teams"
+        uri: "https://d4el2racxe.execute-api.us-east-1.amazonaws.com/mock/auth/secure"
         requestParameters:
           integration.request.header.x-amz-security-token: "method.request.header.x-amz-security-token"
           integration.request.header.x-amz-date: "method.request.header.x-amz-date"
@@ -82,6 +81,7 @@ paths:
           integration.request.header.Content-Type: "method.request.header.Content-Type"
         passthroughBehavior: "when_no_match"
         httpMethod: "GET"
+        type: "http"
     options:
       consumes:
       - "application/json"
@@ -100,7 +100,6 @@ paths:
             Access-Control-Allow-Headers:
               type: "string"
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -111,48 +110,57 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
-    x-amazon-apigateway-any-method:
+        type: "mock"
+  /auth/secure:
+    get:
+      consumes:
+      - "application/json"
       produces:
       - "application/json"
-      parameters:
-      - name: "Content-Type"
-        in: "header"
-        required: false
-        type: "string"
-      - name: "x-amz-security-token"
-        in: "header"
-        required: false
-        type: "string"
-      - name: "Authorization"
-        in: "header"
-        required: false
-        type: "string"
-      - name: "x-amz-date"
-        in: "header"
-        required: false
-        type: "string"
       responses:
         200:
           description: "200 response"
           schema:
             $ref: "#/definitions/Empty"
-        403:
-          description: "403 response"
+      security:
+      - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
-          200:
+          default:
             statusCode: "200"
-          403:
-            statusCode: "403"
-        uri: "https://d4el2racxe.execute-api.us-east-1.amazonaws.com/mock/teams"
-        requestParameters:
-          integration.request.header.x-amz-security-token: "method.request.header.x-amz-security-token"
-          integration.request.header.x-amz-date: "method.request.header.x-amz-date"
-          integration.request.header.Authorization: "method.request.header.Authorization"
-          integration.request.header.Content-Type: "method.request.header.Content-Type"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
-        httpMethod: "GET"
+        type: "mock"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
   /goals:
     get:
       consumes:
@@ -172,7 +180,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -184,6 +191,7 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
+        type: "mock"
     post:
       consumes:
       - "application/json"
@@ -197,7 +205,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
@@ -207,6 +214,7 @@ paths:
         uri: "https://alpha.service.formigio.com/goal"
         passthroughBehavior: "when_no_templates"
         httpMethod: "POST"
+        type: "http"
     put:
       produces:
       - "application/json"
@@ -218,13 +226,13 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
         uri: "https://alpha.service.formigio.com/goal"
         passthroughBehavior: "when_no_templates"
         httpMethod: "PUT"
+        type: "http"
     delete:
       produces:
       - "application/json"
@@ -241,7 +249,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
@@ -253,6 +260,7 @@ paths:
           integration.request.querystring.goal: "method.request.querystring.goal"
         passthroughBehavior: "when_no_match"
         httpMethod: "GET"
+        type: "http"
     options:
       consumes:
       - "application/json"
@@ -271,7 +279,6 @@ paths:
             Access-Control-Allow-Headers:
               type: "string"
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -282,6 +289,7 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
+        type: "mock"
   /invites:
     get:
       produces:
@@ -299,7 +307,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
@@ -312,6 +319,7 @@ paths:
           integration.request.querystring.goal: "method.request.querystring.goal"
         passthroughBehavior: "when_no_match"
         httpMethod: "GET"
+        type: "http"
     post:
       produces:
       - "application/json"
@@ -323,13 +331,13 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
         uri: "https://alpha.service.formigio.com/invite"
         passthroughBehavior: "when_no_templates"
         httpMethod: "POST"
+        type: "http"
     delete:
       produces:
       - "application/json"
@@ -346,7 +354,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
@@ -358,6 +365,7 @@ paths:
           integration.request.querystring.invite: "method.request.querystring.invite"
         passthroughBehavior: "when_no_match"
         httpMethod: "DELETE"
+        type: "http"
     options:
       consumes:
       - "application/json"
@@ -376,7 +384,6 @@ paths:
             Access-Control-Allow-Headers:
               type: "string"
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -387,6 +394,7 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
+        type: "mock"
   /tasks:
     get:
       produces:
@@ -408,7 +416,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
@@ -423,6 +430,7 @@ paths:
           integration.request.querystring.goal: "method.request.querystring.goal"
         passthroughBehavior: "when_no_match"
         httpMethod: "GET"
+        type: "http"
     post:
       produces:
       - "application/json"
@@ -434,13 +442,13 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
         uri: "https://alpha.service.formigio.com/task"
         passthroughBehavior: "when_no_templates"
         httpMethod: "POST"
+        type: "http"
     delete:
       produces:
       - "application/json"
@@ -457,7 +465,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "http"
         responses:
           default:
             statusCode: "200"
@@ -469,6 +476,7 @@ paths:
           integration.request.header.X-Identity-Id: "context.identity.cognitoIdentityId"
         passthroughBehavior: "when_no_match"
         httpMethod: "GET"
+        type: "http"
     options:
       consumes:
       - "application/json"
@@ -487,7 +495,6 @@ paths:
             Access-Control-Allow-Headers:
               type: "string"
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -498,6 +505,7 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
+        type: "mock"
   /teams:
     get:
       consumes:
@@ -515,7 +523,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -527,6 +534,7 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
+        type: "mock"
     post:
       consumes:
       - "application/json"
@@ -543,7 +551,6 @@ paths:
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -555,6 +562,7 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
+        type: "mock"
     options:
       consumes:
       - "application/json"
@@ -573,7 +581,6 @@ paths:
             Access-Control-Allow-Headers:
               type: "string"
       x-amazon-apigateway-integration:
-        type: "mock"
         responses:
           default:
             statusCode: "200"
@@ -584,6 +591,7 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
+        type: "mock"
 securityDefinitions:
   sigv4:
     type: "apiKey"
