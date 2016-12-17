@@ -124,7 +124,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             message:'An error has occured fetching the tasks.'
           });
         }
-      )
+      );
     });
 
     return obs;

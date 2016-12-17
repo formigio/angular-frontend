@@ -241,6 +241,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Get User in Process Context',
             'getUser',
             {}
+        ),
+        invite_fetch_init: new ProcessTask(
+            'get_user_for_invite_fetch',
+            'invite_fetch_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
         )
     };
 

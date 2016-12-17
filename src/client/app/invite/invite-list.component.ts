@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
-import { HelperService } from '../core/index';
-
+import { MessageService, HelperService } from '../core/index';
 import { Invite, InviteService } from './index';
 
 /**
@@ -17,9 +15,7 @@ import { Invite, InviteService } from './index';
 
 export class InviteListComponent implements OnInit {
 
-  errorMessage: string = '';
   invites: Invite[] = [];
-  currentResponse: string;
   invite: Invite = {
     email: '',
     uuid: '',
@@ -29,16 +25,15 @@ export class InviteListComponent implements OnInit {
 
   goal: string;
 
-  private sub: Subscription;
-
   /**
    *
    * @param
    */
   constructor(
-      protected service: InviteService,
-      protected route: ActivatedRoute,
-      protected helper: HelperService
+    protected message: MessageService,
+    protected helper: HelperService,
+    protected service: InviteService,
+    protected route: ActivatedRoute
   ) {
     this.service = this.helper.getServiceInstance(this.service,'InviteService');
   }
@@ -47,21 +42,19 @@ export class InviteListComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      if(this.goal = params['goal_uuid']) {
-        this.service.getListSubscription()
-                .subscribe(
-                  invites => {
-                    this.invites = <Invite[]>invites;
-                  }
-                );
-        this.fetchInvites();
+    this.service.getListSubscription().subscribe(
+      invites => {
+        this.invites = <Invite[]>invites;
       }
-     });
+    );
+    this.route.params.subscribe(params => {
+      this.goal = params['goal_uuid'];
+      this.refreshInvites();
+    });
   }
 
-  fetchInvites() {
-    this.service.refreshInvites(this.goal);
+  refreshInvites() {
+    this.message.startProcess('invite_fetch',{goal:this.goal});
   }
 
   /**

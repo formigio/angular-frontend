@@ -2,9 +2,12 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable, ReplaySubject } from 'rxjs/Rx';
 import { Config } from '../shared/index';
+import { User } from '../user/index';
 import { Invite } from './index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+
+declare let apigClientFactory: any;
 
 /**
  * This class provides the NameList service with methods to read names and add names.
@@ -12,7 +15,10 @@ import 'rxjs/add/operator/catch';
 @Injectable()
 export class InviteService {
 
+  public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
   public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
+
+  user: User;
 
   private invites: Invite[] = [];
 
@@ -28,14 +34,8 @@ export class InviteService {
     return this.listSubscription;
   }
 
-  refreshInvites(guid:string) {
-    this.list(guid).subscribe(
-      invites => this.invites = invites,
-      error => console.log(error),
-      () => {
-        this.listSubscription.next(this.invites);
-      }
-    );
+  publishInvites(invites:Invite[]) {
+    this.listSubscription.next(invites);
   }
 
   addInvite(invite:Invite) {
@@ -47,6 +47,14 @@ export class InviteService {
         this.listSubscription.next(this.invites);
       }
     );
+  }
+
+  setUser(user:User) {
+    this.user = user;
+  }
+
+  getUser(): User {
+    return this.user;
   }
 
   /**
@@ -73,10 +81,14 @@ export class InviteService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(guid:string): Observable<Invite[]> {
-    return this.http.get(Config.API + '/goals/' + guid + '/invites')
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+  list(goal:string): Promise<any> {
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.invitesGet({goal:goal});
   }
 
   /**

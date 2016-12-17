@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { User } from '../user/index';
 import { Invite, InviteService } from './index';
 
 /**
@@ -18,6 +19,12 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         invite_delete: new ProcessRoutine(
             'invite_delete',
             'The Process Used to Control the Deletion of Invites',
+            new ProcessContext,
+            ''
+        ),
+        invite_fetch: new ProcessRoutine(
+            'invite_fetch',
+            'The Process Used to Control the Fetch of Invites',
             new ProcessContext,
             ''
         )
@@ -44,6 +51,20 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'Remove Invites for a specific goal',
             'removeInvites',
             {goal:'string', invite_count:'string'}
+        ),
+        get_user_for_invite_fetch_complete: new ProcessTask(
+            'gather_invites_for_invite_fetch',
+            'get_user_for_invite_fetch_complete',
+            'Fetch Invites for a specific goal',
+            'gatherInvites',
+            {goal:'string',user:'User'}
+        ),
+        gather_invites_for_invite_fetch_complete: new ProcessTask(
+            'publish_invites',
+            'gather_invites_for_invite_fetch_complete',
+            'Publish Invites for a specific goal',
+            'publishInvites',
+            {invites:'array'}
         )
     };
 
@@ -81,26 +102,45 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
 
   public gatherInvites(control_uuid: string, params: any): Observable<any> {
     let goal: string = params.goal;
+    let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      this.service.list(goal).subscribe(
-        invites => {
-          invites = <Invite[]>invites;
+      this.service.setUser(user);
+      this.service.list(goal).then(
+        response => {
+          let invites = <Invite[]>response.data;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Invites fetched successfully.',
             context:{params:{invites:invites,invite_count:invites.length}}
           });
-        },
+          observer.complete();
+        }
+      ).catch(
         error => {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
             message:'An error has occured fetching the invites.'
           });
-        },
-        () => observer.complete()
+        }
       );
+    });
+
+    return obs;
+  }
+
+  public publishInvites(control_uuid: string, params: any): Observable<any> {
+    let invites: Invite[] = params.invites;
+    let obs = new Observable((observer:any) => {
+      this.service.publishInvites(invites);
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message: 'Invites Published.',
+        context:{params:{}}
+      });
+      observer.complete();
     });
 
     return obs;
