@@ -1,8 +1,8 @@
-<div class="row" *ngIf="member.user_email">
+<div class="row" *ngIf="member.identity">
     <div class="col-xs-12">
         <button class="btn btn-xs btn-default" type="button">
             <span class="glyphicon glyphicon-user"></span>
         </button>
-        <span [innerHTML]="member.user_email"></span>
+        <span [innerHTML]="member.identity"></span>
     </div>
 </div>

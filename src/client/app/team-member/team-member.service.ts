@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { MessageService, HelperService } from '../core/index';
+import { Config } from '../shared/index';
+import { User } from '../user/index';
 import { TeamMember } from './index';
-import { MessageService } from '../core/index';
-import { Config, HelperService } from '../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+
+declare let apigClientFactory: any;
 
 /**
  * This class provides the NameList service with methods to read names and add names.
@@ -19,6 +22,7 @@ export class TeamMemberService {
 
   teammember: TeamMember;
   teammembers: TeamMember[];
+  user: User;
 
   /**
    * Creates a new NameListService with the injected Http.
@@ -55,14 +59,27 @@ export class TeamMemberService {
     this.helper.sortBy(this.teammembers,'user_email');
   }
 
+  setUser(user:User) {
+    this.user = user;
+  }
+
+  getUser(): User {
+    return this.user;
+  }
+
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(team_uuid:string): Observable<TeamMember[]> {
-    return this.http.get(Config.API + '/teams/membership?team=' + team_uuid)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+  list(team_uuid:string): Promise<any> {
+    let user: User = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+
+    return api.teamMembersGet();
   }
 
   /**
@@ -70,7 +87,7 @@ export class TeamMemberService {
    * @return {string[]} The Observable for the HTTP request.
    */
   get(teammember:TeamMember): Observable<TeamMember> {
-    let url = '/teams/membership/?team=' + teammember.team_uuid + '&user=' + teammember.user_uuid;
+    let url = '/teams/membership/?team=' + teammember.uuid + '&user=' + teammember.identity;
     return this.http.get(Config.API + url)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
@@ -94,7 +111,7 @@ export class TeamMemberService {
    * @return {string[]} The Observable for the HTTP request.
    */
   delete(teammember:TeamMember): Observable<string[]> {
-    let url = '/teams/membership/?team=' + teammember.team_uuid + '&user=' + teammember.user_uuid;
+    let url = '/teams/membership/?team=' + teammember.uuid + '&user=' + teammember.identity;
     return this.http.delete(Config.API + url)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);

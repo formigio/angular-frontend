@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Config, HelperService } from '../shared/index';
+import { HelperService } from '../core/index';
+import { Config } from '../shared/index';
+import { User } from '../user/index';
 import { Task } from './index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+
+declare let apigClientFactory: any;
 
 /**
  * This class provides the NameList service with methods to read names and add names.
@@ -13,7 +17,10 @@ import 'rxjs/add/operator/catch';
 @Injectable()
 export class TaskService {
 
-  public taskListReplay: ReplaySubject<any> = new ReplaySubject(1);
+  public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
+  public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
+
+  user: User;
 
   private tasks: Task[] = [];
 
@@ -24,19 +31,20 @@ export class TaskService {
    */
   constructor(private http: Http, private helper: HelperService) {}
 
-  getListReplay(): ReplaySubject<any> {
-    return this.taskListReplay;
+  getListSubscription(): ReplaySubject<any> {
+    return this.listSubscription;
   }
 
-  refreshTasks(guid:string) {
-    this.list(guid).subscribe(
-      tasks => this.tasks = tasks,
-      error => console.log(error),
-      () => {
-        this.sortTasks();
-        this.taskListReplay.next(this.tasks);
-      }
+  refreshTasks(goal:string) {
+    this.list(goal).then(
+      response => this.tasks = response.data
+    ).catch(
+      error => console.log(error)
     );
+  }
+
+  publishTasks(tasks:Task[]) {
+    this.listSubscription.next(tasks);
   }
 
   addTask(task:Task) {
@@ -46,13 +54,21 @@ export class TaskService {
       () => {
         this.tasks.push(task);
         this.sortTasks();
-        this.taskListReplay.next(this.tasks);
+        this.listSubscription.next(this.tasks);
       }
     );
   }
 
   sortTasks() {
     this.helper.sortBy(this.tasks,'title');
+  }
+
+  setUser(user:User) {
+    this.user = user;
+  }
+
+  getUser(): User {
+    return this.user;
   }
 
   /**
@@ -69,10 +85,14 @@ export class TaskService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(guid:string): Observable<Task[]> {
-    return this.http.get(Config.API + '/goals/' + guid + '/tasks')
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+  list(goal:string): Promise<any> {
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.tasksGet({goal:goal});
   }
 
   /**

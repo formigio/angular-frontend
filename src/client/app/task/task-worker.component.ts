@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
-import { HelperService } from '../shared/index';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { User } from '../user/index';
 import { Task, TaskService } from './index';
 
 /**
@@ -19,6 +19,12 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         task_delete: new ProcessRoutine(
             'task_delete',
             'The Process Used to Control the Deletion of Tasks',
+            new ProcessContext,
+            ''
+        ),
+        load_task_list: new ProcessRoutine(
+            'load_task_list',
+            'The Process Used to Control the Loading of Tasks',
             new ProcessContext,
             ''
         )
@@ -45,6 +51,20 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'Remove Tasks for a specific goal',
             'removeTasks',
             {goal:'string', task_count:'string'}
+        ),
+        get_user_for_load_task_list_complete: new ProcessTask(
+            'load_tasks',
+            'get_user_for_load_task_list_complete',
+            'Fetch Tasks for a specific goal',
+            'gatherTasks',
+            {goal:'string',user:'User'}
+        ),
+        load_tasks_complete: new ProcessTask(
+            'publish_tasks',
+            'load_tasks_complete',
+            'Publish Tasks for a specific goal',
+            'publishTasks',
+            {tasks:'array'}
         )
     };
 
@@ -82,26 +102,45 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
 
   public gatherTasks(control_uuid: string, params: any): Observable<any> {
     let goal: string = params.goal;
+    let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      this.service.list(goal).subscribe(
-        tasks => {
-          tasks = <Task[]>tasks;
+      this.service.setUser(user);
+      this.service.list(goal).then(
+        response => {
+          let tasks = <Task[]>response.data;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Tasks fetched successfully.',
+            message:tasks.length + ' Tasks fetched.',
             context:{params:{tasks:tasks,task_count:tasks.length}}
           });
-        },
+          observer.complete();
+        }
+      ).catch(
         error => {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
             message:'An error has occured fetching the tasks.'
           });
-        },
-        () => observer.complete()
-      );
+        }
+      )
+    });
+
+    return obs;
+  }
+
+  public publishTasks(control_uuid: string, params: any): Observable<any> {
+    let tasks: Task[] = params.tasks;
+    let obs = new Observable((observer:any) => {
+      this.service.publishTasks(tasks);
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message: ' Tasks Published.',
+        context:{params:{}}
+      });
+      observer.complete();
     });
 
     return obs;

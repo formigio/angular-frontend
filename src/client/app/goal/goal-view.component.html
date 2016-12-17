@@ -1,13 +1,13 @@
 <div class="row">
   <div class="col-xs-12 text-center" *ngIf="goal">
-      <button *ngIf="editable===true" type="button" (click)="accomplishGoal(goal)" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
+      <!--<button *ngIf="editable===true" type="button" (click)="accomplishGoal(goal)" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
           <span *ngIf="goal.accomplished==='true'">Complete</span>
           <span *ngIf="goal.accomplished!=='true'">In Progress</span>
       </button>
       <button *ngIf="editable===false" type="button" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
           <span *ngIf="goal.accomplished==='true'">Complete</span>
           <span *ngIf="goal.accomplished!=='true'">In Progress</span>
-      </button>
+      </button>-->
       <button *ngIf="editable===true" type="button" (click)="deleteGoal(goal)" class="btn btn-xs btn-danger pull-right">
           <span>Delete</span>
       </button>
@@ -16,7 +16,7 @@
       <button *ngIf="editable===true" type="button" name="back" class="btn btn-xs btn-default" (click)="navigateToTeam()">
           <span>&lt; Back to Team</span>
       </button>
-      <small>Goal ID: {{goal.guid}}</small>
-      <h2><span [innerHtml]="goal.goal"></span> </h2>
+      <small>Goal ID: {{goal.uuid}}</small>
+      <h2><span [innerHtml]="goal.title"></span> </h2>
   </div>
 </div>

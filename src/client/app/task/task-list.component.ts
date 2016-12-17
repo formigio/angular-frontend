@@ -1,10 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-
+import { MessageService, HelperService } from '../core/index';
 import { TaskService, Task } from './index';
-
-import { HelperService } from '../shared/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -36,16 +34,15 @@ export class TaskListComponent implements OnInit {
 
   goal: string;
 
-  private sub: Subscription;
-
   /**
    *
    * @param
    */
   constructor(
-      protected helper: HelperService,
-      protected service: TaskService,
-      protected route: ActivatedRoute
+    protected message: MessageService,
+    protected helper: HelperService,
+    protected service: TaskService,
+    protected route: ActivatedRoute
   ) {
     this.service = this.helper.getServiceInstance(this.service,'TaskService');
   }
@@ -54,21 +51,19 @@ export class TaskListComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      if(this.goal = params['goal_uuid']) {
-        this.service.getListReplay()
-                .subscribe(
-                  tasks => {
-                    this.tasks = <Task[]>tasks;
-                  }
-                );
-        this.fetchTasks();
+    this.service.getListSubscription().subscribe(
+      tasks => {
+        this.tasks = <Task[]>tasks;
       }
-     });
+    );
+    this.route.params.subscribe(params => {
+      this.goal = params['goal_uuid'];
+      this.refreshTasks();
+    });
   }
 
-  fetchTasks() {
-    this.service.refreshTasks(this.goal);
+  refreshTasks() {
+    this.message.startProcess('load_task_list',{goal:this.goal});
   }
 
   /**

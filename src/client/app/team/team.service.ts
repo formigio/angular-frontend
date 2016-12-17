@@ -4,8 +4,8 @@ import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Team, TeamMembership } from './index';
 import { User } from '../user/index';
-import { MessageService } from '../core/index';
-import { Config, HelperService } from '../shared/index';
+import { MessageService, HelperService } from '../core/index';
+import { Config } from '../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -43,8 +43,8 @@ export class TeamService {
   }
 
   publishTeam(uuid:string) {
-    this.get(uuid).subscribe(
-      team => this.itemSubscription.next(team)
+    this.get(uuid).then(
+      response => this.itemSubscription.next(response.data)
     );
   }
 
@@ -102,10 +102,14 @@ export class TeamService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  get(uuid:string): Observable<Team> {
-    return this.http.get(Config.API + '/teams/' + uuid)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+  get(uuid:string): Promise<any> {
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.teamsUuidGet({uuid:uuid});
   }
 
   /**

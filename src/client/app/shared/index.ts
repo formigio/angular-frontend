@@ -3,5 +3,4 @@
  */
 
 export * from './config/env.config';
-export * from './util/helper.service';
 export * from './routing/route-worker.component';

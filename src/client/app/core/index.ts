@@ -4,5 +4,6 @@
 
 export * from './hormone/process.model';
 export * from './message/message.service';
+export * from './util/helper.service';
 export * from './hormone/process.component';
 export * from './message/message.component';

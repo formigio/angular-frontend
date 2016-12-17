@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-import { HelperService } from '../shared/index';
+import { HelperService } from '../core/index';
 
 import { Invite, InviteService } from './index';
 

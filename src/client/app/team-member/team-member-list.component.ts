@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TeamMemberService, TeamMember, TeamMemberItemComponent } from './index';
-import { MessageService } from '../core/index';
-import { HelperService } from '../shared/index';
+import { MessageService, HelperService } from '../core/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -20,9 +19,9 @@ export class TeamMemberListComponent implements OnInit {
   members: TeamMember[] = [];
 
   member: TeamMember = {
-    team_uuid: '',
-    user_uuid: '',
-    user_email: ''
+    uuid: '',
+    identity: '',
+    title: ''
   };
 
   team: string; // Team UUID from URL
@@ -66,10 +65,10 @@ export class TeamMemberListComponent implements OnInit {
    */
   addTeamMember(): boolean {
     let newMember: TeamMember = JSON.parse(JSON.stringify(this.member));
-    newMember.team_uuid = this.team;
+    newMember.uuid = this.team;
     this.members.push(newMember);
     this.helper.sortBy(this.members,'user_email');
-    this.message.startProcess('teammember_add',{team_uuid:this.team,user_email:newMember.user_email});
+    this.message.startProcess('teammember_add',{team_uuid:this.team,user_email:newMember.title});
     return false;
   }
 

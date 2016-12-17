@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MessageService, HelperService } from '../core/index';
 import { TeamService, Team } from './index';
-import { HelperService } from '../shared/index';
-import { MessageService } from '../core/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.

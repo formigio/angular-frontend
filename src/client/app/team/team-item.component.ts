@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TeamService, Team } from './index';
-import { MessageService } from '../core/index';
-import { HelperService } from '../shared/index';
+import { MessageService, HelperService } from '../core/index';
 
 /**
  * This class represents the lazy loaded HomeComponent.

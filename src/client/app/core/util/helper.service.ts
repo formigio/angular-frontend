@@ -10,10 +10,16 @@ export class AppState {
 @Injectable()
 export class HelperService {
 
+    instance: string;
+
     public runtimestorage: AppState = {
         state: {},
         services: {}
     };
+
+    constructor() {
+        this.instance = Math.random().toString().split('.').pop();
+    }
 
     sortBy(arr:any[],property:string) {
         arr.sort((a,b) => {

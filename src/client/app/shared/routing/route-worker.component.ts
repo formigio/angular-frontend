@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessTask, WorkerComponent } from '../../core/index';
-import { HelperService } from '../index';
+import { MessageService, HelperService, ProcessRoutine, ProcessTask, WorkerComponent } from '../../core/index';
 
 /**
  * This class represents the lazy loaded RouteWorkerComponent.
@@ -57,6 +56,13 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           'navigate',
           'store_google_user_complete',
           'Navigate after Google Login',
+          'navigateTo',
+          {navigate_to:'string'}
+      ),
+      test_user_auth_error: new ProcessTask(
+          'navigate',
+          'test_user_auth_error',
+          'Navigate after Auth Test Fails',
           'navigateTo',
           {navigate_to:'string'}
       )

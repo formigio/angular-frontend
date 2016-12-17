@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
-import { HelperService, Config } from '../shared/index';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { Config } from '../shared/index';
 import { User, UserService } from './index';
 
 declare let AWSCognito: any;
@@ -66,6 +66,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'loadUserIntoApp',
             {}
         ),
+        // load_user_for_app_complete: new ProcessTask(
+        //     'test_user_auth',
+        //     'load_user_for_app_complete',
+        //     'Test User Auth',
+        //     'testUserAuth',
+        //     {user:'User'}
+        // ),
         // user_login_init: new ProcessTask(
         //     'get_hash_for_login',
         //     'user_login_init',
@@ -179,6 +186,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'getUser',
             {}
         ),
+        team_view_init: new ProcessTask(
+            'get_user_for_view_team',
+            'team_view_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
         team_fetch_user_teams_init: new ProcessTask(
             'get_user_for_fetch_teams',
             'team_fetch_user_teams_init',
@@ -192,6 +206,41 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Put User in Process Context',
             'validateUser',
             {user_email:'string'}
+        ),
+        goal_view_init: new ProcessTask(
+            'get_user_for_view_goal',
+            'goal_view_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
+        load_goal_list_init: new ProcessTask(
+            'get_user_for_load_goals',
+            'load_goal_list_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
+        teammember_fetch_team_members_init: new ProcessTask(
+            'get_user_for_load_teammembers',
+            'teammember_fetch_team_members_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
+        create_goal_init: new ProcessTask(
+            'get_user_for_create_goal',
+            'create_goal_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
+        load_task_list_init: new ProcessTask(
+            'get_user_for_load_task_list',
+            'load_task_list_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
         )
     };
 
@@ -208,22 +257,22 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
    */
   ngOnInit() {
       // Subscribe to Process Queue
+      if(Object.keys(this.routines).length > 0) {
+        this.message.getProcessQueue().subscribe(
+          message => {
+            console.log('Process: ' + message.routine);
+            // Process Inits
+            message.initProcess(this);
+          }
+        );
+      }
       // Process Tasks based on messages received
       if(Object.keys(this.tasks).length > 0) {
         this.message.getWorkerQueue().subscribe(
           message => {
-            console.log(message.signal);
+            console.log('Task: ' + message.signal);
             // Process Signals
             message.processSignal(this);
-          }
-        );
-      }
-      if(Object.keys(this.routines).length > 0) {
-        this.message.getProcessQueue().subscribe(
-          message => {
-            console.log(message.routine);
-            // Process Inits
-            message.initProcess(this);
           }
         );
       }
@@ -664,7 +713,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   public loadUserIntoApp(control_uuid: string, params: any): Observable<any> {
     let obs = new Observable((observer:any) => {
       let user:User = this.service.retrieveUser();
-      if(!user.credentials.accessKey){
+      if(!user.credentials.accessKey) {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
@@ -700,5 +749,40 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     });
     return obs;
   }
-}
 
+  public testUserAuth(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.auth(user).then((response:any) => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Auth successful.',
+            context:{params:{}}
+          });
+          observer.complete();
+        }).catch((error:any) => {
+          let message = 'Auth Test Failed.';
+          if(error.status === 403) {
+            message = 'User Login Required';
+            this.message.startProcess('user_logout',{});
+          }
+          if(error.status === 0) {
+            message = 'Network Error';
+          }
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message: message,
+            context:{
+              params:{
+                navigate_to: '/login'
+              }
+            }
+        });
+      });
+    });
+    return obs;
+  }
+
+}

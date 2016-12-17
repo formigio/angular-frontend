@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
-import { HelperService } from '../shared/index';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
 import { TeamMember, TeamMemberService } from './index';
+import { User } from '../user/index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
@@ -44,12 +44,12 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
             'deleteTeamMember',
             {teammember:'TeamMember'}
         ),
-        teammember_fetch_team_members_init: new ProcessTask(
+        get_user_for_load_teammembers_complete: new ProcessTask(
             'fetch_team_members',
             'teammember_fetch_init',
             'Fetch Team Members',
             'fetchTeamMembers',
-            {team:'Team'}
+            {team:'Team',user:'User'}
         )
     };
 
@@ -101,7 +101,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Team Member removed successfully.',
-            context:{params:{teammember_deleted:teammember.user_email}}
+            context:{params:{teammember_deleted:teammember.identity}}
           });
           observer.complete();
         }
@@ -113,7 +113,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
   public addTeamMember(control_uuid: string, params: any): Observable<any> {
     let teammember: TeamMember = params.teammember;
     let user_uuid: string = params.user_uuid;
-    teammember.user_uuid = user_uuid;
+    teammember.identity = user_uuid;
     let obs = new Observable((observer:any) => {
       this.service.post(teammember).subscribe(
         null,
@@ -128,7 +128,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Team Member added successfully.',
-            context:{params:{teammember_added:teammember.user_email}}
+            context:{params:{teammember_added:teammember.identity}}
           });
           observer.complete();
         }
@@ -139,28 +139,29 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
 
   public fetchTeamMembers(control_uuid: string, params: any): Observable<any> {
     let team: string = params.team;
+    let user: User = params.user;
     let loadedMembers: TeamMember[];
     let obs = new Observable((observer:any) => {
-      this.service.list(team).subscribe(
-        members => {
-          loadedMembers = members;
+      this.service.setUser(user);
+      this.service.list(team).then(
+        response => {
+          loadedMembers = response.data;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Members loaded successfully.',
             context:{params:{team_members_loaded:true}}
           });
-        },
+          this.service.publishTeamMembers(loadedMembers);
+          observer.complete();
+        }
+      ).catch(
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
             message:'Teams load failed: ' + error,
             context:{params:{}}
-        }),
-        () => {
-          this.service.publishTeamMembers(loadedMembers);
-          observer.complete();
-        }
+        })
       );
     });
     return obs;

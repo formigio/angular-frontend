@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { HelperService } from '../core/index';
+import { Config } from '../shared/index';
+import { User } from '../user/index';
 import { Goal } from './index';
-import { Config, HelperService } from '../shared/index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+
+declare let apigClientFactory: any;
 
 /**
  * This class provides the NameList service with methods to read names and add names.
@@ -16,15 +20,19 @@ export class GoalService {
   public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
   public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
+  user: User;
   goal: Goal;
   goals: Goal[];
+  instance: string;
 
   /**
    * Creates a new NameListService with the injected Http.
    * @param {Http} http - The injected Http.
    * @constructor
    */
-  constructor(private http: Http, private helper: HelperService) {}
+  constructor(private http: Http, private helper: HelperService) {
+    this.instance = Math.random().toString().split('.').pop();
+  }
 
 
   getItemSubscription(): ReplaySubject<any> {
@@ -36,62 +44,75 @@ export class GoalService {
   }
 
   publishGoal(uuid:string) {
-    this.get(uuid).subscribe(
-      goal => this.itemSubscription.next(goal)
+    this.get(uuid).then(
+      response => this.itemSubscription.next(response.data)
     );
   }
 
   publishGoals(team:string = '') {
-    this.list(team).subscribe(
-      goals => this.goals = goals,
-      error => console.log(error),
-      () => {
+    this.list(team).then(
+      response => {
+        this.goals = response.data;
         this.sort();
         this.listSubscription.next(this.goals);
       }
-    );
+    ).catch(error => console.log(error));
+  }
+
+  setUser(user:User) {
+    this.user = user;
+  }
+
+  getUser(): User {
+    return this.user;
   }
 
   sort() {
-    this.helper.sortBy(this.goals,'goal');
+    this.helper.sortBy(this.goals,'title');
+  }
+
+  /**
+   * Returns an Promise for the HTTP GET request for the JSON resource.
+   * @return {Goal[]} The Promise for the HTTP request.
+   */
+  list(team:string = ''): Promise<any> {
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.goalsGet({team:team});
   }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(team:string = ''): Observable<Goal[]> {
-    let url = '/goals';
-    if(team) {
-      url = url + '?team=' + team;
-    }
-    return this.http.get(Config.API + url)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
-  }
-
-  /**
-   * Returns an Observable for the HTTP GET request for the JSON resource.
-   * @return {string[]} The Observable for the HTTP request.
-   */
-  get(guid:string): Observable<Goal> {
-    return this.http.get(Config.API + '/goals/' + guid)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+  get(uuid:string): Promise<any> {
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.goalsUuidGet({uuid:uuid});
   }
 
   /**
    * Returns an Observable for the HTTP POST request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  post(goal:Goal): Observable<{}> {
-    goal.goal = this.htmlEntities(goal.goal);
+  post(goal:Goal): Promise<any> {
+    goal.title = this.htmlEntities(goal.title);
     let body = JSON.stringify(goal);
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    return this.http.post(Config.API + '/goals',body, options)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.goalsPost({},body);
   }
 
   /**
@@ -112,7 +133,7 @@ export class GoalService {
     let body = JSON.stringify(goal);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    return this.http.put(Config.API + '/goals/' + goal.guid, body, options)
+    return this.http.put(Config.API + '/goals/' + goal.uuid, body, options)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }

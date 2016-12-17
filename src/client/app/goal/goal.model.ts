@@ -1,8 +1,7 @@
 export class Goal {
   constructor(
-    public accomplished: string,
-    public guid: string,
-    public goal: string,
+    public uuid: string,
+    public title: string,
     public team: string
   ) {}
 }

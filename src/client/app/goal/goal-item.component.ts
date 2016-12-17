@@ -38,17 +38,17 @@ export class GoalItemComponent {
     this.putGoal(this.goal);
   }
 
-  /**
-   * Returns whether or not a goal is accomplished.
-   * @return {boolean}
-   */
-  isAccomplished(goal: Goal): boolean {
-    let acc = false;
-    if(goal.accomplished==='true') {
-      acc = true;
-    }
-    return acc;
-  }
+  // /**
+  //  * Returns whether or not a goal is accomplished.
+  //  * @return {boolean}
+  //  */
+  // isAccomplished(goal: Goal): boolean {
+  //   let acc = false;
+  //   if(goal.accomplished==='true') {
+  //     acc = true;
+  //   }
+  //   return acc;
+  // }
 
   /**
    * Puts the Goal Object to the Goal List Service
@@ -69,7 +69,7 @@ export class GoalItemComponent {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   accomplishGoal(goal:Goal): boolean {
-    goal.accomplished = 'true';
+    // goal.accomplished = 'true';
     this.service.put(goal)
       .subscribe(
         error => this.errorMessage = <any>error
@@ -78,7 +78,7 @@ export class GoalItemComponent {
   }
 
   navigateTo(goal:Goal) {
-    this.router.navigate(['/goal/',goal.guid]);
+    this.router.navigate(['/goal/',goal.uuid]);
   }
 
 }

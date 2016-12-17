@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GoalService, Goal } from './index';
-import { MessageService } from '../core/index';
-import { HelperService } from '../shared/index';
+import { MessageService, HelperService } from '../core/index';
 
 /**
  * This class represents the lazy loaded GoalViewComponent.
@@ -20,9 +19,8 @@ export class GoalViewComponent implements OnInit {
   errorMessage: string;
   currentResponse: {};
   goal: Goal = {
-    guid: '',
-    goal: '',
-    accomplished: 'false',
+    uuid: '',
+    title: '',
     team: ''
   };
 
@@ -60,7 +58,7 @@ export class GoalViewComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteGoal(goal:Goal): boolean {
-    this.message.startProcess('goal_delete',{goal:goal.guid});
+    this.message.startProcess('goal_delete',{goal:goal.uuid});
     return false;
   }
 
@@ -69,7 +67,7 @@ export class GoalViewComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   accomplishGoal(goal:Goal): boolean {
-    goal.accomplished = 'true';
+    // goal.accomplished = 'true';
     this.service.put(goal)
       .subscribe(
         response => this.currentResponse,

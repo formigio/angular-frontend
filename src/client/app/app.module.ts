@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { routing, appRoutingProviders } from './app.routes';
 
 import { CoreModule } from './core/core.module';
+import { MessageService, HelperService } from './core/index';
 import { HomeModule } from './+home/home.module';
 import { TeamModule } from './team/team.module';
 import { TeamMemberModule } from './team-member/team-member.module';
@@ -16,10 +17,8 @@ import { TeamPagesModule } from './+teams/team-pages.module';
 import { GoalPagesModule } from './+goals/goal-pages.module';
 import { LoginModule } from './+login/login.module';
 import { UserModule } from './user/user.module';
-import { HelperService } from './shared/index';
 import { SharedModule } from './shared/shared.module';
 import { NavModule } from './nav/nav.module';
-import { MessageService } from './core/index';
 
 
 @NgModule({

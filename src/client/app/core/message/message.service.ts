@@ -19,10 +19,16 @@ export class MessageService {
 
 // Add Notices, messages that must be dismissed. Notices stack.
 
+    instance: string;
+
     public flashMessage: ReplaySubject<any> = new ReplaySubject(1);
     public processMessage: ReplaySubject<any> = new ReplaySubject(1);
     public workerQueue: ReplaySubject<any> = new ReplaySubject(1);
     public processQueue: ReplaySubject<any> = new ReplaySubject(1);
+
+    constructor() {
+        this.instance = Math.random().toString().split('.').pop();
+    }
 
     public setFlash(message:string, alert:string = 'info') {
         let flashMessage = new Message(true,message,alert);

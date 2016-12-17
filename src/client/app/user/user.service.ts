@@ -6,6 +6,8 @@ import { MessageService } from '../core/index';
 import { Config } from '../shared/index';
 import { User } from './index';
 
+declare let apigClientFactory: any;
+
 @Injectable()
 export class UserService {
 
@@ -24,7 +26,7 @@ export class UserService {
             secretKey:'',
             sessionToken:''
         }
-    )
+    );
 
     public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
@@ -60,6 +62,26 @@ export class UserService {
                         error => this.errorMsg,
                         () => this._router.navigate(['/login'])); }
                     );
+    }
+
+
+    /**
+     * Returns an Promise for the HTTP GET request for the JSON resource.
+     * @return {any} The Promise for the HTTP request.
+     */
+    auth(user:User): Promise<any> {
+        let api = apigClientFactory.newClient({
+            accessKey: user.credentials.accessKey,
+            secretKey: user.credentials.secretKey,
+            sessionToken: user.credentials.sessionToken
+        });
+        let params = {
+            'Content-Type': 'application/json',
+            'x-amz-security-token': '',
+            'x-amz-date': '',
+            'Authorization': ''
+        };
+        return api.authGet(params);
     }
 
     authenticateUser(user:User) {
@@ -112,7 +134,7 @@ export class UserService {
 
     retrieveUser(): User {
         let user: User = JSON.parse(localStorage.getItem('user'));
-        if(user==null) {
+        if(user === null) {
             return this.user;
         }
         return user;
@@ -125,7 +147,7 @@ export class UserService {
 
     checkCredentials(): boolean {
         let user = this.retrieveUser();
-        if(user == null) {
+        if(user === null) {
             return false;
         }
         if(user.credentials.accessKey && user.credentials.secretKey) {

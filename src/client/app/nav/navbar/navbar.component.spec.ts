@@ -6,8 +6,7 @@ import {
 import { By } from '@angular/platform-browser';
 
 import { NavbarComponent } from './navbar.component';
-import { MessageService } from '../../core/index';
-import { HelperService } from '../../shared/index';
+import { MessageService, HelperService } from '../../core/index';
 import { UserService } from '../../user/index';
 
 import { RouterLinkStubDirective } from '../../../testing/router/router-stubs';

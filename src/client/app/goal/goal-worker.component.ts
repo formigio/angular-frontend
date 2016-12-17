@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
-import { HelperService } from '../shared/index';
-import { GoalService } from './index';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { User } from '../user/index';
+import { Goal, GoalService } from './index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
@@ -27,6 +27,18 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'The Process Used to Control the Viewing of Goals',
           new ProcessContext,
           ''
+      ),
+      load_goal_list: new ProcessRoutine(
+          'load_goal_list',
+          'The Process Used to Control the Viewing of Goals',
+          new ProcessContext,
+          ''
+      ),
+      create_goal: new ProcessRoutine(
+          'create_goal',
+          'The Process Used to Control the Creating of Goals',
+          new ProcessContext,
+          ''
       )
   };
 
@@ -38,12 +50,26 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'removeGoal',
           {goal:'string', invite_count:'string', task_count:'string'}
       ),
-      goal_view_init: new ProcessTask(
+      get_user_for_view_goal_complete: new ProcessTask(
           'load_goal',
-          'goal_view_init',
+          'get_user_for_view_goal_complete',
           'Load Goal',
           'loadGoal',
-          {goal_uuid:'string'}
+          {goal_uuid:'string',user:'User'}
+      ),
+      get_user_for_load_goals_complete: new ProcessTask(
+          'load_team_goals',
+          'get_user_for_load_goals_complete',
+          'Load Goals',
+          'loadGoals',
+          {team:'string',user:'User'}
+      ),
+      get_user_for_create_goal_complete: new ProcessTask(
+          'create_goal_task',
+          'get_user_for_create_goal_complete',
+          'Create Goal',
+          'createGoal',
+          {goal:'Goal',user:'User'}
       )
   };
 
@@ -116,7 +142,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
 
   public loadGoal(control_uuid: string, params: any): Observable<any> {
     let uuid: string = params.goal_uuid;
+    let user: User = params.user;
     let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
       this.service.publishGoal(uuid);
       observer.next({
             control_uuid: control_uuid,
@@ -128,4 +156,49 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     });
     return obs;
   }
+
+  public loadGoals(control_uuid: string, params: any): Observable<any> {
+    let team: string = params.team;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.publishGoals(team);
+      observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Goal loaded successfully.',
+            context:{params:{}}
+      });
+      observer.complete();
+    });
+    return obs;
+  }
+
+  public createGoal(control_uuid: string, params: any): Observable<any> {
+    let goal: Goal = params.goal;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.post(goal).then(
+        response => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Goal Saved Successfully.',
+            context:{params:{goal:response.data}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => observer.next({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Goal Save Failed.',
+            context:{params:{}}
+        })
+      );
+    });
+    return obs;
+  }
+
 }

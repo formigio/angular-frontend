@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
-import { HelperService } from '../shared/index';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
 import { Team, TeamMembership, TeamService } from './index';
 import { User } from '../user/index';
 
@@ -93,12 +92,12 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
         //     'prepareTeamMembership',
         //     {team_uuid:'string', user_uuid:'string', user_email:'string'}
         // ),
-        team_view_init: new ProcessTask(
+        get_user_for_view_team_complete: new ProcessTask(
             'load_team',
             'team_view_init',
             'Load Team',
             'loadTeam',
-            {uuid:'string'}
+            {uuid:'string', user:'User'}
         ),
         get_user_for_fetch_teams_complete: new ProcessTask(
             'fetch_teams',
@@ -259,38 +258,40 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public prepareTeamMembership(control_uuid: string, params: any): Observable<any> {
-    let team_uuid: string = params.team_uuid;
-    let user_uuid: string = params.user_uuid;
-    let user_email: string = params.user_email;
-    let userDoc: User = JSON.parse(JSON.stringify({uuid:user_uuid,email:user_email}));
-    let teamDoc: Team;
+    // let team_uuid: string = params.team_uuid;
+    // let user_uuid: string = params.user_uuid;
+    // let user_email: string = params.user_email;
+    // let userDoc: User = JSON.parse(JSON.stringify({uuid:user_uuid,email:user_email}));
+    // let teamDoc: Team;
 
     let obs = new Observable((observer:any) => {
-      this.service.get(team_uuid).subscribe(
-        team => teamDoc = team,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while preparing team membership.',
-          context:{params:{}}
-        }),
-        () => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Team Membership Prepared.',
-            context:{params:{user: userDoc, team: teamDoc}}
-          });
-          observer.complete();
-        }
-      );
+      // this.service.get(team_uuid).subscribe(
+      //   team => teamDoc = team,
+      //   error => observer.error({
+      //     control_uuid: control_uuid,
+      //     outcome: 'error',
+      //     message:'Error has occured while preparing team membership.',
+      //     context:{params:{}}
+      //   }),
+      //   () => {
+      //     observer.next({
+      //       control_uuid: control_uuid,
+      //       outcome: 'success',
+      //       message:'Team Membership Prepared.',
+      //       context:{params:{user: userDoc, team: teamDoc}}
+      //     });
+      //     observer.complete();
+      //   }
+      // );
     });
     return obs;
   }
 
   public loadTeam(control_uuid: string, params: any): Observable<any> {
     let uuid: string = params.uuid;
+    let user: User = params.user;
     let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
       this.service.publishTeam(uuid);
       observer.next({
             control_uuid: control_uuid,
@@ -326,7 +327,8 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             context:{
               params:{}
             }
-        })});
+        });
+      });
     });
     return obs;
   }
@@ -344,12 +346,11 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.complete();
         }).catch((error:any) => {
           let message = 'Auth Test Failed.';
-          let error_message = '';
-          if(error.status == 403) {
+          if(error.status === 403) {
             message = 'User Login Required';
             this.message.startProcess('user_logout',{});
           }
-          if(error.status == 0){
+          if(error.status === 0) {
             message = 'Network Error';
           }
           observer.error({
@@ -359,7 +360,8 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             context:{
               params:{}
             }
-        })});
+        });
+      });
     });
     return obs;
   }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MessageService } from '../core/index';
-import { HelperService } from '../shared/index';
+import { MessageService, HelperService } from '../core/index';
 import { GoalService, Goal, GoalItemComponent } from './index';
 
 /**
@@ -12,7 +11,7 @@ import { GoalService, Goal, GoalItemComponent } from './index';
   selector: 'goal-list',
   directives: [ GoalItemComponent ],
   templateUrl: 'goal-list.component.html',
-  providers: [ GoalService, HelperService ]
+  providers: [ GoalService ]
 })
 
 export class GoalListComponent implements OnInit {
@@ -45,16 +44,18 @@ export class GoalListComponent implements OnInit {
    */
   ngOnInit() {
     this.service.getListSubscription().subscribe(
-      goals => this.goals = <Goal[]>goals
+      goals => {
+        this.goals = <Goal[]>goals;
+      }
     );
     this.route.params.subscribe(params => {
       this.team = params['uuid'];
-      this.service.publishGoals(this.team);
+      this.refreshGoals();
     });
   }
 
   refreshGoals() {
-    this.service.publishGoals(this.team);
+    this.message.startProcess('load_goal_list',{team:this.team});
   }
 
   /**
@@ -62,22 +63,16 @@ export class GoalListComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addGoal(): boolean {
-    let guid = Math.random().toString().split('.').pop();
+    let uuid = Math.random().toString().split('.').pop();
     let newGoal: Goal = {
-      goal:this.newGoal,
-      accomplished:this.newAccomplished,
-      guid:guid,
+      title:this.newGoal,
+      uuid:uuid,
       team:this.team
     };
-    this.service.post(newGoal).subscribe(
-        response => this.successObject = <any>response,
-        error => this.errorMessage = <any>error,
-        () => this.router.navigate(['/goal/' + guid])
-      );
+    this.message.startProcess('create_goal',{goal:newGoal,navigate_to:'/goal/' + uuid});
     this.goals.push(newGoal);
-    this.helper.sortBy(this.goals,'goal');
+    this.helper.sortBy(this.goals,'title');
     this.newGoal = '';
-    this.newAccomplished = 'false';
     return false;
   }
 

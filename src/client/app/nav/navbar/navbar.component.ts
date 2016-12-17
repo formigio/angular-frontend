@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService } from '../../core/index';
-import { HelperService } from '../../shared/index';
+import { MessageService, HelperService } from '../../core/index';
 import { User, UserService } from '../../user/index';
 
 /**
