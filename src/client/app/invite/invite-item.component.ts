@@ -26,11 +26,21 @@ export class InviteItemComponent {
   ) {}
 
   /**
+   * Get the names OnInit
+   */
+  ngOnInit() {
+    console.log('Invite Item Init:' + this.invite.uuid);
+    if(!this.invite.uuid) {
+      this.message.startProcess('invite_create',{invite:this.invite});
+    }
+  }
+
+  /**
    * Deletes an invite
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteInvite(invite:Invite): boolean {
-    invite.deleted = true;
+    invite.changed = true;
     this.message.startProcess('invite_delete',{invite:invite});
     return false;
   }

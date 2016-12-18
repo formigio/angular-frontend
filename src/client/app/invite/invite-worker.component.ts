@@ -27,6 +27,12 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'The Process Used to Control the Fetch of Invites',
             new ProcessContext,
             ''
+        ),
+        invite_create: new ProcessRoutine(
+          'invite_create',
+          'The Process Used to Control the Creation of Invites',
+          new ProcessContext,
+          ''
         )
     };
 
@@ -65,6 +71,13 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'Publish Invites for a specific goal',
             'publishInvites',
             {invites:'array'}
+        ),
+        get_user_for_invite_create_complete: new ProcessTask(
+            'create_invite',
+            'get_user_for_invite_create_complete',
+            'Create Invite',
+            'createInvite',
+            {invite:'Invite',user:'User'}
         )
     };
 
@@ -129,6 +142,38 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
 
     return obs;
   }
+
+  public createInvite(control_uuid: string, params: any): Observable<any> {
+    let invite: Invite = params.invite;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.post(invite).then(
+        response => {
+          let invite = <Invite>response.data;
+          this.service.addInvite(invite);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Invite Created.',
+            context:{params:{invite:invite}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured saving the invite.'
+          });
+        }
+      );
+    });
+
+    return obs;
+  }
+
 
   public publishInvites(control_uuid: string, params: any): Observable<any> {
     let invites: Invite[] = params.invites;

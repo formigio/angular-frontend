@@ -248,6 +248,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Get User in Process Context',
             'getUser',
             {}
+        ),
+        invite_create_init: new ProcessTask(
+            'get_user_for_invite_create',
+            'invite_create_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
         )
     };
 

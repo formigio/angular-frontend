@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2016-12-17T20:13:29Z"
+  version: "2016-12-17T23:54:17Z"
   title: "formigio.alpha"
 host: "d4el2racxe.execute-api.us-east-1.amazonaws.com"
 basePath: "/mock"
@@ -402,6 +402,8 @@ paths:
         passthroughBehavior: "when_no_match"
         type: "mock"
     post:
+      consumes:
+      - "application/json"
       produces:
       - "application/json"
       responses:
@@ -409,16 +411,24 @@ paths:
           description: "200 response"
           schema:
             $ref: "#/definitions/Invite"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
         responses:
           default:
             statusCode: "200"
-        uri: "https://alpha.service.formigio.com/invite"
-        passthroughBehavior: "when_no_templates"
-        httpMethod: "POST"
-        type: "http"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"goal\"\
+                \ : \"foo\",\n  \"uuid\" : \"foo\",\n  \"email\" : \"foo\"\n}"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
     delete:
       produces:
       - "application/json"

@@ -35,18 +35,14 @@ export class InviteService {
   }
 
   publishInvites(invites:Invite[]) {
+    this.invites = invites;
     this.listSubscription.next(invites);
   }
 
   addInvite(invite:Invite) {
-    this.post(invite).subscribe(
-      null,
-      error => console.log(error),
-      () => {
-        this.invites.push(invite);
-        this.listSubscription.next(this.invites);
-      }
-    );
+    this.invites.push(invite);
+    console.log(this.invites.length + ' invites');
+    this.publishInvites(this.invites);
   }
 
   setUser(user:User) {
@@ -95,14 +91,16 @@ export class InviteService {
    * Returns an Observable for the HTTP POST request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  post(invite:Invite): Observable<string[]> {
+  post(invite:Invite): Promise<any> {
     invite.email = this.htmlEntities(invite.email);
     let body = JSON.stringify(invite);
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    return this.http.post(Config.API + '/goals/' + invite.goal + '/invites',body, options)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.invitesPost({},body);
   }
 
   /**

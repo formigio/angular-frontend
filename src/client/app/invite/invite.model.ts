@@ -1,5 +1,5 @@
 export class Invite {
-  public deleted:boolean =  false;
+  public changed:boolean =  false;
   constructor(
     public uuid: string,
     public email: string,

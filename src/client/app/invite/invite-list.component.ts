@@ -20,7 +20,7 @@ export class InviteListComponent implements OnInit {
     email: '',
     uuid: '',
     goal: '',
-    deleted: false
+    changed: false
   };
 
   goal: string;
@@ -44,7 +44,14 @@ export class InviteListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription().subscribe(
       invites => {
-        this.invites = <Invite[]>invites;
+        let newinvites:Invite[] = [];
+        let allinvites:Invite[] = invites;
+        allinvites.forEach((invite) => {
+          if(invite.uuid) {
+            newinvites.push(invite);
+          }
+        });
+        this.invites = newinvites;
       }
     );
     this.route.params.subscribe(params => {
@@ -62,15 +69,15 @@ export class InviteListComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addInvite(): boolean {
-    let uuid = Math.random().toString().split('.').pop();
+    // let uuid = Math.random().toString().split('.').pop();
     this.invite.goal = this.goal;
     let newInvite:Invite = {
-      uuid: uuid,
+      uuid: '',
       email: this.invite.email,
       goal: this.goal,
-      deleted: false
+      changed: true
     };
-    this.service.addInvite(newInvite);
+    this.invites.push(newInvite);
     this.invite.email = '';
     return false;
   }
