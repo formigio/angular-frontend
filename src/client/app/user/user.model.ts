@@ -14,6 +14,7 @@ export class UserCredentials {
     constructor(
         public accessKey?: string,
         public secretKey?: string,
-        public sessionToken?: string
+        public sessionToken?: string,
+        public expireTime?: string
     ) { }
 }

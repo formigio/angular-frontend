@@ -511,14 +511,17 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'User Registration Failed. ('+err+')',
+              message:'Google Login Failed. ('+err+')',
               context:{params:{}}
             });
           }
 
+          console.log(AWS.config.credentials);
+
           user.credentials.accessKey = AWS.config.credentials.accessKeyId;
           user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
           user.credentials.sessionToken = AWS.config.credentials.sessionToken;
+          user.credentials.expireTime = AWS.config.credentials.expireTime;
 
           observer.next({
             control_uuid: control_uuid,
@@ -725,6 +728,10 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   public getUser(control_uuid: string, params: any): Observable<any> {
     let obs = new Observable((observer:any) => {
       let user:User = this.service.retrieveUser();
+
+      // Check Expired for Expired Tokens
+
+
       if(!user.uuid) {
         observer.error({
           control_uuid: control_uuid,

@@ -30,7 +30,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
     credentials: {
       accessKey:'',
       secretKey:'',
-      sessionToken:''
+      sessionToken:'',
+      expireTime: ''
     }
   };
   errorMsg = '';
@@ -74,7 +75,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
         {
           accessKey:'',
           secretKey:'',
-          sessionToken:''
+          sessionToken:'',
+          expireTime: ''
         }
       )
     });
