@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers, RequestOptions} from '@angular/http';
+import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HelperService } from '../core/index';
@@ -49,14 +49,14 @@ export class GoalService {
     );
   }
 
-  publishGoals(team:string = '') {
-    this.list(team).then(
-      response => {
-        this.goals = response.data;
-        this.sort();
-        this.listSubscription.next(this.goals);
-      }
-    ).catch(error => console.log(error));
+  publishGoals(goals:Goal[]) {
+    this.goals = goals;
+    this.listSubscription.next(goals);
+  }
+
+  addGoal(goal:Goal) {
+    this.goals.push(goal);
+    this.publishGoals(this.goals);
   }
 
   setUser(user:User) {

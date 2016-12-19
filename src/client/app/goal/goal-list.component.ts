@@ -21,6 +21,12 @@ export class GoalListComponent implements OnInit {
   newAccomplished: string = 'false';
   errorMessage: string;
   goals: Goal[] = [];
+  goal: Goal = {
+    uuid: '',
+    title: '',
+    team: '',
+    changed: false
+  };
   team: string = '';
 
   /**
@@ -46,6 +52,14 @@ export class GoalListComponent implements OnInit {
     this.service.getListSubscription().subscribe(
       goals => {
         this.goals = <Goal[]>goals;
+        let newgoals:Goal[] = [];
+        let allgoals:Goal[] = this.goals;
+        allgoals.forEach((goal) => {
+          if(goal.uuid) {
+            newgoals.push(goal);
+          }
+        });
+        this.goals = newgoals;
       }
     );
     this.route.params.subscribe(params => {
@@ -63,16 +77,13 @@ export class GoalListComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addGoal(): boolean {
-    let uuid = Math.random().toString().split('.').pop();
-    let newGoal: Goal = {
-      title:this.newGoal,
-      uuid:uuid,
-      team:this.team
-    };
-    this.message.startProcess('create_goal',{goal:newGoal,navigate_to:'/goal/' + uuid});
+    // let uuid = Math.random().toString().split('.').pop();
+    this.goal.uuid = '';
+    this.goal.changed = true;
+    let newGoal: Goal = JSON.parse(JSON.stringify(this.goal));
     this.goals.push(newGoal);
     this.helper.sortBy(this.goals,'title');
-    this.newGoal = '';
+    this.goal.title = '';
     return false;
   }
 

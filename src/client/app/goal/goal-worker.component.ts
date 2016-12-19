@@ -175,14 +175,26 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.publishGoals(team);
-      observer.next({
+      this.service.list(team).then(
+        response => {
+          let goals = <Goal[]>response.data;
+          this.service.publishGoals(goals);
+          observer.next({
+                control_uuid: control_uuid,
+                outcome: 'success',
+                message:'Goal loaded successfully.',
+                context:{params:{}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => observer.error({
             control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Goal loaded successfully.',
+            outcome: 'error',
+            message:'Goals Load Failed.',
             context:{params:{}}
-      });
-      observer.complete();
+        })
+      );
     });
     return obs;
   }
@@ -194,6 +206,8 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       this.service.setUser(user);
       this.service.post(goal).then(
         response => {
+          goal = <Goal>response.data;
+          this.service.addGoal(goal);
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
@@ -203,7 +217,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           observer.complete();
         }
       ).catch(
-        error => observer.next({
+        error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
             message:'Goal Save Failed.',
@@ -230,7 +244,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           observer.complete();
         }
       ).catch(
-        error => observer.next({
+        error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
             message:'Goal Save Failed.',

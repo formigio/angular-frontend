@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from '../core/index';
 import { GoalService, Goal } from './index';
@@ -13,12 +13,10 @@ import { GoalService, Goal } from './index';
   providers: [ GoalService ]
 })
 
-export class GoalItemComponent {
+export class GoalItemComponent implements OnInit {
 
   @Input() goal:Goal;
 
-  errorMessage: string = '';
-  successResponse: {};
   state: string = 'view';
 
   /**
@@ -30,6 +28,15 @@ export class GoalItemComponent {
     public service: GoalService,
     public router: Router
   ) {}
+
+  /**
+   * Get the names OnInit
+   */
+  ngOnInit() {
+    if(!this.goal.uuid) {
+      this.message.startProcess('create_goal',{goal:this.goal,navigate_to:'/goal/' + this.goal.uuid});
+    }
+  }
 
   makeEditable() {
     this.state = 'edit';

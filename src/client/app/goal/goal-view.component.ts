@@ -21,7 +21,8 @@ export class GoalViewComponent implements OnInit {
   goal: Goal = {
     uuid: '',
     title: '',
-    team: ''
+    team: '',
+    changed: false
   };
 
   /**
@@ -62,20 +63,20 @@ export class GoalViewComponent implements OnInit {
     return false;
   }
 
-  /**
-   * Puts the accomplished Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  accomplishGoal(goal:Goal): boolean {
-    // goal.accomplished = 'true';
-    this.service.put(goal)
-      .subscribe(
-        response => this.currentResponse,
-        error => this.errorMessage = <any>error,
-        () => console.log('Goal Successfully saved.')
-      );
-    return false;
-  }
+  // /**
+  //  * Puts the accomplished Goal Object to the Goal List Service
+  //  * @return {boolean} false to prevent default form submit behavior to refresh the page.
+  //  */
+  // accomplishGoal(goal:Goal): boolean {
+  //   // goal.accomplished = 'true';
+  //   this.service.put(goal)
+  //     .subscribe(
+  //       response => this.currentResponse,
+  //       error => this.errorMessage = <any>error,
+  //       () => console.log('Goal Successfully saved.')
+  //     );
+  //   return false;
+  // }
 
   navigateToTeam(): boolean {
     this.message.startProcess('navigate_to',{navigate_to:'/team/' + this.goal.team});

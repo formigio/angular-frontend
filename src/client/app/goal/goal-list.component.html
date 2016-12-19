@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-lg-12">
     <div class="list-group">
-      <div class="list-group-item" *ngFor="let goal of goals">
+      <div class="list-group-item" *ngFor="let goal of goals" [class.list-group-item-warning]="goal.changed===true">
         <goal-item [goal]="goal"></goal-item>
       </div>
       <div class="list-group-item">
@@ -10,7 +10,7 @@
           <button class="btn btn-xs btn-default" type="button">
               <span class="glyphicon glyphicon-plus"></span>
           </button>
-          <input [(ngModel)]="newGoal" name="newGoal" class="form-control" placeholder="Enter Goal Title">
+          <input [(ngModel)]="goal.title" name="title" class="form-control" placeholder="Enter Goal Title">
           <button type="submit" class="btn btn-primary">Add</button>
           <button type="button" class="btn btn-secondary" (click)="refreshGoals()"><span class="glyphicon glyphicon-refresh"></span></button>
         </div>
