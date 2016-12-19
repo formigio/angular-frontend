@@ -281,6 +281,24 @@ apigClientFactory.newClient = function (config) {
     };
     
     
+    apigClient.goalsUuidPut = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, ['uuid'], ['body']);
+        
+        var goalsUuidPutRequest = {
+            verb: 'put'.toUpperCase(),
+            path: pathComponent + uritemplate('/goals/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, ['uuid'])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(goalsUuidPutRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
     apigClient.goalsUuidOptions = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         

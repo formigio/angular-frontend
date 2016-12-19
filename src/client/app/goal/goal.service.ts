@@ -129,13 +129,16 @@ export class GoalService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  put(goal:Goal): Observable<string[]> {
+  put(goal:Goal): Promise<any> {
+    goal.title = this.htmlEntities(goal.title);
     let body = JSON.stringify(goal);
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    return this.http.put(Config.API + '/goals/' + goal.uuid, body, options)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.goalsUuidPut({uuid:goal.uuid},body);
   }
 
   /**

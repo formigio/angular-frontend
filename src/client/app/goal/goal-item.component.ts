@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { MessageService } from '../core/index';
 import { GoalService, Goal } from './index';
 
 /**
@@ -25,8 +26,9 @@ export class GoalItemComponent {
    * @param
    */
   constructor(
-      public service: GoalService,
-      public router: Router
+    public message: MessageService,
+    public service: GoalService,
+    public router: Router
   ) {}
 
   makeEditable() {
@@ -35,7 +37,7 @@ export class GoalItemComponent {
 
   persistGoal() {
     this.state='view';
-    this.putGoal(this.goal);
+    this.message.startProcess('goal_save',{goal:this.goal});
   }
 
   // /**
@@ -50,32 +52,18 @@ export class GoalItemComponent {
   //   return acc;
   // }
 
-  /**
-   * Puts the Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  putGoal(goal:Goal): boolean {
-    this.service.put(goal)
-      .subscribe(
-        data => this.successResponse,
-        error => this.errorMessage = <any>error,
-        () => console.log('Goal Saved')
-      );
-    return false;
-  }
-
-  /**
-   * Puts the accomplished Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  accomplishGoal(goal:Goal): boolean {
-    // goal.accomplished = 'true';
-    this.service.put(goal)
-      .subscribe(
-        error => this.errorMessage = <any>error
-      );
-    return false;
-  }
+  // /**
+  //  * Puts the accomplished Goal Object to the Goal List Service
+  //  * @return {boolean} false to prevent default form submit behavior to refresh the page.
+  //  */
+  // accomplishGoal(goal:Goal): boolean {
+  //   // goal.accomplished = 'true';
+  //   this.service.put(goal)
+  //     .subscribe(
+  //       error => this.errorMessage = <any>error
+  //     );
+  //   return false;
+  // }
 
   navigateTo(goal:Goal) {
     this.router.navigate(['/goal/',goal.uuid]);

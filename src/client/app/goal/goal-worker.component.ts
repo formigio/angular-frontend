@@ -39,6 +39,12 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'The Process Used to Control the Creating of Goals',
           new ProcessContext,
           ''
+      ),
+      goal_save: new ProcessRoutine(
+          'goal_save',
+          'The Process Used to Control the Saving of Goals',
+          new ProcessContext,
+          ''
       )
   };
 
@@ -69,6 +75,13 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'get_user_for_create_goal_complete',
           'Create Goal',
           'createGoal',
+          {goal:'Goal',user:'User'}
+      ),
+      get_user_for_goal_save_complete: new ProcessTask(
+          'put_goal_task',
+          'get_user_for_goal_save_complete',
+          'Save Goal',
+          'saveGoal',
           {goal:'Goal',user:'User'}
       )
   };
@@ -180,6 +193,33 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
       this.service.post(goal).then(
+        response => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Goal Saved Successfully.',
+            context:{params:{goal:response.data}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => observer.next({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Goal Save Failed.',
+            context:{params:{}}
+        })
+      );
+    });
+    return obs;
+  }
+
+  public saveGoal(control_uuid: string, params: any): Observable<any> {
+    let goal: Goal = params.goal;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.put(goal).then(
         response => {
           observer.next({
             control_uuid: control_uuid,
