@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TeamService, Team } from './index';
 import { MessageService, HelperService } from '../core/index';
 
@@ -13,7 +13,7 @@ import { MessageService, HelperService } from '../core/index';
   providers: [ TeamService ]
 })
 
-export class TeamItemComponent {
+export class TeamItemComponent implements OnInit {
 
   @Input() team: Team;
 
@@ -32,6 +32,14 @@ export class TeamItemComponent {
     public helper: HelperService
   ) {}
 
+  /**
+   * Get the names OnInit
+   */
+  ngOnInit() {
+    if(!this.team.uuid) {
+      this.message.startProcess('team_create',{team:this.team});
+    }
+  }
 
   makeEditable() {
     this.state = 'edit';
@@ -39,7 +47,7 @@ export class TeamItemComponent {
 
   persistTeam() {
     this.state='view';
-    this.saveTeam(this.team);
+    this.message.startProcess('team_save',{team:this.team});
     return false;
   }
 
@@ -50,14 +58,6 @@ export class TeamItemComponent {
   deleteTeam(team:Team) {
     this.message.startProcess('team_delete',{team:team});
     return false;
-  }
-
-  /**
-   * Puts the Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  saveTeam(team:Team) {
-    this.message.startProcess('team_save',{team:team});
   }
 
   navigateTo(team:Team) {

@@ -54,6 +54,11 @@ export class TeamService {
     this.listSubscription.next(this.teams);
   }
 
+  addTeam(team:Team) {
+    this.teams.push(team);
+    this.publishTeams(this.teams);
+  }
+
   setUser(user:User) {
     this.user = user;
   }

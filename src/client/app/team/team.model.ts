@@ -1,8 +1,7 @@
 import { User } from '../user/index';
 
 export class Team {
-  isDeleted: boolean = false;
-  isNew: boolean = true;
+  changed: boolean = false;
   constructor(
     public uuid: string,
     public identity: string,

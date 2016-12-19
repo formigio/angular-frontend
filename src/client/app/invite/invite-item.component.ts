@@ -29,7 +29,6 @@ export class InviteItemComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    console.log('Invite Item Init:' + this.invite.uuid);
     if(!this.invite.uuid) {
       this.message.startProcess('invite_create',{invite:this.invite});
     }

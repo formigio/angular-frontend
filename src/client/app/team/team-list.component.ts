@@ -22,8 +22,7 @@ export class TeamListComponent implements OnInit {
     uuid: '',
     title: '',
     identity: '',
-    isDeleted: false,
-    isNew: true
+    changed: false
   };
 
   /**
@@ -45,10 +44,18 @@ export class TeamListComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    this.service.getListSubscription()
-            .subscribe(
-                teams => this.teams = teams
-            );
+    this.service.getListSubscription().subscribe(
+      teams => {
+        let newteams:Team[] = [];
+        let allteams:Team[] = teams;
+        allteams.forEach((team) => {
+          if(team.uuid) {
+            newteams.push(team);
+          }
+        });
+        this.teams = newteams;
+      }
+    );
     this.refreshTeams();
   }
 
@@ -61,13 +68,13 @@ export class TeamListComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addTeam(): boolean {
-    this.team.uuid = Math.random().toString().split('.').pop();
+    // this.team.uuid = Math.random().toString().split('.').pop();
+    this.team.uuid = '';
+    this.team.changed = true;
     let newTeam: Team = JSON.parse(JSON.stringify(this.team));
     this.teams.push(newTeam);
     this.helper.sortBy(this.teams,'title');
-    this.message.startProcess('team_create',{team:newTeam});
     this.team.title = '';
-    this.team.uuid = '';
     return false;
   }
 

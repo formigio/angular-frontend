@@ -1,4 +1,4 @@
-<div class="row" *ngIf="team.uuid">
+<div class="row" *ngIf="team.title">
     <div class="col-xs-12">
         <div style="display:inline-block;" *ngIf="state==='view'">
             <span [innerHTML]="team.title" (click)="navigateTo(team)"></span>

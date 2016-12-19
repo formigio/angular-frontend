@@ -206,12 +206,13 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
       this.service.setUser(user);
       this.service.post(team)
         .then((response:any) => {
-          team.isNew = false;
+          team = response.data;
+          this.service.addTeam(team);
           observer.next({
             control_uuid: control_uuid,
-           outcome: 'success',
-           message:'Team Created successfully.',
-           context:{params:{team_created:team.uuid}}
+            outcome: 'success',
+            message:'Team Created successfully.',
+            context:{params:{team_created:team.uuid}}
           });
           observer.complete();
         }).catch((response:any) => {
