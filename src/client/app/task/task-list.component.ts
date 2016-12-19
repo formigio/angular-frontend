@@ -23,12 +23,12 @@ export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
 
   task: Task = {
-    complete: 'false',
+    complete: false,
     uuid: '',
     title: '',
     goal: '',
-    notes: '',
-    deleted: false
+    // notes: '',
+    changed: false
   };
 
   goal: string;
@@ -53,6 +53,14 @@ export class TaskListComponent implements OnInit {
     this.service.getListSubscription().subscribe(
       tasks => {
         this.tasks = <Task[]>tasks;
+        let newtasks:Task[] = [];
+        let alltasks:Task[] = tasks;
+        alltasks.forEach((task) => {
+          if(task.uuid) {
+            newtasks.push(task);
+          }
+        });
+        this.tasks = newtasks;
       }
     );
     this.route.params.subscribe(params => {
@@ -74,16 +82,16 @@ export class TaskListComponent implements OnInit {
     let taskLines = this.task.title.split('\n');
     taskLines.forEach((taskTitle) => {
       if(taskTitle) {
-        let uuid = Math.random().toString().split('.').pop();
+        // let uuid = Math.random().toString().split('.').pop();
         let newTask:Task = {
-          complete: 'false',
-          uuid: uuid,
+          complete: false,
+          uuid: '',
           title: taskTitle,
           goal: this.task.goal,
-          notes: '',
-          deleted: false
+          // notes: '',
+          changed: true
         };
-        this.service.addTask(newTask);
+        this.tasks.push(newTask);
       } // If Task Title
     }); // Task Lines foreach
     this.task.title = '';

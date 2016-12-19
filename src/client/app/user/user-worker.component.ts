@@ -262,6 +262,20 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Get User in Process Context',
             'getUser',
             {}
+        ),
+        task_create_init: new ProcessTask(
+            'get_user_for_task_create',
+            'task_create_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
+        task_save_init: new ProcessTask(
+            'get_user_for_task_save',
+            'task_save_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
         )
     };
 

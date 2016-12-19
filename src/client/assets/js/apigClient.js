@@ -461,6 +461,42 @@ apigClientFactory.newClient = function (config) {
     };
     
     
+    apigClient.tasksUuidPut = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, ['uuid'], ['body']);
+        
+        var tasksUuidPutRequest = {
+            verb: 'put'.toUpperCase(),
+            path: pathComponent + uritemplate('/tasks/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, ['uuid'])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(tasksUuidPutRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.tasksUuidOptions = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
+        
+        var tasksUuidOptionsRequest = {
+            verb: 'options'.toUpperCase(),
+            path: pathComponent + uritemplate('/tasks/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(tasksUuidOptionsRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
     apigClient.teamMembersGet = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         

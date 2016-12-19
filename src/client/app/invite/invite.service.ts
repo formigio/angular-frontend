@@ -41,7 +41,6 @@ export class InviteService {
 
   addInvite(invite:Invite) {
     this.invites.push(invite);
-    console.log(this.invites.length + ' invites');
     this.publishInvites(this.invites);
   }
 

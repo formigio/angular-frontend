@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TaskService, Task } from './index';
 import { MessageService } from '../core/index';
 
@@ -13,13 +13,11 @@ import { MessageService } from '../core/index';
   providers: [ ]
 })
 
-export class TaskItemComponent {
+export class TaskItemComponent implements OnInit {
 
   @Input() task:Task;
   @Input() editable: boolean;
 
-  errorMessage: string = '';
-  success: string = '';
   state: string = 'view';
   response: any;
   showNotes: boolean = false;
@@ -33,25 +31,34 @@ export class TaskItemComponent {
     protected message: MessageService
   ) {}
 
-  makeEditable() {
-    this.state = 'edit';
-    this.showNotes = true;
-    this.task.notes = this.task.notes.split('|').join('\n');
-  }
-
-  toggleNotes() {
-    if(this.showNotes === false) {
-      this.task.notes = this.task.notes.split('|').join('\n');
-      this.showNotes = true;
-    } else {
-      this.showNotes = false;
+  /**
+   * Get the names OnInit
+   */
+  ngOnInit() {
+    if(!this.task.uuid) {
+      this.message.startProcess('task_create',{task:this.task});
     }
   }
 
+  makeEditable() {
+    this.state = 'edit';
+    // this.showNotes = true;
+    // this.task.notes = this.task.notes.split('|').join('\n');
+  }
+
+  // toggleNotes() {
+  //   if(this.showNotes === false) {
+  //     this.task.notes = this.task.notes.split('|').join('\n');
+  //     this.showNotes = true;
+  //   } else {
+  //     this.showNotes = false;
+  //   }
+  // }
+
   persistTask() {
     this.state='view';
-    this.showNotes = false;
-    this.saveTask(this.task);
+    // this.showNotes = false;
+    this.message.startProcess('task_save',{task:this.task});
   }
 
   /**
@@ -59,20 +66,8 @@ export class TaskItemComponent {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteTask(task:Task) {
-    task.deleted = true;
+    task.changed = true;
     this.message.startProcess('task_delete',{task:task});
-    return false;
-  }
-
-  /**
-   * Puts the Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  saveTask(task:Task): boolean {
-    this.service.put(task)
-      .subscribe(
-        error => this.errorMessage = <any>error
-      );
     return false;
   }
 
@@ -81,13 +76,8 @@ export class TaskItemComponent {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   completeTask(task:Task): boolean {
-    task.complete = 'true';
-    this.service.put(task)
-      .subscribe(
-        res => this.response = res,
-        error => this.errorMessage = <any>error,
-        () => this.message.setFlash('Task Saved.','success')
-      );
+    task.complete = true;
+    this.message.startProcess('task_save',{task:task});
     return false;
   }
 

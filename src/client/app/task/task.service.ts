@@ -44,19 +44,14 @@ export class TaskService {
   }
 
   publishTasks(tasks:Task[]) {
+    this.tasks = tasks;
     this.listSubscription.next(tasks);
   }
 
   addTask(task:Task) {
-    this.post(task).subscribe(
-      null,
-      error => console.log(error),
-      () => {
-        this.tasks.push(task);
-        this.sortTasks();
-        this.listSubscription.next(this.tasks);
-      }
-    );
+    this.tasks.push(task);
+    this.sortTasks();
+    this.listSubscription.next(this.tasks);
   }
 
   sortTasks() {
@@ -99,14 +94,16 @@ export class TaskService {
    * Returns an Observable for the HTTP POST request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  post(task:Task): Observable<string[]> {
+  post(task:Task): Promise<any> {
     task.title = this.htmlEntities(task.title);
     let body = JSON.stringify(task);
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    return this.http.post(Config.API + '/goals/' + task.goal + '/tasks',body, options)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.tasksPost({},body);
   }
 
   /**
@@ -120,18 +117,19 @@ export class TaskService {
   }
 
   /**
-   * Returns an Observable for the HTTP GET request for the JSON resource.
+   * Returns an Observable for the HTTP POST request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  put(task:Task): Observable<string[]> {
+  put(task:Task): Promise<any> {
     task.title = this.htmlEntities(task.title);
-    task.notes = this.htmlEntities(task.notes).split('\n').join('|');
     let body = JSON.stringify(task);
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    return this.http.put(Config.API + '/goals/'+ task.goal + '/tasks/' + task.uuid, body, options)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.tasksUuidPut({uuid:task.uuid},body);
   }
 
   /**

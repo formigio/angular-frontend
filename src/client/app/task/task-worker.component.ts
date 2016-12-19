@@ -27,6 +27,18 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'The Process Used to Control the Loading of Tasks',
             new ProcessContext,
             ''
+        ),
+        task_create: new ProcessRoutine(
+            'task_create',
+            'The Process Used to Control the Creating a Task',
+            new ProcessContext,
+            ''
+        ),
+        task_save: new ProcessRoutine(
+            'task_save',
+            'The Process Used to Control the Save a Task',
+            new ProcessContext,
+            ''
         )
     };
 
@@ -65,6 +77,20 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'Publish Tasks for a specific goal',
             'publishTasks',
             {tasks:'array'}
+        ),
+        get_user_for_task_create_complete: new ProcessTask(
+            'create_task',
+            'get_user_for_task_create_complete',
+            'Create Task for a specific goal',
+            'createTask',
+            {task:'Task',user:'User'}
+        ),
+        get_user_for_task_save_complete: new ProcessTask(
+            'save_task',
+            'get_user_for_task_save_complete',
+            'Save Task for a specific goal',
+            'saveTask',
+            {task:'Task',user:'User'}
         )
     };
 
@@ -98,6 +124,67 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           }
         );
       }
+  }
+
+  public createTask(control_uuid: string, params: any): Observable<any> {
+    let task: Task = params.task;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.post(task).then(
+        response => {
+          let task = <Task>response.data;
+          this.service.addTask(task);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Task Created.',
+            context:{params:{task:task}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured fetching the tasks.'
+          });
+        }
+      );
+    });
+
+    return obs;
+  }
+
+  public saveTask(control_uuid: string, params: any): Observable<any> {
+    let task: Task = params.task;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.put(task).then(
+        response => {
+          let task = <Task>response.data;
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Task Saved.',
+            context:{params:{task:task}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured fetching the tasks.'
+          });
+        }
+      );
+    });
+
+    return obs;
   }
 
   public gatherTasks(control_uuid: string, params: any): Observable<any> {

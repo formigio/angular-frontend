@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-lg-12">
     <ul class="list-group">
-      <li class="list-group-item" *ngFor="let task of tasks" [class.disabled]="task.deleted===true">
+      <li class="list-group-item" *ngFor="let task of tasks" [class.list-group-item-warning]="task.changed">
         <task-item [task]="task" [editable]="editable"></task-item>
       </li>
       <li class="list-group-item" *ngIf="editable===true">

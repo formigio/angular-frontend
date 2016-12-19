@@ -1,22 +1,22 @@
-<div class="row" *ngIf="task.uuid">
+<div class="row" *ngIf="task.title">
     <div class="col-xs-1">
-        <button *ngIf="editable===true" (click)="completeTask(task)" [class.btn-success]="task.complete==='true'" [class.btn-default]="task.complete==='false'" name="complete" class="btn btn-xs" type="button">
-            <span [class.glyphicon-ok]="task.complete==='true'" [class.glyphicon-stop]="task.complete==='false'" class="glyphicon"></span>
+        <button *ngIf="editable===true" (click)="completeTask(task)" [class.btn-success]="task.complete" [class.btn-default]="task.complete" name="complete" class="btn btn-xs" type="button">
+            <span [class.glyphicon-ok]="task.complete" [class.glyphicon-stop]="!task.complete" class="glyphicon"></span>
         </button>
-        <button *ngIf="editable===false" [class.btn-success]="task.complete==='true'" [class.btn-default]="task.complete==='false'" name="complete" class="btn btn-xs" type="button">
-            <span [class.glyphicon-ok]="task.complete==='true'" [class.glyphicon-stop]="task.complete==='false'" class="glyphicon"></span>
+        <button *ngIf="editable===false" [class.btn-success]="task.complete" [class.btn-default]="!task.complete" name="complete" class="btn btn-xs" type="button">
+            <span [class.glyphicon-ok]="task.complete" [class.glyphicon-stop]="!task.complete" class="glyphicon"></span>
         </button>
     </div>
     <div class="col-xs-10">
         <div style="display:inline-block;" *ngIf="state==='view'">
             <span [innerHTML]="task.title"></span>
             <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
-            <button type="button" *ngIf="task.notes!==''" (click)="toggleNotes()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-align-left"></span></button>
-            <div [innerHTML]="task.notes" *ngIf="showNotes===true"></div>
+            <!--<button type="button" *ngIf="task.notes!==''" (click)="toggleNotes()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-align-left"></span></button>-->
+            <!--<div [innerHTML]="task.notes" *ngIf="showNotes===true"></div>-->
         </div>
         <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistTask()" *ngIf="state==='edit'">
             <input [(ngModel)]="task.title" name="task.title" type="text" style="min-width:75%">
-            <textarea [(ngModel)]="task.notes" name="task.notes" type="text" style="min-width:75%" *ngIf="showNotes===true"></textarea>
+            <!--<textarea [(ngModel)]="task.notes" name="task.notes" type="text" style="min-width:75%" *ngIf="showNotes===true"></textarea>-->
             <button type="submit" class="btn btn-success btn-xs">Save</button>
         </form>
     </div>

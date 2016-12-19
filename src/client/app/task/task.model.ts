@@ -1,10 +1,9 @@
 export class Task {
-  public deleted:boolean =  false;
+  public changed:boolean =  false;
   constructor(
-    public complete: string = 'false',
+    public complete: boolean = false,
     public uuid: string,
     public title: string = '',
-    public goal: string,
-    public notes: string
+    public goal: string
   ) {}
 }
