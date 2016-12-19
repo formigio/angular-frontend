@@ -24,7 +24,8 @@ export class UserService {
         {
             accessKey:'',
             secretKey:'',
-            sessionToken:''
+            sessionToken:'',
+            expireTime: ''
         }
     );
 
