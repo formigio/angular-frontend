@@ -156,14 +156,16 @@ export class TeamService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  put(team:Team): Observable<string[]> {
+  put(team:Team): Promise<any> {
     team.title = this.htmlEntities(team.title);
+    let user = this.getUser();
     let body = JSON.stringify(team);
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    return this.http.put(Config.API + '/teams/' + team.uuid, body, options)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.teamsUuidPut({uuid:team.uuid},body);
   }
 
   /**

@@ -209,7 +209,6 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             message:'Invite removed successfully.',
             context:{params:{invite_deleted:invite.uuid}}
           });
-          this.service.refreshInvites(invite.goal);
           observer.complete();
         }
       );

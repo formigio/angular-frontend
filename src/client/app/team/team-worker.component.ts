@@ -62,7 +62,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_save_team_complete',
             'Save Team',
             'saveTeam',
-            {team:'Team'}
+            {team:'Team',user:'User'}
         ),
         get_user_for_create_team_complete: new ProcessTask(
             'create_team',
@@ -174,16 +174,11 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
 
   public saveTeam(control_uuid: string, params: any): Observable<any> {
     let team: Team = params.team;
+    let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      this.service.put(team).subscribe(
-        null,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while saving team.',
-          context:{params:{}}
-        }),
-        () => {
+      this.service.setUser(user);
+      this.service.put(team).then(
+        response => {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
@@ -192,6 +187,13 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           });
           observer.complete();
         }
+      ).catch(
+        error => observer.error({
+          control_uuid: control_uuid,
+          outcome: 'error',
+          message:'Error has occured while saving team.',
+          context:{params:{}}
+        })
       );
     });
     return obs;

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from '../core/index';
 import { InviteService, Invite } from './index';
 
@@ -12,7 +12,7 @@ import { InviteService, Invite } from './index';
   providers: [ InviteService ]
 })
 
-export class InviteItemComponent {
+export class InviteItemComponent implements OnInit {
 
   @Input() invite:Invite;
 

@@ -40,6 +40,7 @@ export class TeamItemComponent {
   persistTeam() {
     this.state='view';
     this.saveTeam(this.team);
+    return false;
   }
 
   /**
