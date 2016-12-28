@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     password: '',
     identity_provider: '',
     confirm_code: '',
+    login_token: '',
     credentials: {
       accessKey:'',
       secretKey:'',
@@ -63,15 +64,17 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   handleGoogleLogin = (loggedInUser:any) => {
     let profile:any = loggedInUser.getBasicProfile();
+    let loginToken:string = loggedInUser.getAuthResponse().id_token;
     this.message.startProcess('user_login_google',{
       navigate_to:'/',
-      token:loggedInUser.getAuthResponse().id_token,
+      token:loginToken,
       user: new User(
         profile.getId(),
         profile.getEmail(),
         '','',
         '',
         'Google',
+        loginToken,
         {
           accessKey:'',
           secretKey:'',

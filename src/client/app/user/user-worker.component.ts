@@ -32,6 +32,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             new ProcessContext,
             ''
         ),
+        user_google_token_refresh: new ProcessRoutine(
+            'user_google_token_refresh',
+            'The Process Used to Control the Login with Google',
+            new ProcessContext,
+            ''
+        ),
         user_register: new ProcessRoutine(
             'user_register',
             'The Process Used to Control the Registration of New Users',
@@ -92,7 +98,21 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'user_login_google_init',
             'Login Google User',
             'loginGoogleUser',
-            {token:'string'}
+            {token:'string',user:'User'}
+        ),
+        user_google_token_refresh_init: new ProcessTask(
+            'refresh_google_token',
+            'user_google_token_refresh_init',
+            'Refresh Google Token',
+            'loginGoogleUser',
+            {token:'string',user:'User'}
+        ),
+        refresh_google_token_complete: new ProcessTask(
+            'store_refreshed_user',
+            'refresh_google_token_complete',
+            'Store Refreshed User',
+            'storeUser',
+            {user:'User',token:'string'}
         ),
         login_cognito_user_complete: new ProcessTask(
           'swap_token',
@@ -275,6 +295,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'task_save_init',
             'Get User in Process Context',
             'getUser',
+            {}
+        ),
+        refresh_google_token_error: new ProcessTask(
+            'logout_after_google_token_refresh_failed',
+            'refresh_google_token_error',
+            'Forced Logout after Google Token Refresh Fails',
+            'logoutUser',
             {}
         )
     };
@@ -516,8 +543,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             });
           }
 
-          console.log(AWS.config.credentials);
-
           user.credentials.accessKey = AWS.config.credentials.accessKeyId;
           user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
           user.credentials.sessionToken = AWS.config.credentials.sessionToken;
@@ -730,20 +755,37 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       let user:User = this.service.retrieveUser();
 
       // Check Expired for Expired Tokens
+      let current = new Date();
+      let future = new Date();
+      future.setTime(future.getTime() + (60000*15)); // Get a date in the future 15 mins
+      let expire = new Date(user.credentials.expireTime);
 
+      // If the token is about to expire we start the refresh token process.
+      if(future > expire) {
+        this.message.startProcess('user_google_token_refresh',{user:user,token:user.login_token,navigate_to:'/login'});
+      }
+
+      if(current > expire) {
+        observer.error({
+          control_uuid: control_uuid,
+          outcome: 'token_expired',
+          message: 'Tokens needs a refresh, please try again... Or you may need to logout and log back in.',
+          context:{params:{}}
+        });
+      }
 
       if(!user.uuid) {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'Cannot Get User from Local Storage. ' + JSON.stringify(user),
+          message:'Looks like you need to log back in.',
           context:{params:{}}
         });
       } else {
         observer.next({
           control_uuid: control_uuid,
           outcome: 'success',
-          message:'User Retrieved',
+          message:'',
           context:{params:{user:user}}
         });
         observer.complete();

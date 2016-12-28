@@ -6,6 +6,7 @@ export class User {
         public password: string,
         public confirm_code?: string,
         public identity_provider?: string,
+        public login_token?: string,
         public credentials?: UserCredentials
     ) { }
 }

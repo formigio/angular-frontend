@@ -105,14 +105,15 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             'Fetch Teams',
             'fetchUserTeams',
             {user:'User'}
-        ),
-        fetch_teams_error: new ProcessTask(
-            'handle_team_fetch_error',
-            'fetch_teams_error',
-            'Fetch Teams - Error Handler',
-            'handleFetchTeamsError',
-            {user:'User'}
         )
+        // ,
+        // fetch_teams_error: new ProcessTask(
+        //     'handle_team_fetch_error',
+        //     'fetch_teams_error',
+        //     'Fetch Teams - Error Handler',
+        //     'handleFetchTeamsError',
+        //     {user:'User'}
+        // )
     };
 
   constructor(
