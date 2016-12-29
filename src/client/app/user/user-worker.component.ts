@@ -303,6 +303,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Forced Logout after Google Token Refresh Fails',
             'logoutUser',
             {}
+        ),
+        fetch_teams_complete: new ProcessTask(
+            'store_user_identity',
+            'fetch_teams_complete',
+            'Store the User Identity',
+            'storeUserIdentity',
+            {user_identity:'string'}
         )
     };
 
@@ -437,7 +444,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     let user: User = params.user;
     user.password = params.password_hash;
     let obs = new Observable((observer:any) => {
-      user.password_hash = '';
       user.uuid = Math.random().toString().split('.').pop();
       let create = this.service.createUser(user);
       create.subscribe(
@@ -742,13 +748,31 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'Login Successful.',
+        message:'User Saved.',
         context:{params:{}}
       });
       observer.complete();
     });
     return obs;
   }
+
+  public storeUserIdentity(control_uuid: string, params: any): Observable<any> {
+    let user_identity: string = params.user_identity;
+    let obs = new Observable((observer:any) => {
+      let user = this.service.retrieveUser();
+      user.data_identity = user_identity;
+      this.service.storeUser(user);
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message:'User Updated.',
+        context:{params:{}}
+      });
+      observer.complete();
+    });
+    return obs;
+  }
+
 
   public getUser(control_uuid: string, params: any): Observable<any> {
     let obs = new Observable((observer:any) => {

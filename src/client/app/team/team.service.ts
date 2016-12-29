@@ -124,7 +124,9 @@ export class TeamService {
   post(team:Team): Promise<Team> {
     team.title = this.htmlEntities(team.title);
     let user = this.getUser();
-    let body = JSON.stringify(team);
+    team.identity = user.data_identity;
+    // let body = JSON.stringify(team);
+    let body = team;
     let api = apigClientFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,

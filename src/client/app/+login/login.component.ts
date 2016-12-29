@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   user: User = {
     uuid: '',
     email: '',
-    password_hash: '',
+    data_identity: '',
     password: '',
     identity_provider: '',
     confirm_code: '',

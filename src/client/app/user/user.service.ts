@@ -51,20 +51,20 @@ export class UserService {
         this._router.navigate(['/']);
     }
 
-    register(user:User) {
-        let hash = this.password(user);
-        hash.subscribe(
-                    response => user.password_hash = response.password_hash,
-                    error =>  this.errorMsg = <any>error,
-                    () => { user.password = user.password_hash;
-                        user.password_hash = '';
-                        user.uuid = Math.random().toString().split('.').pop();
-                        this.createUser(user).subscribe(
-                        response => this.successMsg = response,
-                        error => this.errorMsg,
-                        () => this._router.navigate(['/login'])); }
-                    );
-    }
+    // register(user:User) {
+    //     let hash = this.password(user);
+    //     hash.subscribe(
+    //                 response => user.password_hash = response.password_hash,
+    //                 error =>  this.errorMsg = <any>error,
+    //                 () => { user.password = user.password_hash;
+    //                     user.password_hash = '';
+    //                     user.uuid = Math.random().toString().split('.').pop();
+    //                     this.createUser(user).subscribe(
+    //                     response => this.successMsg = response,
+    //                     error => this.errorMsg,
+    //                     () => this._router.navigate(['/login'])); }
+    //                 );
+    // }
 
 
     /**

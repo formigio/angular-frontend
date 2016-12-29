@@ -2,7 +2,7 @@ export class User {
     constructor(
         public uuid: string,
         public email: string,
-        public password_hash: string,
+        public data_identity: string,
         public password: string,
         public confirm_code?: string,
         public identity_provider?: string,

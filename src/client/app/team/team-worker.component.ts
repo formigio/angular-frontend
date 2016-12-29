@@ -311,14 +311,16 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
   public fetchUserTeams(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
     let loadedTeams: Team[];
+    let userIdentity: string = '';
     let obs = new Observable((observer:any) => {
       this.service.list(user).then((response:any) => {
           loadedTeams = response.data;
+          userIdentity = loadedTeams.slice(-1).pop().identity;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Teams loaded successfully.',
-            context:{params:{teams_loaded:true}}
+            context:{params:{teams_loaded:true,user_identity:userIdentity}}
           });
           this.service.publishTeams(loadedTeams);
           observer.complete();
