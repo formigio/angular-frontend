@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2016-12-29T04:07:21Z"
+  version: "2016-12-31T05:02:37Z"
   title: "formigio.alpha"
 host: "d4el2racxe.execute-api.us-east-1.amazonaws.com"
 basePath: "/mock"
@@ -168,8 +168,6 @@ paths:
         type: "mock"
   /goals:
     get:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -193,18 +191,14 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n[\n{\n  \"uuid\"\
-                \ : \"foo\",\n  \"team\" : \"foo\",\n  \"title\" : \"foo\"\n},\n{\n\
-                \  \"uuid\" : \"foo\",\n  \"team\" : \"foo\",\n  \"title\" : \"foo\"\
-                \n}\n]"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+        uri: "http://data-service.alpha.formig.io/goal"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.querystring.team: "method.request.querystring.team"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "GET"
+        type: "http"
     post:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       responses:
@@ -223,13 +217,12 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"uuid\"\
-                \ : \"foo\",\n  \"team\" : \"foo\",\n  \"title\" : \"foo\"\n}"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+        uri: "http://data-service.alpha.formig.io/goal"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "POST"
+        type: "http"
     put:
       produces:
       - "application/json"
