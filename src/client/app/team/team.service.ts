@@ -43,15 +43,23 @@ export class TeamService {
   }
 
   publishTeam(uuid:string) {
-    this.get(uuid).then(
-      response => this.itemSubscription.next(response.data)
-    );
+    let user = this.getUser();
+    this.itemSubscription.next(this.retrieveTeam(uuid,user.data_identity));
   }
 
   publishTeams(teams:Team[]) {
     this.teams = teams;
     this.sort();
+    this.storeTeams();
     this.listSubscription.next(this.teams);
+  }
+
+  storeTeams() {
+    this.teams.forEach(team => localStorage.setItem('team::' + team.uuid + ':' + team.identity, JSON.stringify(team)));
+  }
+
+  retrieveTeam(uuid:string,identity:string): Team {
+    return (<Team>JSON.parse(localStorage.getItem('team::' + uuid + ':' + identity)));
   }
 
   addTeam(team:Team) {

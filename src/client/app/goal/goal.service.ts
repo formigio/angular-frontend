@@ -105,7 +105,7 @@ export class GoalService {
    */
   post(goal:Goal): Promise<any> {
     goal.title = this.htmlEntities(goal.title);
-    let body = JSON.stringify(goal);
+    let body = goal;
     let user = this.getUser();
     let api = apigClientFactory.newClient({
       accessKey: user.credentials.accessKey,
@@ -138,7 +138,7 @@ export class GoalService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.goalsUuidPut({uuid:goal.uuid},body);
+    return api.goalsUuidPut({uuid:goal.guid},body);
   }
 
   /**

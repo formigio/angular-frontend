@@ -19,7 +19,7 @@ export class GoalViewComponent implements OnInit {
   errorMessage: string;
   currentResponse: {};
   goal: Goal = {
-    uuid: '',
+    guid: '',
     title: '',
     team: '',
     changed: false
@@ -59,7 +59,7 @@ export class GoalViewComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteGoal(goal:Goal): boolean {
-    this.message.startProcess('goal_delete',{goal:goal.uuid});
+    this.message.startProcess('goal_delete',{goal:goal.guid});
     return false;
   }
 
