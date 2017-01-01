@@ -96,7 +96,7 @@ export class TaskService {
    */
   post(task:Task): Promise<any> {
     task.title = this.htmlEntities(task.title);
-    let body = JSON.stringify(task);
+    let body = task;
     let user = this.getUser();
     let api = apigClientFactory.newClient({
       accessKey: user.credentials.accessKey,

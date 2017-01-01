@@ -44,14 +44,24 @@ export class GoalService {
   }
 
   publishGoal(uuid:string) {
-    this.get(uuid).then(
-      response => this.itemSubscription.next(response.data)
-    );
+    this.itemSubscription.next(this.retrieveGoal(uuid));
+    // this.get(uuid).then(
+    //   response => this.itemSubscription.next(response.data)
+    // );
   }
 
   publishGoals(goals:Goal[]) {
     this.goals = goals;
+    this.storeGoals();
     this.listSubscription.next(goals);
+  }
+
+  storeGoals() {
+    this.goals.forEach(goal => localStorage.setItem('goal::' + goal.uuid, JSON.stringify(goal)));
+  }
+
+  retrieveGoal(uuid:string): Goal {
+    return (<Goal>JSON.parse(localStorage.getItem('goal::' + uuid)));
   }
 
   addGoal(goal:Goal) {
@@ -138,7 +148,7 @@ export class GoalService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.goalsUuidPut({uuid:goal.guid},body);
+    return api.goalsUuidPut({uuid:goal.uuid},body);
   }
 
   /**

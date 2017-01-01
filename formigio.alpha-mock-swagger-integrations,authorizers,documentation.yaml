@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2016-12-31T05:02:37Z"
+  version: "2017-01-01T08:24:49Z"
   title: "formigio.alpha"
 host: "d4el2racxe.execute-api.us-east-1.amazonaws.com"
 basePath: "/mock"
@@ -300,8 +300,6 @@ paths:
         type: "mock"
   /goals/{uuid}:
     get:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -321,15 +319,13 @@ paths:
         responses:
           default:
             statusCode: "200"
-            responseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"uuid\"\
-                \ : \"foo\",\n  \"team\" : \"foo\",\n  \"title\" : \"foo\"\n}"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+        uri: "http://data-service.alpha.formig.io/goal?team={uuid}"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.querystring.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "GET"
+        type: "http"
     put:
       consumes:
       - "application/json"
@@ -394,8 +390,6 @@ paths:
         type: "mock"
   /invites:
     get:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -411,6 +405,11 @@ paths:
           headers:
             Access-Control-Allow-Origin:
               type: "string"
+        404:
+          description: "404 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
@@ -419,17 +418,18 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n[{\n  \"goal\"\
-                \ : \"foo\",\n  \"uuid\" : \"foo\",\n  \"email\" : \"foo@bar.com\"\
-                \n}]"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+          404:
+            statusCode: "404"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        uri: "http://data-service.alpha.formig.io/invite"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.querystring.goal: "method.request.querystring.goal"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "GET"
+        type: "http"
     post:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       responses:
@@ -448,13 +448,12 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"goal\"\
-                \ : \"foo\",\n  \"uuid\" : \"foo\",\n  \"email\" : \"foo\"\n}"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+        uri: "http://data-service.alpha.formig.io/invite"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "POST"
+        type: "http"
     delete:
       produces:
       - "application/json"
@@ -514,8 +513,6 @@ paths:
         type: "mock"
   /tasks:
     get:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -539,18 +536,14 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n[{\n  \"completed\"\
-                \ : false,\n  \"goal\" : \"foo\",\n  \"uuid\" : \"foo\",\n  \"title\"\
-                \ : \"foo\"\n},{\n  \"completed\" : true,\n  \"goal\" : \"foo\",\n\
-                \  \"uuid\" : \"bar\",\n  \"title\" : \"bar\"\n}]"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+        uri: "http://data-service.alpha.formig.io/task"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.querystring.goal: "method.request.querystring.goal"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "GET"
+        type: "http"
     post:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       responses:
@@ -558,6 +551,11 @@ paths:
           description: "200 response"
           schema:
             $ref: "#/definitions/Task"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+        500:
+          description: "500 response"
           headers:
             Access-Control-Allow-Origin:
               type: "string"
@@ -569,14 +567,16 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"completed\"\
-                \ : true,\n  \"goal\" : \"foo\",\n  \"uuid\" : \"foo\",\n  \"title\"\
-                \ : \"foo\"\n}"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+          500:
+            statusCode: "500"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        uri: "http://data-service.alpha.formig.io/task"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "POST"
+        type: "http"
     delete:
       produces:
       - "application/json"
@@ -700,10 +700,13 @@ paths:
         type: "mock"
   /team-members:
     get:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - name: "uuid"
+        in: "query"
+        required: false
+        type: "string"
       responses:
         200:
           description: "200 response"
@@ -720,15 +723,74 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n[{\n  \"identity\"\
-                \ : \"foo\",\n  \"title\" : \"foo\",\n  \"uuid\" : \"foo\"\n},{\n\
-                \  \"identity\" : \"bar\",\n  \"title\" : \"bar\",\n  \"uuid\" : \"\
-                bar\"\n}]\n"
+        uri: "http://data-service.alpha.formig.io/team/{uuid}"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.header.X-Identity-Id: "context.identity.cognitoIdentityId"
+          integration.request.path.uuid: "method.request.querystring.uuid"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "GET"
+        type: "http"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         passthroughBehavior: "when_no_match"
         type: "mock"
+  /team-members/{uuid}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        uri: "http://data-service.alpha.formig.io/team/{uuid}"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.header.X-Identity-Id: "context.identity.cognitoIdentityId"
+          integration.request.path.uuid: "method.request.path.uuid"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "GET"
+        type: "http"
     options:
       consumes:
       - "application/json"

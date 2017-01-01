@@ -91,8 +91,7 @@ export class InviteService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(invite:Invite): Promise<any> {
-    invite.email = this.htmlEntities(invite.email);
-    let body = JSON.stringify(invite);
+    let body = invite;
     let user = this.getUser();
     let api = apigClientFactory.newClient({
       accessKey: user.credentials.accessKey,
@@ -117,7 +116,6 @@ export class InviteService {
    * @return {string[]} The Observable for the HTTP request.
    */
   put(invite:Invite): Observable<string[]> {
-    invite.email = this.htmlEntities(invite.email);
     let body = JSON.stringify(invite);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });

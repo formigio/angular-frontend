@@ -17,7 +17,6 @@ export class InviteListComponent implements OnInit {
 
   invites: Invite[] = [];
   invite: Invite = {
-    email: '',
     uuid: '',
     goal: '',
     changed: false
@@ -45,9 +44,12 @@ export class InviteListComponent implements OnInit {
     this.service.getListSubscription().subscribe(
       invites => {
         let newinvites:Invite[] = [];
+        if(invites===null){
+          let invites:Invite[] = [];
+        }
         let allinvites:Invite[] = invites;
         allinvites.forEach((invite) => {
-          if(invite.uuid) {
+          if(invite.goal) {
             newinvites.push(invite);
           }
         });
@@ -73,12 +75,10 @@ export class InviteListComponent implements OnInit {
     this.invite.goal = this.goal;
     let newInvite:Invite = {
       uuid: '',
-      email: this.invite.email,
       goal: this.goal,
       changed: true
     };
     this.invites.push(newInvite);
-    this.invite.email = '';
     return false;
   }
 

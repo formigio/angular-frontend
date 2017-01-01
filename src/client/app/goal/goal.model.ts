@@ -1,7 +1,7 @@
 export class Goal {
   public changed:boolean =  false;
   constructor(
-    public guid: string,
+    public uuid: string,
     public title: string,
     public team: string
   ) {}

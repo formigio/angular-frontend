@@ -1,8 +1,8 @@
-<div *ngIf="invite.email">
+<div *ngIf="invite.uuid">
     <button class="btn btn-xs btn-default" type="button" (click)="copyLink()">
         <span class="glyphicon glyphicon-copy"></span>
     </button>
-    <span [innerHtml]="invite.email"></span>
+    <span [innerHtml]="invite.uuid"></span>
     <a routerLink="/goal/{{invite.goal}}/invite/{{invite.uuid}}">View Only Invitation Link</a>
-    <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteInvite(invite)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+    <!--<button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteInvite(invite)"><span class="glyphicon glyphicon-remove-sign"></span></button>-->
 </div>

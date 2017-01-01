@@ -500,13 +500,13 @@ apigClientFactory.newClient = function (config) {
     apigClient.teamMembersGet = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['uuid'], ['body']);
         
         var teamMembersGetRequest = {
             verb: 'get'.toUpperCase(),
             path: pathComponent + uritemplate('/team-members').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
             headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['uuid']),
             body: body
         };
         
@@ -530,6 +530,42 @@ apigClientFactory.newClient = function (config) {
         
         
         return apiGatewayClient.makeRequest(teamMembersOptionsRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.teamMembersUuidGet = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, ['uuid'], ['body']);
+        
+        var teamMembersUuidGetRequest = {
+            verb: 'get'.toUpperCase(),
+            path: pathComponent + uritemplate('/team-members/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, ['uuid'])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(teamMembersUuidGetRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.teamMembersUuidOptions = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
+        
+        var teamMembersUuidOptionsRequest = {
+            verb: 'options'.toUpperCase(),
+            path: pathComponent + uritemplate('/team-members/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(teamMembersUuidOptionsRequest, authType, additionalParams, config.apiKey);
     };
     
     

@@ -70,7 +70,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'gather_invites_for_invite_fetch_complete',
             'Publish Invites for a specific goal',
             'publishInvites',
-            {invites:'array'}
+            {invite:'Invite'}
         ),
         get_user_for_invite_create_complete: new ProcessTask(
             'create_invite',
@@ -120,12 +120,12 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
       this.service.setUser(user);
       this.service.list(goal).then(
         response => {
-          let invites = <Invite[]>response.data;
+          let invite = <Invite>response.data;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Invites fetched successfully.',
-            context:{params:{invites:invites,invite_count:invites.length}}
+            context:{params:{invite:invite,invite_count:1}}
           });
           observer.complete();
         }
@@ -176,8 +176,10 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
 
 
   public publishInvites(control_uuid: string, params: any): Observable<any> {
-    let invites: Invite[] = params.invites;
+    let invite: Invite = params.invite;
     let obs = new Observable((observer:any) => {
+      let invites: Invite[] = [];
+      invites.push(invite);
       this.service.publishInvites(invites);
       observer.next({
         control_uuid: control_uuid,

@@ -8,9 +8,9 @@
           <span *ngIf="goal.accomplished==='true'">Complete</span>
           <span *ngIf="goal.accomplished!=='true'">In Progress</span>
       </button>-->
-      <button *ngIf="editable===true" type="button" (click)="deleteGoal(goal)" class="btn btn-xs btn-danger pull-right">
+      <!--<button *ngIf="editable===true" type="button" (click)="deleteGoal(goal)" class="btn btn-xs btn-danger pull-right">
           <span>Delete</span>
-      </button>
+      </button>-->
   </div>
   <div class="col-xs-12" *ngIf="goal">
       <button *ngIf="editable===true" type="button" name="back" class="btn btn-xs btn-default" (click)="navigateToTeam()">

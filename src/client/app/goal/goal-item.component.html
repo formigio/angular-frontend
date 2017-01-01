@@ -5,7 +5,7 @@
 
     <div style="display:inline-block;" *ngIf="state==='view'">
         <span [innerHtml]="goal.title" (click)="navigateTo(goal)"></span>
-        <button type="button" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+        <!--<button type="button" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>-->
     </div>
     <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistGoal()" *ngIf="state==='edit'">
         <input [(ngModel)]="goal.title" name="title" type="text" style="min-width:75%">

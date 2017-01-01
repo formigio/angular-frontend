@@ -79,7 +79,7 @@ export class TeamMemberService {
       sessionToken: user.credentials.sessionToken
     });
 
-    return api.teamMembersGet();
+    return api.teamMembersUuidGet({uuid:team_uuid});
   }
 
   /**
