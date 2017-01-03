@@ -761,7 +761,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
       // If the token is about to expire we start the refresh token process.
       if(future > expire) {
-        if(user.identity_provider === 'Google'){
+        if(user.identity_provider === 'Google') {
           this.message.startProcess('user_google_token_refresh',{user:user,token:user.login_token,navigate_to:'/login'});
         }
       }

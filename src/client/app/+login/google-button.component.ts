@@ -9,10 +9,10 @@ declare let gapi:any;
  */
 @Component({
   moduleId: module.id,
-  selector: 'google',
-  templateUrl: 'google.component.html'
+  selector: 'google-button',
+  templateUrl: 'google-button.component.html'
 })
-export class GoogleComponent implements AfterViewInit {
+export class GoogleButtonComponent implements AfterViewInit {
 
   constructor(
     public message:MessageService
