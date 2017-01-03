@@ -139,8 +139,8 @@ export class InviteService {
   /**
     * Handle Convert HTML entities
     */
-  private htmlEntities(str:string): string {
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
+  // private htmlEntities(str:string): string {
+  //   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // }
 
 }

@@ -44,9 +44,6 @@ export class InviteListComponent implements OnInit {
     this.service.getListSubscription().subscribe(
       invites => {
         let newinvites:Invite[] = [];
-        if(invites===null){
-          let invites:Invite[] = [];
-        }
         let allinvites:Invite[] = invites;
         allinvites.forEach((invite) => {
           if(invite.goal) {

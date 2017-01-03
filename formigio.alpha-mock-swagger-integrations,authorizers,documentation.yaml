@@ -223,52 +223,6 @@ paths:
         passthroughBehavior: "when_no_match"
         httpMethod: "POST"
         type: "http"
-    put:
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
-          schema:
-            $ref: "#/definitions/Goal"
-      security:
-      - sigv4: []
-      x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "200"
-        uri: "https://alpha.service.formigio.com/goal"
-        passthroughBehavior: "when_no_templates"
-        httpMethod: "PUT"
-        type: "http"
-    delete:
-      produces:
-      - "application/json"
-      parameters:
-      - name: "goal"
-        in: "query"
-        required: false
-        type: "string"
-      responses:
-        200:
-          description: "200 response"
-          schema:
-            $ref: "#/definitions/Empty"
-      security:
-      - sigv4: []
-      x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "200"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{}"
-        uri: "https://alpha.service.formigio.com/goal"
-        requestParameters:
-          integration.request.header.X-Identity-Id: "context.identity.cognitoIdentityId"
-          integration.request.querystring.goal: "method.request.querystring.goal"
-        passthroughBehavior: "when_no_match"
-        httpMethod: "GET"
-        type: "http"
     options:
       consumes:
       - "application/json"
@@ -299,7 +253,9 @@ paths:
         passthroughBehavior: "when_no_match"
         type: "mock"
   /goals/{uuid}:
-    get:
+    put:
+      consumes:
+      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -311,24 +267,25 @@ paths:
         200:
           description: "200 response"
           schema:
-            $ref: "#/definitions/Empty"
+            $ref: "#/definitions/Goal"
           headers:
             Access-Control-Allow-Origin:
               type: "string"
+      security:
+      - sigv4: []
       x-amazon-apigateway-integration:
         responses:
           default:
             statusCode: "200"
-        uri: "http://data-service.alpha.formig.io/goal?team={uuid}"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        uri: "http://data-service.alpha.formig.io/goal"
         requestParameters:
           integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
-          integration.request.querystring.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
-        httpMethod: "GET"
+        httpMethod: "PUT"
         type: "http"
-    put:
-      consumes:
-      - "application/json"
+    delete:
       produces:
       - "application/json"
       parameters:
@@ -352,13 +309,12 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"uuid\"\
-                \ : \"foo\",\n  \"team\" : \"foo\",\n  \"title\" : \"foo\"\n}"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+        uri: "http://data-service.alpha.formig.io/goal"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "DELETE"
+        type: "http"
     options:
       consumes:
       - "application/json"
@@ -458,29 +414,32 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "invite"
+      - name: "goal"
         in: "query"
-        required: true
+        required: false
         type: "string"
       responses:
         200:
           description: "200 response"
           schema:
-            $ref: "#/definitions/Empty"
+            $ref: "#/definitions/Invite"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
       security:
       - sigv4: []
       x-amazon-apigateway-integration:
         responses:
           default:
             statusCode: "200"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{}"
-        uri: "https://alpha.service.formigio.com/invite"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        uri: "http://data-service.alpha.formig.io/invite"
         requestParameters:
-          integration.request.header.X-Identity-Id: "context.identity.cognitoIdentityId"
-          integration.request.querystring.invite: "method.request.querystring.invite"
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.querystring.goal: "method.request.querystring.goal"
         passthroughBehavior: "when_no_match"
-        httpMethod: "DELETE"
+        httpMethod: "GET"
         type: "http"
     options:
       consumes:
@@ -577,34 +536,6 @@ paths:
         passthroughBehavior: "when_no_match"
         httpMethod: "POST"
         type: "http"
-    delete:
-      produces:
-      - "application/json"
-      parameters:
-      - name: "task"
-        in: "query"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "200 response"
-          schema:
-            $ref: "#/definitions/Empty"
-      security:
-      - sigv4: []
-      x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "200"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{}"
-        uri: "https://alpha.service.formigio.com/task"
-        requestParameters:
-          integration.request.querystring.task: "method.request.querystring.task"
-          integration.request.header.X-Identity-Id: "context.identity.cognitoIdentityId"
-        passthroughBehavior: "when_no_match"
-        httpMethod: "GET"
-        type: "http"
     options:
       consumes:
       - "application/json"
@@ -649,7 +580,7 @@ paths:
         200:
           description: "200 response"
           schema:
-            $ref: "#/definitions/Empty"
+            $ref: "#/definitions/Task"
           headers:
             Access-Control-Allow-Origin:
               type: "string"
