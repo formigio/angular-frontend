@@ -1,8 +1,6 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MessageService } from '../core/index';
 import { User, UserService } from '../user/index';
-
-declare let gapi:any;
 
 /**
  * This class represents the lazy loaded LoginComponent.
@@ -14,10 +12,12 @@ declare let gapi:any;
   styleUrls: ['login.component.css'],
   providers: [ UserService ]
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements OnInit {
 
   states: String[] = ['new','registered'];
+  providers: String[] = ['google','cognito'];
   state: string = 'registered';
+  provider: string = '';
   confirmForm: boolean = false;
 
   user: User = {
@@ -42,47 +42,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
     public message:MessageService
   ) { }
 
-  ngAfterViewInit() {
-    console.log('ngAfterViewInit');
-    if(!this.service.checkCredentials()) {
-      gapi.signin2.render(
-        'g-signin2',
-        {
-          onSuccess: this.handleGoogleLogin,
-          scope: 'email'
-        }
-      );
-    }
-  }
-
   ngOnInit() {
-    console.log('ngOnInit');
     if(this.loggedin()) {
       this.user = this.service.retrieveUser();
     }
-  }
-
-  handleGoogleLogin = (loggedInUser:any) => {
-    let profile:any = loggedInUser.getBasicProfile();
-    let loginToken:string = loggedInUser.getAuthResponse().id_token;
-    this.message.startProcess('user_login_google',{
-      navigate_to:'/',
-      token:loginToken,
-      user: new User(
-        profile.getId(),
-        profile.getEmail(),
-        '','',
-        '',
-        'Google',
-        loginToken,
-        {
-          accessKey:'',
-          secretKey:'',
-          sessionToken:'',
-          expireTime: ''
-        }
-      )
-    });
   }
 
   login() {
@@ -113,6 +76,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   loggedin(): boolean {
     return this.service.checkCredentials();
+  }
+
+  setProvider(provider:string) {
+    this.provider = provider;
   }
 
 }

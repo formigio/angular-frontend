@@ -4,22 +4,33 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-            <form class="form-inline">
+
+            <form class="form-inline" *ngIf="provider===''">
+              <button type="button" class="btn" (click)="setProvider('google')">
+                <span>Use Google</span>
+              </button>
+              <button type="button" class="btn" (click)="setProvider('cognito')">
+                <span>Use User/Password</span>
+              </button>
+            </form>
+
+            <form class="form-inline" *ngIf="provider==='google'">
+              <google></google>
+            </form>
+
+            <form class="form-inline" *ngIf="provider==='cognito'">
               <button type="button" class="btn" [class.btn-success]="state==='registered'"
                 [class.btn-default]="state==='new'" (click)="toggleState()">
                 <span>Sign In</span>
               </button>
-
               <button type="button" class="btn" [class.btn-success]="state==='new'"
                 [class.btn-default]="state==='registered'" (click)="toggleState()">
                 <span>Sign Up</span>
               </button>
-
             </form>
 
-            <div id="g-signin2"></div>
         </div>
-        <div class="panel-body">
+        <div class="panel-body" *ngIf="provider==='cognito'">
             <div class="well well-lg">
               <form (submit)="login()" class="form-inline" *ngIf="state==='registered'">
                 <div class="form-group">

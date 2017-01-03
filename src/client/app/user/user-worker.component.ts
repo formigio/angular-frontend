@@ -119,10 +119,10 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'login_cognito_user_complete',
           'Swap the Tokens',
           'swapToken',
-          {id_token:'string'}
+          {user:'User'}
         ),
         login_google_user_complete: new ProcessTask(
-          'store_user',
+          'store_google_user',
           'login_google_user_complete',
           'Store Authenticated User',
           'storeUser',
@@ -131,14 +131,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           }
         ),
         swap_token_complete: new ProcessTask(
-          'test_authenticated',
+          'store_congito_user',
           'login_cognito_user_complete',
-          'Check Authenticated Call',
-          'testAuthenticated',
+          'Store Authenticated User',
+          'storeUser',
           {
-            accessKey:'string',
-            secretKey:'string',
-            sessionToken:'string'
+            user:'User'
           }
         ),
         test_authenticated_complete: new ProcessTask(
@@ -596,11 +594,19 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
       cognitoUser.authenticateUser(authenticationDetails, {
           onSuccess: function (result:any) {
+            console.log(result);
+            user.identity_provider = 'Cognito';
+            user.uuid = result.getIdToken().getJwtToken();
+            user.password = '';
+            user.login_token = result.getIdToken().getJwtToken();
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
               message:'Cognito User is Authenticated.',
-              context:{params:{id_token:result.getIdToken().getJwtToken(),navigate_to:'/login',user:user}}
+              context:{params:{
+                navigate_to:'/',
+                user:user
+              }}
             });
             observer.complete();
           },
@@ -619,7 +625,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
   public swapToken(control_uuid: string, params: any): Observable<any> {
 
-    let token: string = params.id_token;
+    let token: string = params.user.login_token;
     let user: User = params.user;
 
     AWS.config.region = Config.AWS_REGION; //This is required to derive the endpoint
@@ -643,58 +649,27 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'User Registration Failed. ('+err+')',
+              message:'Login Failed. ('+err+')',
               context:{params:{}}
             });
           }
 
-          user.credentials = AWS.config.credentials;
+          user.credentials.accessKey = AWS.config.credentials.accessKeyId;
+          user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
+          user.credentials.sessionToken = AWS.config.credentials.sessionToken;
+          user.credentials.expireTime = AWS.config.credentials.expireTime;
 
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'User Keys Obtained.',
+            message:'User is Authenticated.',
             context:{params:{
-              user:user,
-              accessKey:AWS.config.credentials.accessKeyId,
-              secretKey:AWS.config.credentials.secretAccessKey,
-              sessionToken:AWS.config.credentials.sessionToken
+              user:user
             }}
           });
           observer.complete();
       });
-    });
-    return obs;
-  }
 
-  public testAuthenticated(control_uuid: string, params: any): Observable<any> {
-    let user: User;
-    let api = apigClientFactory.newClient({
-      accessKey: user.credentials.accessKey,
-      secretKey: user.credentials.secretKey,
-      sessionToken: user.credentials.sessionToken
-    });
-    let obs = new Observable((observer:any) => {
-      api.authenticatedGet().then((result:any) => {
-        console.log('200 Response from Gateway');
-        console.log(result);
-        observer.next({
-          control_uuid: control_uuid,
-          outcome: 'success',
-          message:'Authenticated Route Hit.',
-          context:{params:{}}
-        });
-        observer.complete();
-      }).catch((result:any) => {
-        console.log('Error Response from Gateway');
-        console.log(result);
-          observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'Authenticated Call Failed.' + result,
-            context:{params:{}}
-          });
-      });
     });
     return obs;
   }
@@ -786,7 +761,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
       // If the token is about to expire we start the refresh token process.
       if(future > expire) {
-        this.message.startProcess('user_google_token_refresh',{user:user,token:user.login_token,navigate_to:'/login'});
+        if(user.identity_provider === 'Google'){
+          this.message.startProcess('user_google_token_refresh',{user:user,token:user.login_token,navigate_to:'/login'});
+        }
       }
 
       if(current > expire) {
