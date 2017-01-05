@@ -49,7 +49,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'remove_tasks_complete',
             'Gather Goal Invites',
             'gatherInvites',
-            {goal:'string'}
+            {entity_type:'string',entity_uuid:'string',status:'string'}
         ),
         gather_goal_invites_complete: new ProcessTask(
             'remove_invites',
@@ -63,14 +63,14 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_invite_fetch_complete',
             'Fetch Invites for a specific goal',
             'gatherInvites',
-            {goal:'string',user:'User'}
+            {entity_type:'string',entity_uuid:'string',status:'string',user:'User'}
         ),
         gather_invites_for_invite_fetch_complete: new ProcessTask(
             'publish_invites',
             'gather_invites_for_invite_fetch_complete',
             'Publish Invites for a specific goal',
             'publishInvites',
-            {invite:'Invite'}
+            {invites:'Invite'}
         ),
         get_user_for_invite_create_complete: new ProcessTask(
             'create_invite',
@@ -114,18 +114,20 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public gatherInvites(control_uuid: string, params: any): Observable<any> {
-    let goal: string = params.goal;
+    let entity_type: string = params.entity_type;
+    let entity_uuid: string = params.entity_uuid;
+    let status: string = params.status;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.list(goal).then(
+      this.service.list(entity_type,entity_uuid,status).then(
         response => {
-          let invite = <Invite>response.data;
+          let invites = <Invite[]>response.data;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Invites fetched successfully.',
-            context:{params:{invite:invite,invite_count:1}}
+            context:{params:{invites:invites,invite_count:invites.length}}
           });
           observer.complete();
         }
@@ -176,10 +178,8 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
 
 
   public publishInvites(control_uuid: string, params: any): Observable<any> {
-    let invite: Invite = params.invite;
+    let invites: Invite[] = params.invites;
     let obs = new Observable((observer:any) => {
-      let invites: Invite[] = [];
-      invites.push(invite);
       this.service.publishInvites(invites);
       observer.next({
         control_uuid: control_uuid,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService, HelperService } from '../core/index';
 import { Invite, InviteService } from './index';
@@ -15,14 +15,19 @@ import { Invite, InviteService } from './index';
 
 export class InviteListComponent implements OnInit {
 
+  @Input() entity_type:string;
+  @Input() entity_uuid:string;
+
   invites: Invite[] = [];
   invite: Invite = {
     uuid: '',
-    goal: '',
+    entity_uuid: '',
+    entity_type: '',
+    status: '',
+    invitee: '',
+    inviter: '',
     changed: false
   };
-
-  goal: string;
 
   /**
    *
@@ -46,21 +51,25 @@ export class InviteListComponent implements OnInit {
         let newinvites:Invite[] = [];
         let allinvites:Invite[] = invites;
         allinvites.forEach((invite) => {
-          if(invite.goal) {
+          if(invite.uuid) {
             newinvites.push(invite);
           }
         });
         this.invites = newinvites;
       }
     );
-    this.route.params.subscribe(params => {
-      this.goal = params['goal_uuid'];
-      this.refreshInvites();
-    });
+    // this.route.params.subscribe(params => {
+    //   this.goal = params['goal_uuid'];
+    this.refreshInvites();
+    // });
   }
 
   refreshInvites() {
-    this.message.startProcess('invite_fetch',{goal:this.goal});
+    this.message.startProcess('invite_fetch',{
+      entity_type:this.entity_type,
+      entity_uuid:this.entity_uuid,
+      status:'pending'
+    });
   }
 
   /**
@@ -68,13 +77,11 @@ export class InviteListComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addInvite(): boolean {
-    // let uuid = Math.random().toString().split('.').pop();
-    this.invite.goal = this.goal;
-    let newInvite:Invite = {
-      uuid: '',
-      goal: this.goal,
-      changed: true
-    };
+    let newInvite: Invite = JSON.parse(JSON.stringify(this.invite));
+    newInvite.entity_type = this.entity_type;
+    newInvite.entity_uuid = this.entity_uuid;
+    newInvite.status = 'pending';
+    newInvite.changed = true;
     this.invites.push(newInvite);
     return false;
   }

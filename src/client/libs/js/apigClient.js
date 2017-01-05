@@ -53,7 +53,7 @@ apigClientFactory.newClient = function (config) {
 
     
     // extract endpoint and path from url
-    var invokeUrl = 'https://d4el2racxe.execute-api.us-east-1.amazonaws.com/mock';
+    var invokeUrl = 'https://d4el2racxe.execute-api.us-east-1.amazonaws.com/invitemock';
     var endpoint = /(^https?:\/\/[^\/]+)/g.exec(invokeUrl)[1];
     var pathComponent = invokeUrl.substring(endpoint.length);
 
@@ -320,13 +320,13 @@ apigClientFactory.newClient = function (config) {
     apigClient.invitesGet = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, ['goal'], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['entity_type', 'status', 'entity_uuid'], ['body']);
         
         var invitesGetRequest = {
             verb: 'get'.toUpperCase(),
             path: pathComponent + uritemplate('/invites').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
             headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['goal']),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['entity_type', 'status', 'entity_uuid']),
             body: body
         };
         
@@ -338,7 +338,7 @@ apigClientFactory.newClient = function (config) {
     apigClient.invitesPost = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['body'], ['body']);
         
         var invitesPostRequest = {
             verb: 'post'.toUpperCase(),
@@ -350,24 +350,6 @@ apigClientFactory.newClient = function (config) {
         
         
         return apiGatewayClient.makeRequest(invitesPostRequest, authType, additionalParams, config.apiKey);
-    };
-    
-    
-    apigClient.invitesDelete = function (params, body, additionalParams) {
-        if(additionalParams === undefined) { additionalParams = {}; }
-        
-        apiGateway.core.utils.assertParametersDefined(params, ['invite'], ['body']);
-        
-        var invitesDeleteRequest = {
-            verb: 'delete'.toUpperCase(),
-            path: pathComponent + uritemplate('/invites').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['invite']),
-            body: body
-        };
-        
-        
-        return apiGatewayClient.makeRequest(invitesDeleteRequest, authType, additionalParams, config.apiKey);
     };
     
     
@@ -386,6 +368,78 @@ apigClientFactory.newClient = function (config) {
         
         
         return apiGatewayClient.makeRequest(invitesOptionsRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.invitesUuidGet = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, ['uuid'], ['body']);
+        
+        var invitesUuidGetRequest = {
+            verb: 'get'.toUpperCase(),
+            path: pathComponent + uritemplate('/invites/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, ['uuid'])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(invitesUuidGetRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.invitesUuidPut = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, ['uuid', 'body'], ['body']);
+        
+        var invitesUuidPutRequest = {
+            verb: 'put'.toUpperCase(),
+            path: pathComponent + uritemplate('/invites/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, ['uuid', ])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(invitesUuidPutRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.invitesUuidDelete = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, ['uuid'], ['body']);
+        
+        var invitesUuidDeleteRequest = {
+            verb: 'delete'.toUpperCase(),
+            path: pathComponent + uritemplate('/invites/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, ['uuid'])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(invitesUuidDeleteRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.invitesUuidOptions = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
+        
+        var invitesUuidOptionsRequest = {
+            verb: 'options'.toUpperCase(),
+            path: pathComponent + uritemplate('/invites/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(invitesUuidOptionsRequest, authType, additionalParams, config.apiKey);
     };
     
     

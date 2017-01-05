@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { GoalViewComponent } from '../goal/index';
 import { TaskListComponent } from '../task/index';
 import { InviteListComponent } from '../invite/index';
@@ -16,6 +17,8 @@ import { UserService } from '../user/index';
 
 export class GoalPageComponent implements OnInit {
 
+  goal_uuid: string;
+
   /**
    * Creates an instance of the HomeComponent with the injected
    * GoalListService.
@@ -23,7 +26,8 @@ export class GoalPageComponent implements OnInit {
    * @param {GoalListService} goalListService - The injected GoalListService.
    */
   constructor(
-    public auth: UserService
+    public auth: UserService,
+    protected route: ActivatedRoute
   ) {}
 
   /**
@@ -31,6 +35,9 @@ export class GoalPageComponent implements OnInit {
    */
   ngOnInit() {
     this.auth.enforceAuthentication();
+    this.route.params.subscribe(params => {
+      this.goal_uuid = params['goal_uuid'];
+    });
   }
 
 }

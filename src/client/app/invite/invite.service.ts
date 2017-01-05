@@ -76,14 +76,14 @@ export class InviteService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(goal:string): Promise<any> {
+  list(entity_type:string,entity_uuid:string,status:string): Promise<any> {
     let user = this.getUser();
     let api = apigClientFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.invitesGet({goal:goal});
+    return api.invitesGet({entity_type:entity_type,entity_uuid:entity_uuid,status:status});
   }
 
   /**
@@ -106,7 +106,7 @@ export class InviteService {
    * @return {string[]} The Observable for the HTTP request.
    */
   delete(invite:Invite): Observable<string[]> {
-    return this.http.delete(Config.API + '/goals/'+ invite.goal + '/invites/' + invite.uuid)
+    return this.http.delete(Config.API + '/goals/'+ invite.entity_uuid + '/invites/' + invite.uuid)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -119,7 +119,7 @@ export class InviteService {
     let body = JSON.stringify(invite);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    return this.http.put(Config.API + '/goals/' + invite.goal + '/invites/' + invite.uuid, body, options)
+    return this.http.put(Config.API + '/goals/' + invite.entity_uuid + '/invites/' + invite.uuid, body, options)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }

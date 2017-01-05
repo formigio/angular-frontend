@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TeamViewComponent } from '../team/index';
 import { GoalListComponent } from '../goal/index';
 import { TeamMemberListComponent } from '../team-member/index';
+import { InviteListComponent } from '../invite/index';
 import { UserService } from '../user/index';
 
 /**
@@ -10,11 +12,13 @@ import { UserService } from '../user/index';
 @Component({
   moduleId: module.id,
   selector: 'team-page',
-  directives: [ TeamViewComponent, GoalListComponent, TeamMemberListComponent ],
+  directives: [ TeamViewComponent, GoalListComponent, TeamMemberListComponent, InviteListComponent ],
   templateUrl: 'team-page.component.html'
 })
 
 export class TeamPageComponent implements OnInit {
+
+  team_uuid: string;
 
   /**
    * Creates an instance of the TeamPageComponent with the injected
@@ -23,7 +27,8 @@ export class TeamPageComponent implements OnInit {
    * @param {AuthenticationService} auth - The injected AuthenticationService.
    */
   constructor(
-    public auth: UserService
+    public auth: UserService,
+    public route: ActivatedRoute
   ) {}
 
   /**
@@ -31,6 +36,10 @@ export class TeamPageComponent implements OnInit {
    */
   ngOnInit() {
     this.auth.enforceAuthentication();
+    this.route.params.subscribe(params => {
+      this.team_uuid = params['uuid'];
+    });
+
   }
 
 }
