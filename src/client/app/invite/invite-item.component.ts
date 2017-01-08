@@ -44,8 +44,20 @@ export class InviteItemComponent implements OnInit {
     return false;
   }
 
-  copyLink() {
-    window.prompt('Copy to clipboard: Ctrl+C, Enter', 'https://proto.formigio.com/goal/'
-      + this.invite.goal + '/invite/' + this.invite.uuid);
+  getInviteLink(full:boolean):string {
+    let href = '/invite/' + this.invite.uuid + '/' + this.invite.entity_type + '/'
+        + this.invite.entity_uuid;
+      if(full) {
+        return window.location.origin + href;
+      }
+    return href;
   }
+
+  copyLink() {
+    window.prompt(
+      'Copy to clipboard: Ctrl+C, Enter',
+      this.getInviteLink(true)
+    );
+  }
+
 }
