@@ -5,4 +5,5 @@ export * from './invite.model';
 export * from './invite.service';
 export * from './invite-list.component';
 export * from './invite-item.component';
+export * from './invite-view.component';
 export * from './invite-worker.component';
