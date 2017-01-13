@@ -274,6 +274,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'getUser',
             {}
         ),
+        invite_view_init: new ProcessTask(
+            'get_user_for_invite_view',
+            'invite_view_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
         goal_save_init: new ProcessTask(
             'get_user_for_goal_save',
             'goal_save_init',

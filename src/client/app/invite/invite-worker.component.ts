@@ -33,6 +33,12 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           'The Process Used to Control the Creation of Invites',
           new ProcessContext,
           ''
+        ),
+        invite_view: new ProcessRoutine(
+          'invite_view',
+          'The Process Used to Control the View of Invite',
+          new ProcessContext,
+          ''
         )
     };
 
@@ -63,7 +69,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_invite_fetch_complete',
             'Fetch Invites for a specific goal',
             'gatherInvites',
-            {entity_type:'string',entity_uuid:'string',status:'string',user:'User'}
+            {entity_type:'string',entity_uuid:'string',user:'User'}
         ),
         gather_invites_for_invite_fetch_complete: new ProcessTask(
             'publish_invites',
@@ -78,6 +84,13 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'Create Invite',
             'createInvite',
             {invite:'Invite',user:'User'}
+        ),
+        get_user_for_invite_view_complete: new ProcessTask(
+            'load_invite',
+            'get_user_for_invite_create_complete',
+            'Load Invite',
+            'loadInvite',
+            {uuid:'string',user:'User'}
         )
     };
 
@@ -116,11 +129,10 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
   public gatherInvites(control_uuid: string, params: any): Observable<any> {
     let entity_type: string = params.entity_type;
     let entity_uuid: string = params.entity_uuid;
-    let status: string = params.status;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.list(entity_type,entity_uuid,status).then(
+      this.service.list(entity_type,entity_uuid).then(
         response => {
           let invites = <Invite[]>response.data;
           observer.next({
@@ -128,6 +140,38 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             outcome: 'success',
             message:'Invites fetched successfully.',
             context:{params:{invites:invites,invite_count:invites.length}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured fetching the invites.'
+          });
+        }
+      );
+    });
+
+    return obs;
+  }
+
+  public loadInvite(control_uuid: string, params: any): Observable<any> {
+    let uuid: string = params.uuid;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.get(uuid).then(
+        response => {
+          let invite = <Invite>(<any>response).data;
+          console.log(response);
+          this.service.publishInvite(invite);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Invite fetched successfully.',
+            context:{params:{invite:invite}}
           });
           observer.complete();
         }

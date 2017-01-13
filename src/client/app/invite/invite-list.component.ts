@@ -21,8 +21,8 @@ export class InviteListComponent implements OnInit {
   invites: Invite[] = [];
   invite: Invite = {
     uuid: '',
-    entity_uuid: '',
-    entity_type: '',
+    entity: '',
+    entityType: '',
     status: '',
     invitee: '',
     inviter: '',
@@ -67,8 +67,7 @@ export class InviteListComponent implements OnInit {
   refreshInvites() {
     this.message.startProcess('invite_fetch',{
       entity_type:this.entity_type,
-      entity_uuid:this.entity_uuid,
-      status:'pending'
+      entity_uuid:this.entity_uuid
     });
   }
 
@@ -78,8 +77,8 @@ export class InviteListComponent implements OnInit {
    */
   addInvite(): boolean {
     let newInvite: Invite = JSON.parse(JSON.stringify(this.invite));
-    newInvite.entity_type = this.entity_type;
-    newInvite.entity_uuid = this.entity_uuid;
+    newInvite.entityType = this.entity_type;
+    newInvite.entity = this.entity_uuid;
     newInvite.status = 'pending';
     newInvite.changed = true;
     this.invites.push(newInvite);

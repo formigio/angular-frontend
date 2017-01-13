@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2017-01-05T05:27:53Z"
+  version: "2017-01-13T06:27:38Z"
   title: "formigio.alpha"
 host: "d4el2racxe.execute-api.us-east-1.amazonaws.com"
 basePath: "/invitemock"
@@ -390,20 +390,14 @@ paths:
         type: "mock"
   /invites:
     get:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       parameters:
-      - name: "uuid"
+      - name: "entity_type"
         in: "query"
         required: false
         type: "string"
-      - name: "entity"
-        in: "query"
-        required: false
-        type: "string"
-      - name: "status"
+      - name: "entity_uuid"
         in: "query"
         required: false
         type: "string"
@@ -428,16 +422,14 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n[{\n  \"uuid\"\
-                \ : \"8b7f18d7-14f9-4870-8a50-2ca4d1eb92da\",\n  \"entity_type\" :\
-                \ \"team\",\n  \"entity_uuid\" : \"612563bc-43e9-4c10-abf2-d671f552fda3\"\
-                ,\n  \"inviter\" : \"Inviter\",\n  \"invitee\" : \"Invitee\",\n  \"\
-                status\" : \"pending\"\n}]"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+        uri: "http://data-service.alpha.formig.io/invite"
+        requestParameters:
+          integration.request.querystring.entity: "method.request.querystring.entity_uuid"
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.querystring.entityType: "method.request.querystring.entity_type"
         passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "GET"
+        type: "http"
     post:
       consumes:
       - "application/json"
@@ -502,8 +494,6 @@ paths:
         type: "mock"
   /invites/{uuid}:
     get:
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -527,88 +517,13 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"uuid\"\
-                \ : \"8b7f18d7-14f9-4870-8a50-2ca4d1eb92da\",\n  \"entity_type\" :\
-                \ \"team\",\n  \"entity_uuid\" : \"612563bc-43e9-4c10-abf2-d671f552fda3\"\
-                ,\n  \"inviter\" : \"Inviter\",\n  \"invitee\" : \"Invitee\",\n  \"\
-                status\" : \"pending\"\n}"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+        uri: "http://data-service.alpha.formig.io/invite/{uuid}"
+        requestParameters:
+          integration.request.header.Authorization: "'Basic Zm9ybWlnaW9hcGlnYXRld2F5OnNldmVudGVlbmFuZ3J5YW5pbWFscw=='"
+          integration.request.path.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
-        type: "mock"
-    put:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "uuid"
-        in: "path"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "Invite"
-        required: true
-        schema:
-          $ref: "#/definitions/Invite"
-      responses:
-        200:
-          description: "200 response"
-          schema:
-            $ref: "#/definitions/Empty"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-      security:
-      - sigv4: []
-      x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "200"
-            responseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"uuid\"\
-                \ : \"foo\",\n  \"entity_type\" : \"foo\",\n  \"entity_uuid\" : \"\
-                foo\",\n  \"inviter\" : \"foo\",\n  \"invitee\" : \"foo\",\n  \"status\"\
-                \ : \"foo\"\n}"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
-        passthroughBehavior: "when_no_match"
-        type: "mock"
-    delete:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "uuid"
-        in: "path"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "200 response"
-          schema:
-            $ref: "#/definitions/Empty"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-      security:
-      - sigv4: []
-      x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "200"
-            responseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            responseTemplates:
-              application/json: "#set($inputRoot = $input.path('$'))\n{ }"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
-        passthroughBehavior: "when_no_match"
-        type: "mock"
+        httpMethod: "GET"
+        type: "http"
     options:
       consumes:
       - "application/json"

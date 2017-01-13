@@ -21,6 +21,7 @@ export class InviteService {
   user: User;
 
   private invites: Invite[] = [];
+  private invite: Invite;
 
   /**
    * Creates a new NameListService with the injected Http.
@@ -29,9 +30,17 @@ export class InviteService {
    */
   constructor(private http: Http) {}
 
+  getItemSubscription(): ReplaySubject<any> {
+    return this.itemSubscription;
+  }
 
   getListSubscription(): ReplaySubject<any> {
     return this.listSubscription;
+  }
+
+  publishInvite(invite:Invite) {
+    this.invite = invite;
+    this.itemSubscription.next(invite);
   }
 
   publishInvites(invites:Invite[]) {
@@ -56,10 +65,14 @@ export class InviteService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  get(guid:string): Observable<Invite> {
-    return this.http.get(Config.API + '/goals/' + guid + '/invites')
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
+  get(uuid:string): Promise<Invite> {
+    let user = this.getUser();
+    let api = apigClientFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.invitesUuidGet({uuid:uuid});
   }
 
   /**
@@ -76,14 +89,14 @@ export class InviteService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(entity_type:string,entity_uuid:string,status:string): Promise<any> {
+  list(entity_type:string,entity_uuid:string): Promise<any> {
     let user = this.getUser();
     let api = apigClientFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.invitesGet({entity_type:entity_type,entity_uuid:entity_uuid,status:status});
+    return api.invitesGet({entity_type:entity_type,entity_uuid:entity_uuid});
   }
 
   /**
@@ -106,7 +119,7 @@ export class InviteService {
    * @return {string[]} The Observable for the HTTP request.
    */
   delete(invite:Invite): Observable<string[]> {
-    return this.http.delete(Config.API + '/goals/'+ invite.entity_uuid + '/invites/' + invite.uuid)
+    return this.http.delete(Config.API + '/goals/'+ invite.entity + '/invites/' + invite.uuid)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }
@@ -119,7 +132,7 @@ export class InviteService {
     let body = JSON.stringify(invite);
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
-    return this.http.put(Config.API + '/goals/' + invite.entity_uuid + '/invites/' + invite.uuid, body, options)
+    return this.http.put(Config.API + '/goals/' + invite.entity + '/invites/' + invite.uuid, body, options)
                     .map((res: Response) => res.json())
                     .catch(this.handleError);
   }

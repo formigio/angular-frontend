@@ -320,13 +320,13 @@ apigClientFactory.newClient = function (config) {
     apigClient.invitesGet = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, ['entity_type', 'status', 'entity_uuid'], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['entity_type', 'entity_uuid'], ['body']);
         
         var invitesGetRequest = {
             verb: 'get'.toUpperCase(),
             path: pathComponent + uritemplate('/invites').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
             headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['entity_type', 'status', 'entity_uuid']),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['entity_type', 'entity_uuid']),
             body: body
         };
         
@@ -386,42 +386,6 @@ apigClientFactory.newClient = function (config) {
         
         
         return apiGatewayClient.makeRequest(invitesUuidGetRequest, authType, additionalParams, config.apiKey);
-    };
-    
-    
-    apigClient.invitesUuidPut = function (params, body, additionalParams) {
-        if(additionalParams === undefined) { additionalParams = {}; }
-        
-        apiGateway.core.utils.assertParametersDefined(params, ['uuid', 'body'], ['body']);
-        
-        var invitesUuidPutRequest = {
-            verb: 'put'.toUpperCase(),
-            path: pathComponent + uritemplate('/invites/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, ['uuid', ])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
-            body: body
-        };
-        
-        
-        return apiGatewayClient.makeRequest(invitesUuidPutRequest, authType, additionalParams, config.apiKey);
-    };
-    
-    
-    apigClient.invitesUuidDelete = function (params, body, additionalParams) {
-        if(additionalParams === undefined) { additionalParams = {}; }
-        
-        apiGateway.core.utils.assertParametersDefined(params, ['uuid'], ['body']);
-        
-        var invitesUuidDeleteRequest = {
-            verb: 'delete'.toUpperCase(),
-            path: pathComponent + uritemplate('/invites/{uuid}').expand(apiGateway.core.utils.parseParametersToObject(params, ['uuid'])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
-            body: body
-        };
-        
-        
-        return apiGatewayClient.makeRequest(invitesUuidDeleteRequest, authType, additionalParams, config.apiKey);
     };
     
     

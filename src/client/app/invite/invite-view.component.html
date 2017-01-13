@@ -1,8 +1,5 @@
 <div *ngIf="invite.uuid">
-    <button class="btn btn-xs btn-default" type="button" (click)="copyLink()">
-        <span class="glyphicon glyphicon-copy"></span>
-    </button>
-    <span>Invite for {{invite.invitee}}</span>
-    <a routerLink="{{getInviteLink(false)}}">View Only Invitation Link</a>
-    <!--<button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteInvite(invite)"><span class="glyphicon glyphicon-remove-sign"></span></button>-->
+    <p>Hello, {{invite.invitee}}</p>
+    <p>{{invite.inviter}} wants you to accept an invite to work together.</p>
+    <p>This is a {{invite.entityType}}: {{invite.entity}}</p>
 </div>

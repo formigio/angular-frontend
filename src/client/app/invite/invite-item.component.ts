@@ -45,8 +45,8 @@ export class InviteItemComponent implements OnInit {
   }
 
   getInviteLink(full:boolean):string {
-    let href = '/invite/' + this.invite.uuid + '/' + this.invite.entity_type + '/'
-        + this.invite.entity_uuid;
+    let href = '/invite/' + this.invite.uuid + '/' + this.invite.entityType + '/'
+        + this.invite.entity;
       if(full) {
         return window.location.origin + href;
       }

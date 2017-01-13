@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MessageService } from '../core/index';
+import { MessageService, HelperService } from '../core/index';
 import { InviteService, Invite } from './index';
 
 /**
@@ -14,7 +14,17 @@ import { InviteService, Invite } from './index';
 
 export class InviteViewComponent implements OnInit {
 
-  @Input() invite:Invite;
+  @Input() uuid:string;
+
+  invite: Invite = {
+    uuid: '',
+    entity: '',
+    entityType: '',
+    status: '',
+    invitee: '',
+    inviter: '',
+    changed: false
+  };
 
   /**
    *
@@ -22,13 +32,20 @@ export class InviteViewComponent implements OnInit {
    */
   constructor(
       public service: InviteService,
-      public message: MessageService
-  ) {}
+      public message: MessageService,
+      public helper: HelperService
+  ) {
+    this.service = this.helper.getServiceInstance(this.service,'InviteService');
+  }
 
   /**
    * Get the names OnInit
    */
   ngOnInit() {
+    this.service.getItemSubscription().subscribe(
+      invite => this.invite = <Invite>invite
+    );
+    this.message.startProcess('invite_view',{uuid:this.uuid});
   }
 
   /**
@@ -42,8 +59,8 @@ export class InviteViewComponent implements OnInit {
   }
 
   getInviteLink(full:boolean):string {
-    let href = '/invite/' + this.invite.uuid + '/' + this.invite.entity_type + '/'
-        + this.invite.entity_uuid;
+    let href = '/invite/' + this.invite.uuid + '/' + this.invite.entityType + '/'
+        + this.invite.entity;
       if(full) {
         return window.location.origin + href;
       }
