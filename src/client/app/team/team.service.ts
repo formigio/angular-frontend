@@ -86,7 +86,7 @@ export class TeamService {
         secretKey: user.credentials.secretKey,
         sessionToken: user.credentials.sessionToken
       });
-      return api.makeRequest('/teams');
+      return api.get('/teams',{'headers':{'x-identity-id':user.identity}});
   }
 
   /**
@@ -119,7 +119,7 @@ export class TeamService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/team/{id}',{id:id});
+    return api.get('/team/{id}',{id:id});
   }
 
   /**
@@ -131,13 +131,13 @@ export class TeamService {
     let user = this.getUser();
     // team.identity = user.data_identity;
     // let body = JSON.stringify(team);
-    let body = team;
+    let body = {title:team.title};
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/teams',{},body);
+    return api.post('/teams',{'headers':{'x-identity-id':user.identity}},body);
   }
 
   /**

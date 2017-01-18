@@ -308,14 +308,15 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Forced Logout after Google Token Refresh Fails',
             'logoutUser',
             {}
-        ),
-        fetch_teams_complete: new ProcessTask(
-            'store_user_identity',
-            'fetch_teams_complete',
-            'Store the User Identity',
-            'storeUserIdentity',
-            {user_identity:'string'}
         )
+        // ,
+        // fetch_teams_complete: new ProcessTask(
+        //     'store_user_identity',
+        //     'fetch_teams_complete',
+        //     'Store the User Identity',
+        //     'storeUserIdentity',
+        //     {user_identity:'string'}
+        // )
     };
 
   constructor(
@@ -558,6 +559,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
           user.credentials.sessionToken = AWS.config.credentials.sessionToken;
           user.credentials.expireTime = AWS.config.credentials.expireTime;
+          user.identity = AWS.config.credentials.identityId;
 
           observer.next({
             control_uuid: control_uuid,
@@ -665,6 +667,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
           user.credentials.sessionToken = AWS.config.credentials.sessionToken;
           user.credentials.expireTime = AWS.config.credentials.expireTime;
+          user.identity = AWS.config.credentials.identityId;
 
           observer.next({
             control_uuid: control_uuid,

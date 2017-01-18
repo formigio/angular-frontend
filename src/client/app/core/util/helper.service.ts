@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Config } from '../../shared';
+import { Config } from '../../shared/index';
 
 declare let apigClientFactory: any;
 declare let apiGateway: any;
@@ -55,9 +55,11 @@ export class HelperService {
     }
 
     getApiClientFactory() {
-        var apigClientFactory = {};
+        let apigClientFactory = {};
         (<any>apigClientFactory).newClient = function (config:any) {
-            var apigClient: any;
+
+            let apigClient: any = {};
+
             if(config === undefined) {
                 config = {
                     accessKey: '',
@@ -95,11 +97,11 @@ export class HelperService {
 
 
             // extract endpoint and path from url
-            var invokeUrl = Config.API;
-            var endpoint = /(^https?:\/\/[^\/]+)/g.exec(invokeUrl)[1];
-            var pathComponent = invokeUrl.substring(endpoint.length);
+            let invokeUrl:string = Config.API;
+            let endpoint:string = /(^https?:\/\/[^\/]+)/g.exec(invokeUrl)[1];
+            let pathComponent:string = invokeUrl.substring(endpoint.length);
 
-            var sigV4ClientConfig = {
+            let sigV4ClientConfig:any = {
                 accessKey: config.accessKey,
                 secretKey: config.secretKey,
                 sessionToken: config.sessionToken,
@@ -110,33 +112,80 @@ export class HelperService {
                 defaultAcceptType: config.defaultAcceptType
             };
 
-            var authType = 'NONE';
+            let authType:string = 'NONE';
             if (sigV4ClientConfig.accessKey !== undefined && sigV4ClientConfig.accessKey !== ''
                 && sigV4ClientConfig.secretKey !== undefined && sigV4ClientConfig.secretKey !== '') {
                 authType = 'AWS_IAM';
             }
 
-            var simpleHttpClientConfig = {
+            let simpleHttpClientConfig:any = {
                 endpoint: endpoint,
                 defaultContentType: config.defaultContentType,
                 defaultAcceptType: config.defaultAcceptType
             };
 
-            var apiGatewayClient = apiGateway.core.apiGatewayClientFactory.newClient(simpleHttpClientConfig, sigV4ClientConfig);
+            let apiGatewayClient:any = apiGateway.core.apiGatewayClientFactory.newClient(simpleHttpClientConfig, sigV4ClientConfig);
 
-            apigClient.makeRequest = function (path:any ,params:any, body:any, additionalParams:any) {
-                if(additionalParams === undefined) { additionalParams = {}; }
+            apigClient.get = function (path:any, options:any) {
+                if(options.params === undefined) { options.params = {}; }
+                if(options.headers === undefined) { options.headers = {}; }
 
-                var rootOptionsRequest = {
-                    verb: 'options'.toUpperCase(),
-                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-                    headers: apiGateway.core.utils.parseParametersToObject(params, []),
-                    queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+                let requestOptions:any = {
+                    verb: 'get'.toUpperCase(),
+                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(options.params, [])),
+                    headers: options.headers,
+                    queryParams: options.params
+                };
+
+                return apiGatewayClient.makeRequest(requestOptions, authType, options.params, config.apiKey);
+            };
+
+            apigClient.post = function (path:any, options:any, body:any) {
+                if(options.params === undefined) { options.params = {}; }
+                if(options.headers === undefined) { options.headers = {}; }
+                if(body === undefined) { body = {}; }
+
+                let rootOptionsRequest:any = {
+                    verb: 'post'.toUpperCase(),
+                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(options.params, [])),
+                    headers: options.headers,
+                    queryParams: options.params,
                     body: body
                 };
 
-                return apiGatewayClient.makeRequest(rootOptionsRequest, authType, additionalParams, config.apiKey);
+                return apiGatewayClient.makeRequest(rootOptionsRequest, authType, options.params, config.apiKey);
             };
+
+            apigClient.put = function (path:any, options:any, body:any) {
+                if(options.params === undefined) { options.params = {}; }
+                if(options.headers === undefined) { options.headers = {}; }
+                if(body === undefined) { body = {}; }
+
+                let rootOptionsRequest:any = {
+                    verb: 'put'.toUpperCase(),
+                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(options.params, [])),
+                    headers: options.headers,
+                    queryParams: options.params,
+                    body: body
+                };
+
+                return apiGatewayClient.makeRequest(rootOptionsRequest, authType, options.params, config.apiKey);
+            };
+
+            apigClient.delete = function (path:any, options:any) {
+                if(options.params === undefined) { options.params = {}; }
+                if(options.headers === undefined) { options.headers = {}; }
+
+                let requestOptions:any = {
+                    verb: 'delete'.toUpperCase(),
+                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(options.params, [])),
+                    headers: options.headers,
+                    queryParams: options.params
+                };
+
+                return apiGatewayClient.makeRequest(requestOptions, authType, options.params, config.apiKey);
+            };
+
             return apigClient;
         };
         return apigClientFactory;

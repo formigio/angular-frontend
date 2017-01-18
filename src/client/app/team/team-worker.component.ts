@@ -315,17 +315,16 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     let obs = new Observable((observer:any) => {
       this.service.list(user).then((response:any) => {
           loadedTeams = response.data;
-          userIdentity = user.identity;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Teams loaded successfully.',
-            context:{params:{teams_loaded:true,user_identity:userIdentity}}
+            context:{params:{teams_loaded:true}}
           });
           this.service.publishTeams(loadedTeams);
           observer.complete();
         }).catch((error:any) => {
-          let message = 'Teams Load Failed.';
+          let message = 'Teams Load Failed. ('+ error +')';
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
