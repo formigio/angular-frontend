@@ -1,8 +1,10 @@
 export class User {
     constructor(
-        public uuid: string,
+        public id: string,
+        public name: string,
+        public identity: string,
+        public username: string,
         public email: string,
-        public data_identity: string,
         public password: string,
         public confirm_code?: string,
         public identity_provider?: string,

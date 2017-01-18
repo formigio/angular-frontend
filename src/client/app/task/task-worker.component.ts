@@ -233,70 +233,70 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  public deleteTask(control_uuid: string, params: any): Observable<any> {
-    let task: Task = params.task;
-    let obs = new Observable((observer:any) => {
-      this.service.delete(task).subscribe(
-        null,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while removing tasks.',
-          context:{params:{}}
-        }),
-        () => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Task removed successfully.',
-            context:{params:{task_deleted:task.uuid}}
-          });
-          this.service.refreshTasks(task.goal);
-          observer.complete();
-        }
-      );
-    });
-    return obs;
-  }
+  // public deleteTask(control_uuid: string, params: any): Observable<any> {
+  //   let task: Task = params.task;
+  //   let obs = new Observable((observer:any) => {
+  //     this.service.delete(task).subscribe(
+  //       null,
+  //       error => observer.error({
+  //         control_uuid: control_uuid,
+  //         outcome: 'error',
+  //         message:'Error has occured while removing tasks.',
+  //         context:{params:{}}
+  //       }),
+  //       () => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Task removed successfully.',
+  //           context:{params:{task_deleted:task.uuid}}
+  //         });
+  //         this.service.refreshTasks(task.goal);
+  //         observer.complete();
+  //       }
+  //     );
+  //   });
+  //   return obs;
+  // }
 
-  public removeTasks(control_uuid: string, params: any): Observable<any> {
-    let tasks: Task[] = params.tasks;
-    let tasksRemoved: string[] = [];
-    let obs = new Observable((observer:any) => {
-      if(tasks.length === 0) {
-        observer.next({
-          control_uuid: control_uuid,
-          outcome: 'success',
-          message:'No Tasks to Remove.',
-          context:{params:{task_count:0}}
-        });
-        observer.complete();
-      }
-      tasks.forEach((task) => {
-        this.service.delete(task).subscribe(
-          null,
-          error => observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'Error has occured while removing tasks.',
-            context:{params:{}}
-          }),
-          () => {
-            tasksRemoved.push(task.uuid);
-            if(tasks.length === tasksRemoved.length) {
-              observer.next({
-                control_uuid: control_uuid,
-                outcome: 'success',
-                message:'Tasks removed successfully.',
-                context:{params:{task_count:0}}
-              });
-              observer.complete();
-            }
-          }
-        );
-      });
-    });
-    return obs;
-  }
+  // public removeTasks(control_uuid: string, params: any): Observable<any> {
+  //   let tasks: Task[] = params.tasks;
+  //   let tasksRemoved: string[] = [];
+  //   let obs = new Observable((observer:any) => {
+  //     if(tasks.length === 0) {
+  //       observer.next({
+  //         control_uuid: control_uuid,
+  //         outcome: 'success',
+  //         message:'No Tasks to Remove.',
+  //         context:{params:{task_count:0}}
+  //       });
+  //       observer.complete();
+  //     }
+  //     tasks.forEach((task) => {
+  //       this.service.delete(task).subscribe(
+  //         null,
+  //         error => observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message:'Error has occured while removing tasks.',
+  //           context:{params:{}}
+  //         }),
+  //         () => {
+  //           tasksRemoved.push(task.uuid);
+  //           if(tasks.length === tasksRemoved.length) {
+  //             observer.next({
+  //               control_uuid: control_uuid,
+  //               outcome: 'success',
+  //               message:'Tasks removed successfully.',
+  //               context:{params:{task_count:0}}
+  //             });
+  //             observer.complete();
+  //           }
+  //         }
+  //       );
+  //     });
+  //   });
+  //   return obs;
+  // }
 
 }

@@ -20,12 +20,14 @@ export class InviteListComponent implements OnInit {
 
   invites: Invite[] = [];
   invite: Invite = {
+    id:'',
     uuid: '',
     entity: '',
-    entityType: '',
-    status: '',
-    invitee: '',
-    inviter: '',
+    entity_id: '',
+    invitee_name: '',
+    invitee_worker_id: '',
+    inviter_name: '',
+    inviter_worker_id: '',
     changed: false
   };
 
@@ -77,9 +79,8 @@ export class InviteListComponent implements OnInit {
    */
   addInvite(): boolean {
     let newInvite: Invite = JSON.parse(JSON.stringify(this.invite));
-    newInvite.entityType = this.entity_type;
-    newInvite.entity = this.entity_uuid;
-    newInvite.status = 'pending';
+    newInvite.entity = this.entity_type;
+    newInvite.entity_id = this.entity_uuid;
     newInvite.changed = true;
     this.invites.push(newInvite);
     return false;

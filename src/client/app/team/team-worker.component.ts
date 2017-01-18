@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
-import { Team, TeamMembership, TeamService } from './index';
+import { Team, TeamService } from './index';
 import { User } from '../user/index';
 
 /**
@@ -148,30 +148,30 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
       }
   }
 
-  public deleteTeam(control_uuid: string, params: any): Observable<any> {
-    let team: Team = params.team;
-    let obs = new Observable((observer:any) => {
-      this.service.delete(team.uuid).subscribe(
-        null,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while removing team.',
-          context:{params:{}}
-        }),
-        () => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Team removed successfully.',
-            context:{params:{team_deleted:team.uuid}}
-          });
-          observer.complete();
-        }
-      );
-    });
-    return obs;
-  }
+  // public deleteTeam(control_uuid: string, params: any): Observable<any> {
+  //   let team: Team = params.team;
+  //   let obs = new Observable((observer:any) => {
+  //     this.service.delete(team.uuid).subscribe(
+  //       null,
+  //       error => observer.error({
+  //         control_uuid: control_uuid,
+  //         outcome: 'error',
+  //         message:'Error has occured while removing team.',
+  //         context:{params:{}}
+  //       }),
+  //       () => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Team removed successfully.',
+  //           context:{params:{team_deleted:team.id}}
+  //         });
+  //         observer.complete();
+  //       }
+  //     );
+  //   });
+  //   return obs;
+  // }
 
   public saveTeam(control_uuid: string, params: any): Observable<any> {
     let team: Team = params.team;
@@ -184,7 +184,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Team Saved successfully.',
-            context:{params:{team_saved:team.uuid}}
+            context:{params:{team_saved:team.id}}
           });
           observer.complete();
         }
@@ -213,7 +213,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Team Created successfully.',
-            context:{params:{team_created:team.uuid}}
+            context:{params:{team_created:team.id}}
           });
           observer.complete();
         }).catch((response:any) => {
@@ -229,37 +229,37 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  public saveTeamMembership(control_uuid: string, params: any): Observable<any> {
-    let team: Team = params.team;
-    let user: User = params.user;
-    let membership: TeamMembership = {
-      team_uuid: team.uuid,
-      user_uuid: user.uuid,
-      team_doc: team,
-      user_doc: user
-    };
-    let obs = new Observable((observer:any) => {
-      this.service.postMembership(membership).subscribe(
-        null,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while saving team membership.',
-          context:{params:{}}
-        }),
-        () => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Team Membership Saved.',
-            context:{params:{team_membership_saved: true}}
-          });
-          observer.complete();
-        }
-      );
-    });
-    return obs;
-  }
+  // public saveTeamMembership(control_uuid: string, params: any): Observable<any> {
+  //   let team: Team = params.team;
+  //   let user: User = params.user;
+  //   let membership: TeamMembership = {
+  //     team_uuid: team.uuid,
+  //     user_uuid: user.uuid,
+  //     team_doc: team,
+  //     user_doc: user
+  //   };
+  //   let obs = new Observable((observer:any) => {
+  //     this.service.postMembership(membership).subscribe(
+  //       null,
+  //       error => observer.error({
+  //         control_uuid: control_uuid,
+  //         outcome: 'error',
+  //         message:'Error has occured while saving team membership.',
+  //         context:{params:{}}
+  //       }),
+  //       () => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Team Membership Saved.',
+  //           context:{params:{team_membership_saved: true}}
+  //         });
+  //         observer.complete();
+  //       }
+  //     );
+  //   });
+  //   return obs;
+  // }
 
   public prepareTeamMembership(control_uuid: string, params: any): Observable<any> {
     // let team_uuid: string = params.team_uuid;
@@ -315,7 +315,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     let obs = new Observable((observer:any) => {
       this.service.list(user).then((response:any) => {
           loadedTeams = response.data;
-          userIdentity = loadedTeams.slice(-1).pop().identity;
+          userIdentity = user.identity;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
@@ -339,37 +339,37 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  public handleFetchTeamsError(control_uuid: string, params: any): Observable<any> {
-    let user: User = params.user;
-    let obs = new Observable((observer:any) => {
-      this.service.auth(user).then((response:any) => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Auth successful.',
-            context:{params:{}}
-          });
-          observer.complete();
-        }).catch((error:any) => {
-          let message = 'Auth Test Failed.';
-          if(error.status === 403) {
-            message = 'User Login Required';
-            this.message.startProcess('user_logout',{});
-          }
-          if(error.status === 0) {
-            message = 'Network Error';
-          }
-          observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message: message,
-            context:{
-              params:{}
-            }
-        });
-      });
-    });
-    return obs;
-  }
+  // public handleFetchTeamsError(control_uuid: string, params: any): Observable<any> {
+  //   let user: User = params.user;
+  //   let obs = new Observable((observer:any) => {
+  //     this.service.auth(user).then((response:any) => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Auth successful.',
+  //           context:{params:{}}
+  //         });
+  //         observer.complete();
+  //       }).catch((error:any) => {
+  //         let message = 'Auth Test Failed.';
+  //         if(error.status === 403) {
+  //           message = 'User Login Required';
+  //           this.message.startProcess('user_logout',{});
+  //         }
+  //         if(error.status === 0) {
+  //           message = 'Network Error';
+  //         }
+  //         observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message: message,
+  //           context:{
+  //             params:{}
+  //           }
+  //       });
+  //     });
+  //   });
+  //   return obs;
+  // }
 
 }

@@ -35,7 +35,7 @@ export class TaskItemComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    if(!this.task.uuid) {
+    if(!this.task.id) {
       this.message.startProcess('task_create',{task:this.task});
     }
   }
@@ -76,7 +76,7 @@ export class TaskItemComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   completeTask(task:Task): boolean {
-    task.complete = true;
+    task.worker_status = 'completed';
     this.message.startProcess('task_save',{task:task});
     return false;
   }

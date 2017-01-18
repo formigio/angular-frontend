@@ -21,9 +21,11 @@ export class LoginComponent implements OnInit {
   confirmForm: boolean = false;
 
   user: User = {
-    uuid: '',
+    id: '',
+    name: '',
     email: '',
-    data_identity: '',
+    username: '',
+    identity: '',
     password: '',
     identity_provider: '',
     confirm_code: '',

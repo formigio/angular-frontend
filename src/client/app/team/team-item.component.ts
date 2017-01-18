@@ -36,7 +36,7 @@ export class TeamItemComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    if(!this.team.uuid) {
+    if(!this.team.id) {
       this.message.startProcess('team_create',{team:this.team});
     }
   }
@@ -61,6 +61,6 @@ export class TeamItemComponent implements OnInit {
   }
 
   navigateTo(team:Team) {
-    this.message.startProcess('navigate_to',{navigate_to:'team/' + team.uuid});
+    this.message.startProcess('navigate_to',{navigate_to:'team/' + team.id});
   }
 }

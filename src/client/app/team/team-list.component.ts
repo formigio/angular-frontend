@@ -19,9 +19,8 @@ export class TeamListComponent implements OnInit {
   teams: Team[] = [];
 
   team: Team = {
-    uuid: '',
+    id: '',
     title: '',
-    identity: '',
     changed: false
   };
 
@@ -49,7 +48,7 @@ export class TeamListComponent implements OnInit {
         let newteams:Team[] = [];
         let allteams:Team[] = teams;
         allteams.forEach((team) => {
-          if(team.uuid) {
+          if(team.id) {
             newteams.push(team);
           }
         });
@@ -69,7 +68,7 @@ export class TeamListComponent implements OnInit {
    */
   addTeam(): boolean {
     // this.team.uuid = Math.random().toString().split('.').pop();
-    this.team.uuid = '';
+    this.team.id = '';
     this.team.changed = true;
     let newTeam: Team = JSON.parse(JSON.stringify(this.team));
     this.teams.push(newTeam);

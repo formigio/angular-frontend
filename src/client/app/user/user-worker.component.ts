@@ -352,130 +352,130 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       }
   }
 
-  public getHash(control_uuid: string, params: any): Observable<any> {
-    let user: User = params.user;
-    let obs = new Observable((observer:any) => {
-      let hash = this.service.password(user);
-      hash.subscribe(
-        response => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Credentials Processed.',
-            context:{params:{password_hash:response.password_hash}}
-          });
-        },
-        error => {
-          observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'Password Hash Failed.',
-            context:{params:{}}
-          });
-        },
-        () => observer.complete()
-      );
-    });
-    return obs;
-  }
+  // public getHash(control_uuid: string, params: any): Observable<any> {
+  //   let user: User = params.user;
+  //   let obs = new Observable((observer:any) => {
+  //     let hash = this.service.password(user);
+  //     hash.subscribe(
+  //       response => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Credentials Processed.',
+  //           context:{params:{password_hash:response.password_hash}}
+  //         });
+  //       },
+  //       error => {
+  //         observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message:'Password Hash Failed.',
+  //           context:{params:{}}
+  //         });
+  //       },
+  //       () => observer.complete()
+  //     );
+  //   });
+  //   return obs;
+  // }
 
-  public loginUser(control_uuid: string, params: any): Observable<any> {
-    let user: User = params.user;
-    user.password = params.password_hash;
-    let obs = new Observable((observer:any) => {
-      let auth = this.service.authenticateUser(user);
-      auth.subscribe(
-        response => {
-          if(response.uuid === '') {
-            observer.error({
-              control_uuid: control_uuid,
-              outcome: 'error',
-              message:'Login Failed.',
-              context:{params:{}}
-            });
-          } else {
-            user.uuid = response.uuid;
-            this.service.publishUser(user);
-            observer.next({
-              control_uuid: control_uuid,
-              outcome: 'success',
-              message:'Credentials Tested.',
-              context:{params:{logged_in:response.uuid,navigate_to:'/',user:user}}
-            });
-          }
-        },
-        error => {
-          observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'Login Failed.',
-            context:{params:{}}
-          });
-        },
-        () => observer.complete()
-      );
-    });
-    return obs;
-  }
+  // public loginUser(control_uuid: string, params: any): Observable<any> {
+  //   let user: User = params.user;
+  //   user.password = params.password_hash;
+  //   let obs = new Observable((observer:any) => {
+  //     let auth = this.service.authenticateUser(user);
+  //     auth.subscribe(
+  //       response => {
+  //         if(response.uuid === '') {
+  //           observer.error({
+  //             control_uuid: control_uuid,
+  //             outcome: 'error',
+  //             message:'Login Failed.',
+  //             context:{params:{}}
+  //           });
+  //         } else {
+  //           user.uuid = response.uuid;
+  //           this.service.publishUser(user);
+  //           observer.next({
+  //             control_uuid: control_uuid,
+  //             outcome: 'success',
+  //             message:'Credentials Tested.',
+  //             context:{params:{logged_in:response.uuid,navigate_to:'/',user:user}}
+  //           });
+  //         }
+  //       },
+  //       error => {
+  //         observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message:'Login Failed.',
+  //           context:{params:{}}
+  //         });
+  //       },
+  //       () => observer.complete()
+  //     );
+  //   });
+  //   return obs;
+  // }
 
-  public validateUser(control_uuid: string, params: any): Observable<any> {
-    let userEmail: string = params.user_email;
-    let obs = new Observable((observer:any) => {
-      let auth = this.service.validateUser(userEmail);
-      auth.subscribe(
-        response => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Team Member Validated.',
-            context:{params:{user_uuid:response.uuid}}
-          });
-        },
-        error => {
-          observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'User Not Found.',
-            context:{params:{}}
-          });
-        },
-        () => observer.complete()
-      );
-    });
-    return obs;
-  }
+  // public validateUser(control_uuid: string, params: any): Observable<any> {
+  //   let userEmail: string = params.user_email;
+  //   let obs = new Observable((observer:any) => {
+  //     let auth = this.service.validateUser(userEmail);
+  //     auth.subscribe(
+  //       response => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Team Member Validated.',
+  //           context:{params:{user_uuid:response.uuid}}
+  //         });
+  //       },
+  //       error => {
+  //         observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message:'User Not Found.',
+  //           context:{params:{}}
+  //         });
+  //       },
+  //       () => observer.complete()
+  //     );
+  //   });
+  //   return obs;
+  // }
 
-  public createUser(control_uuid: string, params: any): Observable<any> {
-    let user: User = params.user;
-    user.password = params.password_hash;
-    let obs = new Observable((observer:any) => {
-      user.uuid = Math.random().toString().split('.').pop();
-      let create = this.service.createUser(user);
-      create.subscribe(
-        response => {
-          user.uuid = response.uuid;
-          user.password = '';
-          this.service.publishUser(user);
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'User Credentials Saved, Login to Continue.',
-            context:{params:{user_created:response.uuid,navigate_to:'/login',user:user}}
-          });
-        },
-        error => {
-          observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'User Registration Failed.',
-            context:{params:{}}
-          });
-        },
-        () => observer.complete()
-      );
-    });
-    return obs;
-  }
+  // public createUser(control_uuid: string, params: any): Observable<any> {
+  //   let user: User = params.user;
+  //   user.password = params.password_hash;
+  //   let obs = new Observable((observer:any) => {
+  //     user.uuid = Math.random().toString().split('.').pop();
+  //     let create = this.service.createUser(user);
+  //     create.subscribe(
+  //       response => {
+  //         user.uuid = response.uuid;
+  //         user.password = '';
+  //         this.service.publishUser(user);
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'User Credentials Saved, Login to Continue.',
+  //           context:{params:{user_created:response.uuid,navigate_to:'/login',user:user}}
+  //         });
+  //       },
+  //       error => {
+  //         observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message:'User Registration Failed.',
+  //           context:{params:{}}
+  //         });
+  //       },
+  //       () => observer.complete()
+  //     );
+  //   });
+  //   return obs;
+  // }
 
   public createCognitoUser(control_uuid: string, params: any): Observable<any> {
 
@@ -603,7 +603,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           onSuccess: function (result:any) {
             console.log(result);
             user.identity_provider = 'Cognito';
-            user.uuid = result.getIdToken().getJwtToken();
+            user.id = result.getIdToken().getJwtToken();
             user.password = '';
             user.login_token = result.getIdToken().getJwtToken();
             observer.next({
@@ -742,7 +742,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     let user_identity: string = params.user_identity;
     let obs = new Observable((observer:any) => {
       let user = this.service.retrieveUser();
-      user.data_identity = user_identity;
+      user.identity = user_identity;
       this.service.storeUser(user);
       observer.next({
         control_uuid: control_uuid,
@@ -782,7 +782,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         });
       }
 
-      if(!user.uuid) {
+      if(!user.id) {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
@@ -842,39 +842,39 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  public testUserAuth(control_uuid: string, params: any): Observable<any> {
-    let user: User = params.user;
-    let obs = new Observable((observer:any) => {
-      this.service.auth(user).then((response:any) => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Auth successful.',
-            context:{params:{}}
-          });
-          observer.complete();
-        }).catch((error:any) => {
-          let message = 'Auth Test Failed.';
-          if(error.status === 403) {
-            message = 'User Login Required';
-            this.message.startProcess('user_logout',{});
-          }
-          if(error.status === 0) {
-            message = 'Network Error';
-          }
-          observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message: message,
-            context:{
-              params:{
-                navigate_to: '/login'
-              }
-            }
-        });
-      });
-    });
-    return obs;
-  }
+  // public testUserAuth(control_uuid: string, params: any): Observable<any> {
+  //   let user: User = params.user;
+  //   let obs = new Observable((observer:any) => {
+  //     this.service.auth(user).then((response:any) => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Auth successful.',
+  //           context:{params:{}}
+  //         });
+  //         observer.complete();
+  //       }).catch((error:any) => {
+  //         let message = 'Auth Test Failed.';
+  //         if(error.status === 403) {
+  //           message = 'User Login Required';
+  //           this.message.startProcess('user_logout',{});
+  //         }
+  //         if(error.status === 0) {
+  //           message = 'Network Error';
+  //         }
+  //         observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message: message,
+  //           context:{
+  //             params:{
+  //               navigate_to: '/login'
+  //             }
+  //           }
+  //       });
+  //     });
+  //   });
+  //   return obs;
+  // }
 
 }

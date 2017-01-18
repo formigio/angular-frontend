@@ -33,8 +33,8 @@ export class GoalItemComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    if(!this.goal.uuid) {
-      this.message.startProcess('create_goal',{goal:this.goal,navigate_to:'/goal/' + this.goal.uuid});
+    if(!this.goal.id) {
+      this.message.startProcess('create_goal',{goal:this.goal,navigate_to:'/goal/' + this.goal.id});
     }
   }
 
@@ -73,7 +73,7 @@ export class GoalItemComponent implements OnInit {
   // }
 
   navigateTo(goal:Goal) {
-    this.router.navigate(['/goal/',goal.uuid]);
+    this.router.navigate(['/goal/',goal.id]);
   }
 
 }

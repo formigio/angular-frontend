@@ -17,12 +17,14 @@ export class InviteViewComponent implements OnInit {
   @Input() uuid:string;
 
   invite: Invite = {
+    id:'',
     uuid: '',
     entity: '',
-    entityType: '',
-    status: '',
-    invitee: '',
-    inviter: '',
+    entity_id: '',
+    invitee_name: '',
+    invitee_worker_id: '',
+    inviter_name: '',
+    inviter_worker_id: '',
     changed: false
   };
 
@@ -59,8 +61,8 @@ export class InviteViewComponent implements OnInit {
   }
 
   getInviteLink(full:boolean):string {
-    let href = '/invite/' + this.invite.uuid + '/' + this.invite.entityType + '/'
-        + this.invite.entity;
+    let href = '/invite/' + this.invite.uuid + '/' + this.invite.entity + '/'
+        + this.invite.entity_id;
       if(full) {
         return window.location.origin + href;
       }

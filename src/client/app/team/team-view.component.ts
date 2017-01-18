@@ -17,9 +17,8 @@ import { TeamService, Team } from './index';
 export class TeamViewComponent implements OnInit {
 
   team: Team = {
-    uuid: '',
+    id: '',
     title: '',
-    identity: '',
     changed: false
   };
 

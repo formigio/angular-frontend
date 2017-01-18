@@ -118,40 +118,40 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       }
   }
 
-  protected removeGoal(control_uuid: string, params: any): Observable<any> {
-    let goal: string = params.goal;
-    let taskCount: number = params.task_count;
-    let obs = new Observable((observer:any) => {
-      if(taskCount > 0) {
-        observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'You can only delete a goal, when it is empty. taskCount:' + taskCount,
-          context:{params:{}}
-        });
-      } else {
-        this.service.delete(goal).subscribe(
-          null,
-          error => observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'An error has occured during Goal delete',
-            context:{params:{}}
-          }),
-          () => {
-            observer.next({
-              control_uuid: control_uuid,
-              outcome: 'success',
-              message:'Goal removed successfully.',
-              context:{params:{navigate_to:'/teams'}}
-            });
-            observer.complete();
-          }
-        );
-      }
-    });
-    return obs;
-  }
+  // protected removeGoal(control_uuid: string, params: any): Observable<any> {
+  //   let goal: string = params.goal;
+  //   let taskCount: number = params.task_count;
+  //   let obs = new Observable((observer:any) => {
+  //     if(taskCount > 0) {
+  //       observer.error({
+  //         control_uuid: control_uuid,
+  //         outcome: 'error',
+  //         message:'You can only delete a goal, when it is empty. taskCount:' + taskCount,
+  //         context:{params:{}}
+  //       });
+  //     } else {
+  //       this.service.delete(goal).subscribe(
+  //         null,
+  //         error => observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message:'An error has occured during Goal delete',
+  //           context:{params:{}}
+  //         }),
+  //         () => {
+  //           observer.next({
+  //             control_uuid: control_uuid,
+  //             outcome: 'success',
+  //             message:'Goal removed successfully.',
+  //             context:{params:{navigate_to:'/teams'}}
+  //           });
+  //           observer.complete();
+  //         }
+  //       );
+  //     }
+  //   });
+  //   return obs;
+  // }
 
   public loadGoal(control_uuid: string, params: any): Observable<any> {
     let uuid: string = params.goal_uuid;

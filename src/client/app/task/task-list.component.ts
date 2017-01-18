@@ -23,11 +23,12 @@ export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
 
   task: Task = {
-    complete: false,
-    uuid: '',
+    id: '',
     title: '',
-    goal: '',
-    // notes: '',
+    sequence: '0',
+    goal_id: '',
+    worker_status: 'notstarted',
+    system_status: 'pending',
     changed: false
   };
 
@@ -56,7 +57,7 @@ export class TaskListComponent implements OnInit {
         let newtasks:Task[] = [];
         let alltasks:Task[] = tasks;
         alltasks.forEach((task) => {
-          if(task.uuid) {
+          if(task.id) {
             newtasks.push(task);
           }
         });
@@ -78,16 +79,18 @@ export class TaskListComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addTask(): void {
-    this.task.goal = this.goal;
+    this.task.goal_id = this.goal;
     let taskLines = this.task.title.split('\n');
     taskLines.forEach((taskTitle) => {
       if(taskTitle) {
         // let uuid = Math.random().toString().split('.').pop();
         let newTask:Task = {
-          complete: false,
-          uuid: '',
+          worker_status: 'notstarted',
+          system_status: 'notstarted',
+          id: '',
           title: taskTitle,
-          goal: this.task.goal,
+          goal_id: this.task.goal_id,
+          sequence: '0',
           // notes: '',
           changed: true
         };

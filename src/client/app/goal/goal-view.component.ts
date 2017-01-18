@@ -19,9 +19,9 @@ export class GoalViewComponent implements OnInit {
   errorMessage: string;
   currentResponse: {};
   goal: Goal = {
-    uuid: '',
+    id: '',
     title: '',
-    team: '',
+    team_id: '',
     changed: false
   };
 
@@ -59,7 +59,7 @@ export class GoalViewComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteGoal(goal:Goal): boolean {
-    this.message.startProcess('goal_delete',{goal:goal.uuid});
+    this.message.startProcess('goal_delete',{goal:goal.id});
     return false;
   }
 
@@ -79,7 +79,7 @@ export class GoalViewComponent implements OnInit {
   // }
 
   navigateToTeam(): boolean {
-    this.message.startProcess('navigate_to',{navigate_to:'/team/' + this.goal.team});
+    this.message.startProcess('navigate_to',{navigate_to:'/team/' + this.goal.team_id});
     return false;
   }
 

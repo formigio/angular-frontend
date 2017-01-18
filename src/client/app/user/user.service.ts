@@ -6,8 +6,6 @@ import { MessageService } from '../core/index';
 import { Config } from '../shared/index';
 import { User } from './index';
 
-declare let apigClientFactory: any;
-
 @Injectable()
 export class UserService {
 
@@ -15,6 +13,8 @@ export class UserService {
     successMsg: string = '';
     response: User;
     user: User = new User(
+        '',
+        '',
         '',
         '',
         '',
@@ -71,20 +71,20 @@ export class UserService {
      * Returns an Promise for the HTTP GET request for the JSON resource.
      * @return {any} The Promise for the HTTP request.
      */
-    auth(user:User): Promise<any> {
-        let api = apigClientFactory.newClient({
-            accessKey: user.credentials.accessKey,
-            secretKey: user.credentials.secretKey,
-            sessionToken: user.credentials.sessionToken
-        });
-        let params = {
-            'Content-Type': 'application/json',
-            'x-amz-security-token': '',
-            'x-amz-date': '',
-            'Authorization': ''
-        };
-        return api.authGet(params);
-    }
+    // auth(user:User): Promise<any> {
+    //     let api = apigClientFactory.newClient({
+    //         accessKey: user.credentials.accessKey,
+    //         secretKey: user.credentials.secretKey,
+    //         sessionToken: user.credentials.sessionToken
+    //     });
+    //     let params = {
+    //         'Content-Type': 'application/json',
+    //         'x-amz-security-token': '',
+    //         'x-amz-date': '',
+    //         'Authorization': ''
+    //     };
+    //     return api.authGet(params);
+    // }
 
     authenticateUser(user:User) {
         let body = JSON.stringify(user);

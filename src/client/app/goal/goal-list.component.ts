@@ -22,9 +22,9 @@ export class GoalListComponent implements OnInit {
   errorMessage: string;
   goals: Goal[] = [];
   goal: Goal = {
-    uuid: '',
+    id: '',
     title: '',
-    team: '',
+    team_id: '',
     changed: false
   };
   team: string = '';
@@ -55,7 +55,7 @@ export class GoalListComponent implements OnInit {
         let newgoals:Goal[] = [];
         let allgoals:Goal[] = this.goals;
         allgoals.forEach((goal) => {
-          if(goal.uuid) {
+          if(goal.id) {
             newgoals.push(goal);
           }
         });
@@ -78,9 +78,9 @@ export class GoalListComponent implements OnInit {
    */
   addGoal(): boolean {
     // let uuid = Math.random().toString().split('.').pop();
-    this.goal.uuid = '';
+    this.goal.id = '';
     this.goal.changed = true;
-    this.goal.team = this.team;
+    this.goal.team_id = this.team;
     let newGoal: Goal = JSON.parse(JSON.stringify(this.goal));
     this.goals.push(newGoal);
     this.helper.sortBy(this.goals,'title');

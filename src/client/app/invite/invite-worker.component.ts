@@ -237,69 +237,69 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  public deleteInvite(control_uuid: string, params: any): Observable<any> {
-    let invite: Invite = params.invite;
-    let obs = new Observable((observer:any) => {
-      this.service.delete(invite).subscribe(
-        null,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while removing invite.',
-          context:{params:{}}
-        }),
-        () => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Invite removed successfully.',
-            context:{params:{invite_deleted:invite.uuid}}
-          });
-          observer.complete();
-        }
-      );
-    });
-    return obs;
-  }
+  // public deleteInvite(control_uuid: string, params: any): Observable<any> {
+  //   let invite: Invite = params.invite;
+  //   let obs = new Observable((observer:any) => {
+  //     this.service.delete(invite).subscribe(
+  //       null,
+  //       error => observer.error({
+  //         control_uuid: control_uuid,
+  //         outcome: 'error',
+  //         message:'Error has occured while removing invite.',
+  //         context:{params:{}}
+  //       }),
+  //       () => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Invite removed successfully.',
+  //           context:{params:{invite_deleted:invite.uuid}}
+  //         });
+  //         observer.complete();
+  //       }
+  //     );
+  //   });
+  //   return obs;
+  // }
 
-  public removeInvites(control_uuid: string, params: any): Observable<any> {
-    let invites: Invite[] = params.invites;
-    let invitesRemoved: string[] = [];
-    let obs = new Observable((observer:any) => {
-      if(invites.length === 0) {
-        observer.next({
-          control_uuid: control_uuid,
-          outcome: 'success',
-          message:'No Tasks to Remove.',
-          context:{params:{invite_count:0}}
-        });
-        observer.complete();
-      }
-      invites.forEach((invite) => {
-        this.service.delete(invite).subscribe(
-          null,
-          error => observer.error({
-            control_uuid: control_uuid,
-            outcome: 'error',
-            message:'Error has occured while removing invites.',
-            context:{params:{}}
-          }),
-          () => {
-            invitesRemoved.push(invite.uuid);
-            if(invites.length === invitesRemoved.length) {
-              observer.next({
-                control_uuid: control_uuid,
-                outcome: 'success',
-                message:'Invites removed successfully.',
-                context:{params:{invite_count:0}}
-              });
-              observer.complete();
-            }
-          }
-        );
-      });
-    });
-    return obs;
-  }
+  // public removeInvites(control_uuid: string, params: any): Observable<any> {
+  //   let invites: Invite[] = params.invites;
+  //   let invitesRemoved: string[] = [];
+  //   let obs = new Observable((observer:any) => {
+  //     if(invites.length === 0) {
+  //       observer.next({
+  //         control_uuid: control_uuid,
+  //         outcome: 'success',
+  //         message:'No Tasks to Remove.',
+  //         context:{params:{invite_count:0}}
+  //       });
+  //       observer.complete();
+  //     }
+  //     invites.forEach((invite) => {
+  //       this.service.delete(invite).subscribe(
+  //         null,
+  //         error => observer.error({
+  //           control_uuid: control_uuid,
+  //           outcome: 'error',
+  //           message:'Error has occured while removing invites.',
+  //           context:{params:{}}
+  //         }),
+  //         () => {
+  //           invitesRemoved.push(invite.uuid);
+  //           if(invites.length === invitesRemoved.length) {
+  //             observer.next({
+  //               control_uuid: control_uuid,
+  //               outcome: 'success',
+  //               message:'Invites removed successfully.',
+  //               context:{params:{invite_count:0}}
+  //             });
+  //             observer.complete();
+  //           }
+  //         }
+  //       );
+  //     });
+  //   });
+  //   return obs;
+  // }
 
 }

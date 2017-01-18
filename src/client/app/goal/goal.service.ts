@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Http } from '@angular/http';
+// import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HelperService } from '../core/index';
-import { Config } from '../shared/index';
+// import { Config } from '../shared/index';
 import { User } from '../user/index';
 import { Goal } from './index';
 import 'rxjs/add/operator/map';
@@ -30,9 +30,7 @@ export class GoalService {
    * @param {Http} http - The injected Http.
    * @constructor
    */
-  constructor(private http: Http, private helper: HelperService) {
-    this.instance = Math.random().toString().split('.').pop();
-  }
+  constructor(private http: Http, private helper: HelperService) { }
 
 
   getItemSubscription(): ReplaySubject<any> {
@@ -57,11 +55,11 @@ export class GoalService {
   }
 
   storeGoals() {
-    this.goals.forEach(goal => localStorage.setItem('goal::' + goal.uuid, JSON.stringify(goal)));
+    this.goals.forEach(goal => localStorage.setItem('goal::' + goal.id, JSON.stringify(goal)));
   }
 
-  retrieveGoal(uuid:string): Goal {
-    return (<Goal>JSON.parse(localStorage.getItem('goal::' + uuid)));
+  retrieveGoal(id:string): Goal {
+    return (<Goal>JSON.parse(localStorage.getItem('goal::' + id)));
   }
 
   addGoal(goal:Goal) {
@@ -87,12 +85,12 @@ export class GoalService {
    */
   list(team:string = ''): Promise<any> {
     let user = this.getUser();
-    let api = apigClientFactory.newClient({
+    let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.goalsGet({team:team});
+    return api.makeRequest('/goals',{team_id:team});
   }
 
   /**
@@ -101,12 +99,12 @@ export class GoalService {
    */
   get(uuid:string): Promise<any> {
     let user = this.getUser();
-    let api = apigClientFactory.newClient({
+    let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.goalsUuidGet({uuid:uuid});
+    return api.makeRequest('/goals/{id}',{uuid:uuid});
   }
 
   /**
@@ -117,23 +115,23 @@ export class GoalService {
     goal.title = this.htmlEntities(goal.title);
     let body = goal;
     let user = this.getUser();
-    let api = apigClientFactory.newClient({
+    let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.goalsPost({},body);
+    return api.makeRequest('/goals',{},body);
   }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  delete(guid:string): Observable<string[]> {
-    return this.http.delete(Config.API + '/goals/' + guid)
-                    .map((res: Response) => res.json())
-                    .catch(this.handleError);
-  }
+  // delete(guid:string): Observable<string[]> {
+  //   return this.http.delete(Config.API + '/goals/' + guid)
+  //                   .map((res: Response) => res.json())
+  //                   .catch(this.handleError);
+  // }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
@@ -143,25 +141,25 @@ export class GoalService {
     goal.title = this.htmlEntities(goal.title);
     let body = JSON.stringify(goal);
     let user = this.getUser();
-    let api = apigClientFactory.newClient({
+    let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.goalsUuidPut({uuid:goal.uuid},body);
+    return api.makeRequest('/goals/{id}',{id:goal.id},body);
   }
 
   /**
     * Handle HTTP error
     */
-  private handleError (error: any) {
-    // In a real world app, we might use a remote logging infrastructure
-    // We'd also dig deeper into the error to get a better message
-    // let errMsg = (error.message) ? error.message :
-    //   error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-    console.error(error); // log to console instead
-    return Observable.throw(error);
-  }
+  // private handleError (error: any) {
+  //   // In a real world app, we might use a remote logging infrastructure
+  //   // We'd also dig deeper into the error to get a better message
+  //   // let errMsg = (error.message) ? error.message :
+  //   //   error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+  //   console.error(error); // log to console instead
+  //   return Observable.throw(error);
+  // }
 
   /**
     * Handle Convert HTML entities

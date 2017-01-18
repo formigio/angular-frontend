@@ -2,7 +2,7 @@ import {EnvConfig} from './env-config.interface';
 
 const DevConfig: EnvConfig = {
   ENV: 'DEV',
-  API: 'https://d4el2racxe.execute-api.us-east-1.amazonaws.com/invitemock',
+  API: 'http://local.dev:8080',
   AWS_REGION: 'us-east-1',
   COGNITO_USERPOOL: 'us-east-1_0UqEwkU0H',
   COGNITO_IDENTITYPOOL: 'us-east-1:38c1785e-4101-4eb4-b489-6fe8608406d0',

@@ -31,7 +31,7 @@ export class GoogleButtonComponent implements AfterViewInit {
       user: new User(
         profile.getId(),
         profile.getEmail(),
-        '','',
+        '','','','',
         '',
         'Google',
         loginToken,
