@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable, ReplaySubject } from 'rxjs/Rx';
-import { MessageService } from '../core/index';
+import { MessageService, HelperService } from '../core/index';
 import { Config } from '../shared/index';
 import { User } from './index';
 
@@ -18,15 +18,17 @@ export class UserService {
         '',
         '',
         '',
-        '',
-        '',
-        '',
-        '',
         {
             accessKey:'',
             secretKey:'',
             sessionToken:'',
             expireTime: ''
+        },
+        {
+            id:'',
+            name:'',
+            username:'',
+            identity:'',
         }
     );
 
@@ -35,7 +37,8 @@ export class UserService {
     constructor(
         private _router: Router,
         private http: Http,
-        private messaging: MessageService
+        private messaging: MessageService,
+        private helper: HelperService
     ) { }
 
     getItemSubscription(): ReplaySubject<any> {
@@ -49,6 +52,50 @@ export class UserService {
     logout() {
         localStorage.removeItem('user');
         this._router.navigate(['/']);
+    }
+
+    /**
+     * Returns an Observable for the HTTP GET request for the JSON resource.
+     * @return {string[]} The Observable for the HTTP request.
+     */
+    get(): Promise<any> {
+        let user = this.retrieveUser();
+        let api = this.helper.apiFactory.newClient({
+            accessKey: user.credentials.accessKey,
+            secretKey: user.credentials.secretKey,
+            sessionToken: user.credentials.sessionToken
+        });
+        return api.get('/workers',{params:{identity:user.worker.identity},headers:{'x-identity-id':user.worker.identity}});
+    }
+
+    /**
+     * Returns an Observable for the HTTP GET request for the JSON resource.
+     * @return {string[]} The Observable for the HTTP request.
+     */
+    post(userToSave:User): Promise<any> {
+        let user = this.retrieveUser();
+        let body = userToSave.worker;
+        let api = this.helper.apiFactory.newClient({
+            accessKey: user.credentials.accessKey,
+            secretKey: user.credentials.secretKey,
+            sessionToken: user.credentials.sessionToken
+        });
+        return api.post('/workers',{headers:{'x-identity-id':user.worker.identity}},body);
+    }
+
+    /**
+     * Returns an Observable for the HTTP GET request for the JSON resource.
+     * @return {string[]} The Observable for the HTTP request.
+     */
+    put(userToSave:User): Promise<any> {
+        let user = this.retrieveUser();
+        let body = userToSave.worker;
+        let api = this.helper.apiFactory.newClient({
+        accessKey: user.credentials.accessKey,
+        secretKey: user.credentials.secretKey,
+        sessionToken: user.credentials.sessionToken
+        });
+        return api.put('/workers/{id}',{path:{id:user.worker.id}},body);
     }
 
     // register(user:User) {

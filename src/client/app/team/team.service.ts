@@ -86,7 +86,7 @@ export class TeamService {
         secretKey: user.credentials.secretKey,
         sessionToken: user.credentials.sessionToken
       });
-      return api.get('/teams',{'headers':{'x-identity-id':user.identity}});
+      return api.get('/teams',{'headers':{'x-identity-id':user.worker.identity}});
   }
 
   /**
@@ -119,7 +119,7 @@ export class TeamService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/team/{id}',{id:id});
+    return api.get('/teams/{id}',{id:id});
   }
 
   /**
@@ -137,7 +137,7 @@ export class TeamService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.post('/teams',{'headers':{'x-identity-id':user.identity}},body);
+    return api.post('/teams',{'headers':{'x-identity-id':user.worker.identity}},body);
   }
 
   /**
@@ -153,16 +153,20 @@ export class TeamService {
   //                   .catch(this.handleError);
   // }
 
-
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  // delete(uuid:string): Observable<string[]> {
-  //   return this.http.delete(Config.API + '/teams/' + uuid)
-  //                   .map((res: Response) => res.json())
-  //                   .catch(this.handleError);
-  // }
+  delete(id:string): Promise<any> {
+    let user = this.getUser();
+    let api = this.helper.apiFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.delete('/teams/{id}',{path:{id:id}});
+  }
+
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
@@ -171,13 +175,13 @@ export class TeamService {
   put(team:Team): Promise<any> {
     team.title = this.htmlEntities(team.title);
     let user = this.getUser();
-    let body = JSON.stringify(team);
+    let body = team;
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/teams/{id}',{id:team.id},body);
+    return api.put('/teams/{id}',{path:{id:team.id}},body);
   }
 
   // /**

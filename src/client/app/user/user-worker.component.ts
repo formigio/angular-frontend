@@ -61,10 +61,30 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'The Process Used to Control the Logout',
             new ProcessContext,
             ''
+        ),
+        user_update: new ProcessRoutine(
+            'user_update',
+            'The Process Used to Control the User Updates',
+            new ProcessContext,
+            ''
         )
     };
 
     public tasks: {} = {
+        user_update_init: new ProcessTask(
+            'update_user_record',
+            'user_update_init',
+            'Update User Record',
+            'updateUser',
+            {user:'User'}
+        ),
+        update_user_record_complete: new ProcessTask(
+            'store_user_record_after_update',
+            'update_user_record_complete',
+            'Store User Record',
+            'storeUser',
+            {user:'User'}
+        ),
         user_load_for_app_init: new ProcessTask(
             'load_user_for_app',
             'user_load_for_app_init',
@@ -121,10 +141,28 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'swapToken',
           {user:'User'}
         ),
+        store_google_user_complete: new ProcessTask(
+          'fetch_user_worker',
+          'store_google_user_complete',
+          'Store Authenticated User',
+          'fetchUserWorker',
+          {
+            user:'User'
+          }
+        ),
         login_google_user_complete: new ProcessTask(
           'store_google_user',
           'login_google_user_complete',
           'Store Authenticated User',
+          'storeUser',
+          {
+            user:'User'
+          }
+        ),
+        fetch_user_worker_complete: new ProcessTask(
+          'store_user_worker',
+          'fetch_user_worker_complete',
+          'Store User Worker',
           'storeUser',
           {
             user:'User'
@@ -302,6 +340,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'getUser',
             {}
         ),
+        team_delete_init: new ProcessTask(
+            'get_user_for_delete_team',
+            'team_delete_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
         refresh_google_token_error: new ProcessTask(
             'logout_after_google_token_refresh_failed',
             'refresh_google_token_error',
@@ -446,6 +491,81 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   //   return obs;
   // }
 
+  public fetchUserWorker(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.get()
+        .then((response:any) => {
+          user.worker = response.data.pop();
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Worker Record Found.',
+            context:{params:{user:user}}
+          });
+          observer.complete();
+        }).catch((response:any) => {
+          console.log(response);
+          observer.error({
+           control_uuid: control_uuid,
+           outcome: 'error',
+           message:'No Worker Record Found.',
+           context:{params:{}}
+          });
+        });
+    });
+    return obs;
+  }
+
+  public updateUser(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    console.log(user);
+    let obs = new Observable((observer:any) => {
+      if(!user.worker.id) {
+        this.service.post(user)
+          .then((response:any) => {
+            user.worker = response.data;
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Worker Record Found.',
+              context:{params:{user:user}}
+            });
+            observer.complete();
+          }).catch((response:any) => {
+            console.log(response);
+            observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'No Worker Record Found.',
+            context:{params:{}}
+            });
+          });
+      } else {
+        this.service.put(user)
+          .then((response:any) => {
+            user = response.data;
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Worker Record Found.',
+              context:{params:{user:user}}
+            });
+            observer.complete();
+          }).catch((response:any) => {
+            console.log(response);
+            observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'No Worker Record Found.',
+            context:{params:{}}
+            });
+          });
+      }
+    });
+    return obs;
+  }
+
   // public createUser(control_uuid: string, params: any): Observable<any> {
   //   let user: User = params.user;
   //   user.password = params.password_hash;
@@ -559,7 +679,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
           user.credentials.sessionToken = AWS.config.credentials.sessionToken;
           user.credentials.expireTime = AWS.config.credentials.expireTime;
-          user.identity = AWS.config.credentials.identityId;
+          if(AWS.config.credentials.identityId) {
+            user.worker.identity = AWS.config.credentials.identityId.split(':').pop();
+          }
 
           observer.next({
             control_uuid: control_uuid,
@@ -605,7 +727,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           onSuccess: function (result:any) {
             console.log(result);
             user.identity_provider = 'Cognito';
-            user.id = result.getIdToken().getJwtToken();
             user.password = '';
             user.login_token = result.getIdToken().getJwtToken();
             observer.next({
@@ -667,7 +788,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
           user.credentials.sessionToken = AWS.config.credentials.sessionToken;
           user.credentials.expireTime = AWS.config.credentials.expireTime;
-          user.identity = AWS.config.credentials.identityId;
+          if(AWS.config.credentials.identityId) {
+            user.worker.identity = AWS.config.credentials.identityId.split(':').pop();
+          }
 
           observer.next({
             control_uuid: control_uuid,
@@ -741,22 +864,24 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  public storeUserIdentity(control_uuid: string, params: any): Observable<any> {
-    let user_identity: string = params.user_identity;
-    let obs = new Observable((observer:any) => {
-      let user = this.service.retrieveUser();
-      user.identity = user_identity;
-      this.service.storeUser(user);
-      observer.next({
-        control_uuid: control_uuid,
-        outcome: 'success',
-        message:'User Updated.',
-        context:{params:{}}
-      });
-      observer.complete();
-    });
-    return obs;
-  }
+
+
+  // public storeUserIdentity(control_uuid: string, params: any): Observable<any> {
+  //   let user_identity: string = params.user_identity;
+  //   let obs = new Observable((observer:any) => {
+  //     let user = this.service.retrieveUser();
+  //     user.worker.identity = user_identity;
+  //     this.service.storeUser(user);
+  //     observer.next({
+  //       control_uuid: control_uuid,
+  //       outcome: 'success',
+  //       message:'User Updated.',
+  //       context:{params:{}}
+  //     });
+  //     observer.complete();
+  //   });
+  //   return obs;
+  // }
 
 
   public getUser(control_uuid: string, params: any): Observable<any> {
@@ -785,11 +910,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         });
       }
 
-      if(!user.id) {
+      if(!user.worker.id) {
+        this.message.startProcess('navigate_to',{navigate_to:'/register'});
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'Looks like you need to log back in.',
+          message:'Looks like you might be new.',
           context:{params:{}}
         });
       } else {

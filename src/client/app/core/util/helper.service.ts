@@ -128,11 +128,12 @@ export class HelperService {
 
             apigClient.get = function (path:any, options:any) {
                 if(options.params === undefined) { options.params = {}; }
+                if(options.path === undefined) { options.path = {}; }
                 if(options.headers === undefined) { options.headers = {}; }
 
                 let requestOptions:any = {
                     verb: 'get'.toUpperCase(),
-                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(options.params, [])),
+                    path: pathComponent + uritemplate(path).expand(options.path),
                     headers: options.headers,
                     queryParams: options.params
                 };
@@ -142,12 +143,13 @@ export class HelperService {
 
             apigClient.post = function (path:any, options:any, body:any) {
                 if(options.params === undefined) { options.params = {}; }
+                if(options.path === undefined) { options.path = {}; }
                 if(options.headers === undefined) { options.headers = {}; }
                 if(body === undefined) { body = {}; }
 
                 let rootOptionsRequest:any = {
                     verb: 'post'.toUpperCase(),
-                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(options.params, [])),
+                    path: pathComponent + uritemplate(path).expand(options.path),
                     headers: options.headers,
                     queryParams: options.params,
                     body: body
@@ -158,12 +160,13 @@ export class HelperService {
 
             apigClient.put = function (path:any, options:any, body:any) {
                 if(options.params === undefined) { options.params = {}; }
+                if(options.path === undefined) { options.path = {}; }
                 if(options.headers === undefined) { options.headers = {}; }
                 if(body === undefined) { body = {}; }
 
                 let rootOptionsRequest:any = {
                     verb: 'put'.toUpperCase(),
-                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(options.params, [])),
+                    path: pathComponent + uritemplate(path).expand(options.path),
                     headers: options.headers,
                     queryParams: options.params,
                     body: body
@@ -174,11 +177,12 @@ export class HelperService {
 
             apigClient.delete = function (path:any, options:any) {
                 if(options.params === undefined) { options.params = {}; }
+                if(options.path === undefined) { options.path = {}; }
                 if(options.headers === undefined) { options.headers = {}; }
 
                 let requestOptions:any = {
                     verb: 'delete'.toUpperCase(),
-                    path: pathComponent + uritemplate(path).expand(apiGateway.core.utils.parseParametersToObject(options.params, [])),
+                    path: pathComponent + uritemplate(path).expand(options.path),
                     headers: options.headers,
                     queryParams: options.params
                 };

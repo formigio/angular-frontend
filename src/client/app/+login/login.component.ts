@@ -21,11 +21,7 @@ export class LoginComponent implements OnInit {
   confirmForm: boolean = false;
 
   user: User = {
-    id: '',
-    name: '',
     email: '',
-    username: '',
-    identity: '',
     password: '',
     identity_provider: '',
     confirm_code: '',
@@ -35,6 +31,12 @@ export class LoginComponent implements OnInit {
       secretKey:'',
       sessionToken:'',
       expireTime: ''
+    },
+    worker: {
+      id:'',
+      name:'',
+      username:'',
+      identity:'',
     }
   };
   errorMsg = '';

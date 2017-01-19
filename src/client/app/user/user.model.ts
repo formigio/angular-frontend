@@ -1,15 +1,12 @@
 export class User {
     constructor(
-        public id: string,
-        public name: string,
-        public identity: string,
-        public username: string,
         public email: string,
         public password: string,
         public confirm_code?: string,
         public identity_provider?: string,
         public login_token?: string,
-        public credentials?: UserCredentials
+        public credentials?: UserCredentials,
+        public worker?: UserWorker
     ) { }
 }
 
@@ -19,5 +16,14 @@ export class UserCredentials {
         public secretKey?: string,
         public sessionToken?: string,
         public expireTime?: string
+    ) { }
+}
+
+export class UserWorker {
+    constructor(
+        public id: string,
+        public name: string,
+        public username: string,
+        public identity: string
     ) { }
 }

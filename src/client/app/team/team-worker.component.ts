@@ -50,12 +50,12 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
-        team_delete_init: new ProcessTask(
+        get_user_for_delete_team_complete: new ProcessTask(
             'delete_team',
-            'team_delete_init',
+            'get_user_for_delete_team_complete',
             'Delete Team',
             'deleteTeam',
-            {team:'Team'}
+            {user:'User',team:'Team'}
         ),
         get_user_for_save_team_complete: new ProcessTask(
             'save_team',
@@ -148,30 +148,32 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
       }
   }
 
-  // public deleteTeam(control_uuid: string, params: any): Observable<any> {
-  //   let team: Team = params.team;
-  //   let obs = new Observable((observer:any) => {
-  //     this.service.delete(team.uuid).subscribe(
-  //       null,
-  //       error => observer.error({
-  //         control_uuid: control_uuid,
-  //         outcome: 'error',
-  //         message:'Error has occured while removing team.',
-  //         context:{params:{}}
-  //       }),
-  //       () => {
-  //         observer.next({
-  //           control_uuid: control_uuid,
-  //           outcome: 'success',
-  //           message:'Team removed successfully.',
-  //           context:{params:{team_deleted:team.id}}
-  //         });
-  //         observer.complete();
-  //       }
-  //     );
-  //   });
-  //   return obs;
-  // }
+  public deleteTeam(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let team: Team = params.team;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.delete(team.id).then((response:any) => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Teams removed.',
+            context:{params:{}}
+          });
+          observer.complete();
+        }).catch((error:any) => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message: 'Team delete failed',
+            context:{
+              params:{}
+            }
+        });
+      });
+    });
+    return obs;
+  }
 
   public saveTeam(control_uuid: string, params: any): Observable<any> {
     let team: Team = params.team;
@@ -311,7 +313,6 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
   public fetchUserTeams(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
     let loadedTeams: Team[];
-    let userIdentity: string = '';
     let obs = new Observable((observer:any) => {
       this.service.list(user).then((response:any) => {
           loadedTeams = response.data;

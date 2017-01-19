@@ -29,10 +29,6 @@ export class GoogleButtonComponent implements AfterViewInit {
       navigate_to:'/',
       token:loginToken,
       user: new User(
-        profile.getId(),
-        profile.getEmail(),
-        '',
-        profile.getEmail(),
         profile.getEmail(),
         '',
         '',
@@ -43,6 +39,12 @@ export class GoogleButtonComponent implements AfterViewInit {
           secretKey:'',
           sessionToken:'',
           expireTime: ''
+        },
+        {
+            id:'',
+            name:'',
+            username:'',
+            identity:''
         }
       )
     });
