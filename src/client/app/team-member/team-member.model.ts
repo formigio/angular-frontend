@@ -1,7 +1,8 @@
 export class TeamMember {
   constructor(
-    public uuid: string,
-    public title: string,
-    public identity: string
+    public id: string,
+    public name: string,
+    public identity: string,
+    public username: string
   ) {}
 }

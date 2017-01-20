@@ -85,7 +85,7 @@ export class TaskService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/tasks',{goal_id:goal});
+    return api.get('/tasks',{params:{goal_id:goal},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
@@ -94,14 +94,14 @@ export class TaskService {
    */
   post(task:Task): Promise<any> {
     task.title = this.htmlEntities(task.title);
-    let body = task;
+    let body = {title:task.title,goal_id:task.goal_id};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/tasks',{},body);
+    return api.post('/tasks',{headers:{'x-identity-id':user.worker.identity}},body);
   }
 
   /**
@@ -120,14 +120,14 @@ export class TaskService {
    */
   put(task:Task): Promise<any> {
     task.title = this.htmlEntities(task.title);
-    let body = JSON.stringify(task);
+    let body = {title:task.title};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/tasks/{id}',{id:task.id},body);
+    return api.put('/tasks/{id}',{path:{id:task.id},headers:{'x-identity-id':user.worker.identity}},body);
   }
 
   // /**

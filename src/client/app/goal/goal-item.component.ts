@@ -47,6 +47,15 @@ export class GoalItemComponent implements OnInit {
     this.message.startProcess('goal_save',{goal:this.goal});
   }
 
+  /**
+   * Deletes a new goal onto the goals array
+   * @return {boolean} false to prevent default form submit behavior to refresh the page.
+   */
+  deleteGoal(goal:Goal): boolean {
+    this.message.startProcess('goal_delete',{goal:goal.id});
+    return false;
+  }
+
   // /**
   //  * Returns whether or not a goal is accomplished.
   //  * @return {boolean}

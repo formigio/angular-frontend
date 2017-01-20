@@ -71,7 +71,7 @@ export class InviteService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/invites/{id}',{id:id});
+    return api.get('/invites/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
@@ -95,7 +95,7 @@ export class InviteService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/invites',{entity_type:entity_type,entity_uuid:entity_uuid});
+    return api.get('/invites',{params:{entity_type:entity_type,entity_uuid:entity_uuid},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
@@ -110,7 +110,7 @@ export class InviteService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/invites',{},body);
+    return api.post('/invites',{headers:{'x-identity-id':user.worker.identity}},body);
   }
 
   /**

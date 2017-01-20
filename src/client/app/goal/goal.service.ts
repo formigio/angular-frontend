@@ -9,8 +9,6 @@ import { Goal } from './index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
-declare let apigClientFactory: any;
-
 /**
  * This class provides the NameList service with methods to read names and add names.
  */
@@ -90,21 +88,21 @@ export class GoalService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/goals',{team_id:team});
+    return api.get('/goals',{params:{team_id:team},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  get(uuid:string): Promise<any> {
+  get(id:string): Promise<any> {
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/goals/{id}',{uuid:uuid});
+    return api.get('/goals/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
@@ -113,14 +111,14 @@ export class GoalService {
    */
   post(goal:Goal): Promise<any> {
     goal.title = this.htmlEntities(goal.title);
-    let body = goal;
+    let body = {title:goal.title,team_id:goal.team_id};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/goals',{},body);
+    return api.post('/goals',{headers:{'x-identity-id':user.worker.identity}},body);
   }
 
   /**
@@ -139,14 +137,14 @@ export class GoalService {
    */
   put(goal:Goal): Promise<any> {
     goal.title = this.htmlEntities(goal.title);
-    let body = JSON.stringify(goal);
+    let body = goal;
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.makeRequest('/goals/{id}',{id:goal.id},body);
+    return api.put('/goals/{id}',{path:{id:goal.id},headers:{'x-identity-id':user.worker.identity}},body);
   }
 
   /**

@@ -85,57 +85,57 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
       }
   }
 
-  public deleteTeamMember(control_uuid: string, params: any): Observable<any> {
-    let teammember: TeamMember = params.teammember;
-    let obs = new Observable((observer:any) => {
-      this.service.delete(teammember).subscribe(
-        null,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while removing team member.',
-          context:{params:{}}
-        }),
-        () => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Team Member removed successfully.',
-            context:{params:{teammember_deleted:teammember.identity}}
-          });
-          observer.complete();
-        }
-      );
-    });
-    return obs;
-  }
+  // public deleteTeamMember(control_uuid: string, params: any): Observable<any> {
+  //   let teammember: TeamMember = params.teammember;
+  //   let obs = new Observable((observer:any) => {
+  //     this.service.delete(teammember).subscribe(
+  //       null,
+  //       error => observer.error({
+  //         control_uuid: control_uuid,
+  //         outcome: 'error',
+  //         message:'Error has occured while removing team member.',
+  //         context:{params:{}}
+  //       }),
+  //       () => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Team Member removed successfully.',
+  //           context:{params:{teammember_deleted:teammember.identity}}
+  //         });
+  //         observer.complete();
+  //       }
+  //     );
+  //   });
+  //   return obs;
+  // }
 
-  public addTeamMember(control_uuid: string, params: any): Observable<any> {
-    let teammember: TeamMember = params.teammember;
-    let user_uuid: string = params.user_uuid;
-    teammember.identity = user_uuid;
-    let obs = new Observable((observer:any) => {
-      this.service.post(teammember).subscribe(
-        null,
-        error => observer.error({
-          control_uuid: control_uuid,
-          outcome: 'error',
-          message:'Error has occured while adding team member.',
-          context:{params:{}}
-        }),
-        () => {
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Team Member added successfully.',
-            context:{params:{teammember_added:teammember.identity}}
-          });
-          observer.complete();
-        }
-      );
-    });
-    return obs;
-  }
+  // public addTeamMember(control_uuid: string, params: any): Observable<any> {
+  //   let teammember: TeamMember = params.teammember;
+  //   let user_uuid: string = params.user_uuid;
+  //   teammember.identity = user_uuid;
+  //   let obs = new Observable((observer:any) => {
+  //     this.service.post(teammember).subscribe(
+  //       null,
+  //       error => observer.error({
+  //         control_uuid: control_uuid,
+  //         outcome: 'error',
+  //         message:'Error has occured while adding team member.',
+  //         context:{params:{}}
+  //       }),
+  //       () => {
+  //         observer.next({
+  //           control_uuid: control_uuid,
+  //           outcome: 'success',
+  //           message:'Team Member added successfully.',
+  //           context:{params:{teammember_added:teammember.identity}}
+  //         });
+  //         observer.complete();
+  //       }
+  //     );
+  //   });
+  //   return obs;
+  // }
 
   public fetchTeamMembers(control_uuid: string, params: any): Observable<any> {
     let team: string = params.team;
