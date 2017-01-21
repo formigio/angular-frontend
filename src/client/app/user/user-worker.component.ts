@@ -510,7 +510,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     let obs = new Observable((observer:any) => {
       this.service.get()
         .then((response:any) => {
-          user.worker = response.data.pop();
+          if(response.data.length>0) {
+            user.worker = response.data.pop();
+          } else {
+            user.worker.id = '';
+          }
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
