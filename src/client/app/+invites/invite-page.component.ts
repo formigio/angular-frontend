@@ -15,9 +15,9 @@ import { InviteViewComponent } from '../invite/index';
 
 export class InvitePageComponent implements OnInit {
 
-    uuid: string;
+    id: string;
     entity: string;
-    entityType: string;
+    entityId: string;
 
   /**
    * Creates an instance of the InvitePageComponent with the injected
@@ -35,9 +35,9 @@ export class InvitePageComponent implements OnInit {
    */
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.uuid = params['uuid'];
+      this.id = params['id'];
       this.entity = params['entity'];
-      this.entityType = params['entityType'];
+      this.entityId = params['entityId'];
     });
     this.auth.enforceAuthentication();
   }

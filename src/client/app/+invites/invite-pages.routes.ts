@@ -10,11 +10,11 @@ export const InvitePagesRoutes: Route[] = [
     component: InvitesPageComponent
   },
   {
-    path: 'invite/:uuid',
+    path: 'invite/:id',
     component: InvitePageComponent
   },
   {
-    path: 'invite/:uuid/:entityType/:entity',
+    path: 'invite/:id/:entity/:entityId',
     component: InvitePageComponent
   }
 ];

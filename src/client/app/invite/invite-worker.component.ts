@@ -90,7 +90,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_invite_create_complete',
             'Load Invite',
             'loadInvite',
-            {uuid:'string',user:'User'}
+            {id:'string',user:'User'}
         )
     };
 
@@ -158,11 +158,11 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public loadInvite(control_uuid: string, params: any): Observable<any> {
-    let uuid: string = params.uuid;
+    let id: string = params.id;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.get(uuid).then(
+      this.service.get(id).then(
         response => {
           let invite = <Invite>(<any>response).data;
           console.log(response);

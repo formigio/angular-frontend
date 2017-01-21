@@ -14,11 +14,10 @@ import { InviteService, Invite } from './index';
 
 export class InviteViewComponent implements OnInit {
 
-  @Input() uuid:string;
+  @Input() id:string;
 
   invite: Invite = {
     id:'',
-    uuid: '',
     entity: '',
     entity_id: '',
     invitee_name: '',
@@ -47,7 +46,7 @@ export class InviteViewComponent implements OnInit {
     this.service.getItemSubscription().subscribe(
       invite => this.invite = <Invite>invite
     );
-    this.message.startProcess('invite_view',{uuid:this.uuid});
+    this.message.startProcess('invite_view',{id:this.id});
   }
 
   /**

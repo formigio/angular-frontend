@@ -23,7 +23,6 @@ export class InviteListComponent implements OnInit {
   invites: Invite[] = [];
   invite: Invite = {
     id:'',
-    uuid: '',
     entity: '',
     entity_id: '',
     invitee_name: '',
@@ -58,17 +57,14 @@ export class InviteListComponent implements OnInit {
         let newinvites:Invite[] = [];
         let allinvites:Invite[] = invites;
         allinvites.forEach((invite) => {
-          if(invite.uuid) {
+          if(invite.id) {
             newinvites.push(invite);
           }
         });
         this.invites = newinvites;
       }
     );
-    // this.route.params.subscribe(params => {
-    //   this.goal = params['goal_uuid'];
     this.refreshInvites();
-    // });
   }
 
   refreshInvites() {

@@ -2,7 +2,6 @@ export class Invite {
   public changed:boolean =  false;
   constructor(
     public id: string,
-    public uuid: string,
     public entity: string,
     public entity_id: string,
     public inviter_name: string,

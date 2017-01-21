@@ -29,7 +29,7 @@ export class InviteItemComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    if(!this.invite.uuid) {
+    if(!this.invite.id) {
       this.message.startProcess('invite_create',{invite:this.invite});
     }
   }
@@ -45,7 +45,7 @@ export class InviteItemComponent implements OnInit {
   }
 
   getInviteLink(full:boolean):string {
-    let href = '/invite/' + this.invite.uuid + '/' + this.invite.entity + '/'
+    let href = '/invite/' + this.invite.id + '/' + this.invite.entity + '/'
         + this.invite.entity_id;
       if(full) {
         return window.location.origin + href;
