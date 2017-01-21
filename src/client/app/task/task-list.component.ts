@@ -57,7 +57,7 @@ export class TaskListComponent implements OnInit {
         let newtasks:Task[] = [];
         let alltasks:Task[] = tasks;
         alltasks.forEach((task) => {
-          if(task.id) {
+          if(task.title) {
             newtasks.push(task);
           }
         });

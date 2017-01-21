@@ -347,6 +347,20 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'getUser',
             {}
         ),
+        task_delete_init: new ProcessTask(
+            'get_user_for_delete_task',
+            'task_delete_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
+        goal_delete_init: new ProcessTask(
+            'get_user_for_goal_delete',
+            'goal_delete_init',
+            'Get User in Process Context',
+            'getUser',
+            {}
+        ),
         refresh_google_token_error: new ProcessTask(
             'logout_after_google_token_refresh_failed',
             'refresh_google_token_error',

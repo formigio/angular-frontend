@@ -55,7 +55,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'remove_tasks_complete',
             'Gather Goal Invites',
             'gatherInvites',
-            {entity_type:'string',entity_uuid:'string',status:'string'}
+            {entity:'string',entity_id:'string',status:'string'}
         ),
         gather_goal_invites_complete: new ProcessTask(
             'remove_invites',
@@ -69,7 +69,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_invite_fetch_complete',
             'Fetch Invites for a specific goal',
             'gatherInvites',
-            {entity_type:'string',entity_uuid:'string',user:'User'}
+            {entity:'string',entity_id:'string',user:'User'}
         ),
         gather_invites_for_invite_fetch_complete: new ProcessTask(
             'publish_invites',
@@ -127,12 +127,12 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public gatherInvites(control_uuid: string, params: any): Observable<any> {
-    let entity_type: string = params.entity_type;
-    let entity_uuid: string = params.entity_uuid;
+    let entity: string = params.entity;
+    let entity_id: string = params.entity_id;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.list(entity_type,entity_uuid).then(
+      this.service.list(entity,entity_id).then(
         response => {
           let invites = <Invite[]>response.data;
           observer.next({

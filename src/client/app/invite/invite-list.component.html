@@ -8,13 +8,18 @@
       <li class="list-group-item">
         <form (submit)="addInvite()" class="form-inline">
         <div class="form-group">
-          <button class="btn btn-xs btn-default" type="button">
+          <button class="btn btn-xs btn-primary" type="button" (click)="enableAddForm()" *ngIf="!addFormActive">
               <span class="glyphicon glyphicon-plus"></span>
           </button>
-          <input [(ngModel)]="invite.invitee" name="invitee" class="form-control" placeholder="Enter Name of Person to Invite">
-          <input [(ngModel)]="invite.inviter" name="inviter" class="form-control" placeholder="Enter Your Name">
-          <button type="submit" class="btn btn-primary">Invite</button>
-          <button type="button" class="btn btn-secondary" (click)="refreshInvites()"><span class="glyphicon glyphicon-refresh"></span></button>
+          <button class="btn btn-xs btn-default" type="button" (click)="disableAddForm()" *ngIf="addFormActive">
+              <span class="glyphicon glyphicon-minus"></span>
+          </button>
+          <div class="form-group" *ngIf="addFormActive">
+            <input [(ngModel)]="invite.invitee_name" name="invitee_name" class="form-control" placeholder="Enter Name of Person to Invite">
+            <input [(ngModel)]="invite.inviter_name" name="inviter_name" class="form-control" placeholder="Enter Your Name">
+            <button type="submit" class="btn btn-primary">Invite</button>
+            <button *ngIf="invites.length>0" type="button" class="btn btn-secondary" (click)="refreshInvites()"><span class="glyphicon glyphicon-refresh"></span></button>
+          </div>
         </div>
         </form>
       </li>

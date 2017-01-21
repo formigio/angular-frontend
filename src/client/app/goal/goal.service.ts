@@ -60,6 +60,19 @@ export class GoalService {
     return (<Goal>JSON.parse(localStorage.getItem('goal::' + id)));
   }
 
+  removeGoal(id:string) {
+    let checked:Goal[] = [];
+    this.goals.forEach((goal) => {
+      if(id === goal.id) {
+        goal.title = '';
+      }
+      checked.push(goal);
+      if(checked.length===this.goals.length) {
+        this.publishGoals(checked);
+      }
+    });
+  }
+
   addGoal(goal:Goal) {
     this.goals.push(goal);
     this.publishGoals(this.goals);
@@ -125,11 +138,15 @@ export class GoalService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  // delete(guid:string): Observable<string[]> {
-  //   return this.http.delete(Config.API + '/goals/' + guid)
-  //                   .map((res: Response) => res.json())
-  //                   .catch(this.handleError);
-  // }
+  delete(id:string): Promise<any> {
+    let user = this.getUser();
+    let api = this.helper.apiFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.delete('/goals/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
+  }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.

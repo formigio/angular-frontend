@@ -83,6 +83,13 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'Save Goal',
           'saveGoal',
           {goal:'Goal',user:'User'}
+      ),
+      get_user_for_goal_delete_complete: new ProcessTask(
+          'delete_goal_task',
+          'get_user_for_goal_delete_complete',
+          'Delete Goal',
+          'deleteGoal',
+          {goal:'Goal',user:'User'}
       )
   };
 
@@ -221,6 +228,34 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'error',
             message:'Goal Save Failed.',
+            context:{params:{}}
+        })
+      );
+    });
+    return obs;
+  }
+
+  public deleteGoal(control_uuid: string, params: any): Observable<any> {
+    let goal: string = params.goal;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.delete(goal).then(
+        response => {
+          this.service.removeGoal(goal);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Goal Remove Successfully.',
+            context:{params:{}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Goal Remove Failed.',
             context:{params:{}}
         })
       );

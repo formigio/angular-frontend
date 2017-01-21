@@ -1,11 +1,11 @@
-<div class="row" *ngIf="task.title">
+<div class="row">
     <div class="col-xs-1">
-        <button *ngIf="editable===true" (click)="completeTask(task)" [class.btn-success]="task.complete" [class.btn-default]="task.complete" name="complete" class="btn btn-xs" type="button">
-            <span [class.glyphicon-ok]="task.complete" [class.glyphicon-stop]="!task.complete" class="glyphicon"></span>
-        </button>
-        <button *ngIf="editable===false" [class.btn-success]="task.complete" [class.btn-default]="!task.complete" name="complete" class="btn btn-xs" type="button">
-            <span [class.glyphicon-ok]="task.complete" [class.glyphicon-stop]="!task.complete" class="glyphicon"></span>
-        </button>
+        <!--<button *ngIf="editable===true" (click)="completeTask(task)" [class.btn-success]="task.complete" [class.btn-default]="task.complete" name="complete" class="btn btn-xs" type="button">-->
+            <span [class.glyphicon-ok]="task.complete" [class.glyphicon-minus]="!task.complete" class="glyphicon"></span>
+        <!--</button>-->
+        <!--<button *ngIf="editable===false" [class.btn-success]="task.complete" [class.btn-default]="!task.complete" name="complete" class="btn btn-xs" type="button">-->
+            <!--<span [class.glyphicon-ok]="task.complete" [class.glyphicon-stop]="!task.complete" class="glyphicon"></span>-->
+        <!--</button>-->
     </div>
     <div class="col-xs-10">
         <div style="display:inline-block;" *ngIf="state==='view'">
@@ -21,6 +21,6 @@
         </form>
     </div>
     <div class="col-xs-1">
-        <!--<button *ngIf="editable===true" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>-->
+        <button *ngIf="editable===true" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
     </div>
 </div>

@@ -55,7 +55,7 @@ export class GoalListComponent implements OnInit {
         let newgoals:Goal[] = [];
         let allgoals:Goal[] = this.goals;
         allgoals.forEach((goal) => {
-          if(goal.id) {
+          if(goal.title) {
             newgoals.push(goal);
           }
         });

@@ -15,8 +15,10 @@ import { Invite, InviteService } from './index';
 
 export class InviteListComponent implements OnInit {
 
-  @Input() entity_type:string;
-  @Input() entity_uuid:string;
+  @Input() entity:string;
+  @Input() entity_id:string;
+
+  addFormActive:boolean = false;
 
   invites: Invite[] = [];
   invite: Invite = {
@@ -42,6 +44,9 @@ export class InviteListComponent implements OnInit {
     protected route: ActivatedRoute
   ) {
     this.service = this.helper.getServiceInstance(this.service,'InviteService');
+    this.invite.entity = this.entity;
+    this.invite.entity_id = this.entity_id;
+
   }
 
   /**
@@ -68,8 +73,8 @@ export class InviteListComponent implements OnInit {
 
   refreshInvites() {
     this.message.startProcess('invite_fetch',{
-      entity_type:this.entity_type,
-      entity_uuid:this.entity_uuid
+      entity:this.entity,
+      entity_id:this.entity_id
     });
   }
 
@@ -79,8 +84,8 @@ export class InviteListComponent implements OnInit {
    */
   addInvite(): boolean {
     let newInvite: Invite = JSON.parse(JSON.stringify(this.invite));
-    newInvite.entity = this.entity_type;
-    newInvite.entity_id = this.entity_uuid;
+    newInvite.entity = this.entity;
+    newInvite.entity_id = this.entity_id;
     newInvite.changed = true;
     this.invites.push(newInvite);
     return false;
@@ -89,12 +94,20 @@ export class InviteListComponent implements OnInit {
   removeInvite(remove:Invite): boolean {
     let newinvites:Invite[] = [];
     this.invites.forEach((invite) => {
-      if(invite.uuid !== remove.uuid) {
+      if(invite.id !== remove.id) {
         newinvites.push(invite);
       }
     });
     this.invites = newinvites;
     return false;
+  }
+
+  enableAddForm() {
+    this.addFormActive = true;
+  }
+
+  disableAddForm() {
+    this.addFormActive = false;
   }
 
 }

@@ -43,27 +43,27 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
-        task_delete_init: new ProcessTask(
+        get_user_for_delete_task_complete: new ProcessTask(
             'delete_task',
-            'goal_delete_init',
+            'get_user_for_delete_task_complete',
             'Delete Task',
             'deleteTask',
-            {task:'Task'}
+            {user:'User',task:'Task'}
         ),
-        goal_delete_init: new ProcessTask(
-            'gather_goal_tasks',
-            'goal_delete_init',
-            'Gather Goal Tasks',
-            'gatherTasks',
-            {goal:'string'}
-        ),
-        gather_goal_tasks_complete: new ProcessTask(
-            'remove_tasks',
-            'gather_goal_tasks_complete',
-            'Remove Tasks for a specific goal',
-            'removeTasks',
-            {goal:'string', task_count:'string'}
-        ),
+        // goal_delete_init: new ProcessTask(
+        //     'gather_goal_tasks',
+        //     'goal_delete_init',
+        //     'Gather Goal Tasks',
+        //     'gatherTasks',
+        //     {goal:'string'}
+        // ),
+        // gather_goal_tasks_complete: new ProcessTask(
+        //     'remove_tasks',
+        //     'gather_goal_tasks_complete',
+        //     'Remove Tasks for a specific goal',
+        //     'removeTasks',
+        //     {goal:'string', task_count:'string'}
+        // ),
         get_user_for_load_task_list_complete: new ProcessTask(
             'load_tasks',
             'get_user_for_load_task_list_complete',
@@ -233,31 +233,34 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  // public deleteTask(control_uuid: string, params: any): Observable<any> {
-  //   let task: Task = params.task;
-  //   let obs = new Observable((observer:any) => {
-  //     this.service.delete(task).subscribe(
-  //       null,
-  //       error => observer.error({
-  //         control_uuid: control_uuid,
-  //         outcome: 'error',
-  //         message:'Error has occured while removing tasks.',
-  //         context:{params:{}}
-  //       }),
-  //       () => {
-  //         observer.next({
-  //           control_uuid: control_uuid,
-  //           outcome: 'success',
-  //           message:'Task removed successfully.',
-  //           context:{params:{task_deleted:task.uuid}}
-  //         });
-  //         this.service.refreshTasks(task.goal);
-  //         observer.complete();
-  //       }
-  //     );
-  //   });
-  //   return obs;
-  // }
+  public deleteTask(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let task: Task = params.task;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.delete(task.id).then(
+        response => {
+          this.service.removeTask(task.id);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Task Removed.',
+            context:{params:{}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured removing the task.'
+          });
+        }
+      );
+    });
+    return obs;
+  }
 
   // public removeTasks(control_uuid: string, params: any): Observable<any> {
   //   let tasks: Task[] = params.tasks;

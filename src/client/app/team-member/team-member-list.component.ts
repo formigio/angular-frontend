@@ -19,9 +19,10 @@ export class TeamMemberListComponent implements OnInit {
   members: TeamMember[] = [];
 
   member: TeamMember = {
-    uuid: '',
+    id: '',
     identity: '',
-    title: ''
+    username: '',
+    name:''
   };
 
   team: string; // Team UUID from URL
@@ -65,10 +66,10 @@ export class TeamMemberListComponent implements OnInit {
    */
   addTeamMember(): boolean {
     let newMember: TeamMember = JSON.parse(JSON.stringify(this.member));
-    newMember.uuid = this.team;
+    newMember.id = this.team;
     this.members.push(newMember);
     this.helper.sortBy(this.members,'user_email');
-    this.message.startProcess('teammember_add',{team_uuid:this.team,user_email:newMember.title});
+    this.message.startProcess('teammember_add',{team_uuid:this.team,user_email:newMember.username});
     return false;
   }
 
