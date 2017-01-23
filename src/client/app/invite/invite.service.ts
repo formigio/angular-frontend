@@ -133,14 +133,23 @@ export class InviteService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  // put(invite:Invite): Observable<string[]> {
-  //   let body = JSON.stringify(invite);
-  //   let headers = new Headers({ 'Content-Type': 'application/json' });
-  //   let options = new RequestOptions({ headers: headers });
-  //   return this.http.put(Config.API + '/goals/' + invite.entity + '/invites/' + invite.uuid, body, options)
-  //                   .map((res: Response) => res.json())
-  //                   .catch(this.handleError);
-  // }
+  put(invite:Invite): Promise<any> {
+    let user = this.getUser();
+    let body = {
+      entity:invite.entity,
+      entity_id:invite.entity_id,
+      invitee_name:invite.invitee_name,
+      inviter_worker_id:invite.inviter_worker_id,
+      invitee_worker_id:invite.invitee_worker_id,
+      inviter_name:invite.inviter_name
+    };
+    let api = this.helper.apiFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.put('/invites/{id}',{path:{id:invite.id},headers:{'x-identity-id':user.worker.identity}},body);
+  }
 
   // /**
   //   * Handle HTTP error

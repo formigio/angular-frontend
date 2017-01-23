@@ -75,4 +75,8 @@ export class InviteViewComponent implements OnInit {
     );
   }
 
+  acceptInvite() {
+    this.message.startProcess('invite_accept',{invite:this.invite});
+  }
+
 }

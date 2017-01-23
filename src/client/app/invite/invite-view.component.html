@@ -2,4 +2,6 @@
     <p>Hello, {{invite.invitee_name}}</p>
     <p>{{invite.inviter_name}} wants you to accept an invite to work together.</p>
     <p>This is a {{invite.entity}}: {{invite.entity_id}}</p>
+    <button (click)="acceptInvite()" class="btn btn-primary">Accept Invitation</button>
+    <p *ngIf="invite.entity=='team'"><small>Accepting this invitation will add this team into your list of teams, and give you access to it's goals and tasks.</small></p>
 </div>

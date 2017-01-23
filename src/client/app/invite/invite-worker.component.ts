@@ -39,6 +39,12 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           'The Process Used to Control the View of Invite',
           new ProcessContext,
           ''
+        ),
+        invite_accept: new ProcessRoutine(
+          'invite_accept',
+          'The Process Used to Control the Acceptance of an Invite',
+          new ProcessContext,
+          ''
         )
     };
 
@@ -91,6 +97,13 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'Load Invite',
             'loadInvite',
             {id:'string',user:'User'}
+        ),
+        get_user_for_invite_accept_complete: new ProcessTask(
+            'accept_invite',
+            'get_user_for_invite_accept_complete',
+            'Load Invite',
+            'acceptInvite',
+            {invite:'Invite',user:'User'}
         )
     };
 
@@ -220,6 +233,36 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
+  public acceptInvite(control_uuid: string, params: any): Observable<any> {
+    let invite: Invite = params.invite;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      invite.invitee_worker_id = user.worker.id;
+      this.service.setUser(user);
+      this.service.put(invite).then(
+        response => {
+          let invite = <Invite>response.data;
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Invite Created.',
+            context:{params:{invite:invite}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured saving the invite.'
+          });
+        }
+      );
+    });
+
+    return obs;
+  }
 
   public publishInvites(control_uuid: string, params: any): Observable<any> {
     let invites: Invite[] = params.invites;
