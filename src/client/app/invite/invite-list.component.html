@@ -15,8 +15,7 @@
               <span class="glyphicon glyphicon-minus"></span>
           </button>
           <div class="form-group" *ngIf="addFormActive">
-            <input [(ngModel)]="invite.invitee_name" name="invitee_name" class="form-control" placeholder="Enter Name of Person to Invite">
-            <input [(ngModel)]="invite.inviter_name" name="inviter_name" class="form-control" placeholder="Enter Your Name">
+            <input [(ngModel)]="invite.invitee_name" name="invitee_name" class="form-control" placeholder="Enter Name">
             <button type="submit" class="btn btn-primary">Invite</button>
             <button *ngIf="invites.length>0" type="button" class="btn btn-secondary" (click)="refreshInvites()"><span class="glyphicon glyphicon-refresh"></span></button>
           </div>

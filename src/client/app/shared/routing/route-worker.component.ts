@@ -66,6 +66,14 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           'navigateTo',
           {navigate_to:'string'}
       )
+      // ,
+      // link_invite_error: new ProcessTask(
+      //     'navigate',
+      //     'test_user_auth_error',
+      //     'Navigate after Auth Test Fails',
+      //     'navigateTo',
+      //     {navigate_to:'string'}
+      // )
   };
 
   constructor(

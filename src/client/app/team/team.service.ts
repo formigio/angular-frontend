@@ -181,7 +181,7 @@ export class TeamService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.put('/teams/{id}',{path:{id:team.id}},body);
+    return api.put('/teams/{id}',{path:{id:team.id},'headers':{'x-identity-id':user.worker.identity}},body);
   }
 
   // /**

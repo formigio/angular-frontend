@@ -29,6 +29,7 @@ export class InviteListComponent implements OnInit {
     invitee_worker_id: '',
     inviter_name: '',
     inviter_worker_id: '',
+    status: '',
     changed: false
   };
 

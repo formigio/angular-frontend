@@ -49,12 +49,12 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
-        invite_delete_init: new ProcessTask(
+        get_user_for_invite_delete_complete: new ProcessTask(
             'delete_invite',
-            'invite_delete_init',
+            'get_user_for_invite_delete_complete',
             'Delete Invite',
             'deleteInvite',
-            {invite:'Invite'}
+            {user:'User',invite:'Invite'}
         ),
         remove_tasks_complete: new ProcessTask(
             'gather_goal_invites',
@@ -93,10 +93,17 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         ),
         get_user_for_invite_view_complete: new ProcessTask(
             'load_invite',
-            'get_user_for_invite_create_complete',
+            'get_user_for_invite_view_complete',
             'Load Invite',
             'loadInvite',
             {id:'string',user:'User'}
+        ),
+        load_invite_complete: new ProcessTask(
+            'link_invite',
+            'load_invite_complete',
+            'Link Invite',
+            'linkInvite',
+            {invite:'Invite',user:'User'}
         ),
         get_user_for_invite_accept_complete: new ProcessTask(
             'accept_invite',
@@ -178,8 +185,6 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
       this.service.get(id).then(
         response => {
           let invite = <Invite>(<any>response).data;
-          console.log(response);
-          this.service.publishInvite(invite);
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
@@ -207,6 +212,8 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
+      invite.inviter_name = user.worker.name;
+      invite.inviter_worker_id = user.worker.id;
       this.service.post(invite).then(
         response => {
           let invite = <Invite>response.data;
@@ -237,7 +244,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     let invite: Invite = params.invite;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      invite.invitee_worker_id = user.worker.id;
+      invite.status = 'accepted';
       this.service.setUser(user);
       this.service.put(invite).then(
         response => {
@@ -245,10 +252,11 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Invite Created.',
+            message:'Invite Marked Accepted.',
             context:{params:{invite:invite}}
           });
           observer.complete();
+          this.message.startProcess('navigate_to',{navigate_to:'/' + invite.entity + '/' + invite.entity_id});
         }
       ).catch(
         error => {
@@ -261,6 +269,45 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
       );
     });
 
+    return obs;
+  }
+
+  public linkInvite(control_uuid: string, params: any): Observable<any> {
+    let invite: Invite = params.invite;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      if(invite.invitee_worker_id && invite.invitee_worker_id !== user.worker.id){
+        observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'This Invite has expired or is invalid.'
+        });
+      } else {
+        invite.invitee_worker_id = user.worker.id;
+        this.service.setUser(user);
+        this.service.put(invite).then(
+          response => {
+            let invite = <Invite>response.data;
+            this.service.publishInvite(invite);
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Invite Created.',
+              context:{params:{invite:invite}}
+            });
+            observer.complete();
+          }
+        ).catch(
+          error => {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'An error has occured saving the invite.'
+            });
+          }
+        );
+      }
+    });
     return obs;
   }
 
@@ -280,30 +327,32 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  // public deleteInvite(control_uuid: string, params: any): Observable<any> {
-  //   let invite: Invite = params.invite;
-  //   let obs = new Observable((observer:any) => {
-  //     this.service.delete(invite).subscribe(
-  //       null,
-  //       error => observer.error({
-  //         control_uuid: control_uuid,
-  //         outcome: 'error',
-  //         message:'Error has occured while removing invite.',
-  //         context:{params:{}}
-  //       }),
-  //       () => {
-  //         observer.next({
-  //           control_uuid: control_uuid,
-  //           outcome: 'success',
-  //           message:'Invite removed successfully.',
-  //           context:{params:{invite_deleted:invite.uuid}}
-  //         });
-  //         observer.complete();
-  //       }
-  //     );
-  //   });
-  //   return obs;
-  // }
+  public deleteInvite(control_uuid: string, params: any): Observable<any> {
+    let invite: Invite = params.invite;
+    let obs = new Observable((observer:any) => {
+      this.service.delete(invite.id).then(
+        response => {
+          this.service.removeInvite(invite.id);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Invite Removed.',
+            context:{params:{invite_deleted:invite.id}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured removing the invite.'
+          });
+        }
+      );
+    });
+    return obs;
+  }
 
   // public removeInvites(control_uuid: string, params: any): Observable<any> {
   //   let invites: Invite[] = params.invites;

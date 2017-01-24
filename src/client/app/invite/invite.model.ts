@@ -7,6 +7,7 @@ export class Invite {
     public inviter_name: string,
     public invitee_name: string,
     public inviter_worker_id: string,
-    public invitee_worker_id: string
+    public invitee_worker_id: string,
+    public status: string
   ) {}
 }

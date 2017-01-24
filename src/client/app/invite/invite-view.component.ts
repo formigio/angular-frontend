@@ -24,6 +24,7 @@ export class InviteViewComponent implements OnInit {
     invitee_worker_id: '',
     inviter_name: '',
     inviter_worker_id: '',
+    status: '',
     changed: false
   };
 
@@ -77,6 +78,10 @@ export class InviteViewComponent implements OnInit {
 
   acceptInvite() {
     this.message.startProcess('invite_accept',{invite:this.invite});
+  }
+
+  declineInvite() {
+    this.message.startProcess('invite_delete',{invite:this.invite});
   }
 
 }

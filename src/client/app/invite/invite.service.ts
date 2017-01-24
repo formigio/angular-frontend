@@ -52,6 +52,20 @@ export class InviteService {
     this.publishInvites(this.invites);
   }
 
+  removeInvite(id:string) {
+    let checked:Invite[] = [];
+    let newList:Invite[] = [];
+    this.invites.forEach((invite) => {
+      if(id !== invite.id) {
+        newList.push(invite);
+      }
+      checked.push(invite);
+      if(checked.length===this.invites.length) {
+        this.publishInvites(newList);
+      }
+    });
+  }
+
   setUser(user:User) {
     this.user = user;
   }
@@ -95,7 +109,7 @@ export class InviteService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/invites',{params:{entity:entity,entity_id:entity_id},headers:{'x-identity-id':user.worker.identity}});
+    return api.get('/invites',{params:{status:'pending',entity:entity,entity_id:entity_id},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
@@ -108,6 +122,7 @@ export class InviteService {
       entity:invite.entity,
       entity_id:invite.entity_id,
       invitee_name:invite.invitee_name,
+      invitee_worker_id:invite.invitee_worker_id,
       inviter_worker_id:user.worker.id,
       inviter_name:invite.inviter_name
     };
@@ -123,11 +138,15 @@ export class InviteService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  // delete(invite:Invite): Observable<string[]> {
-  //   return this.http.delete(Config.API + '/goals/'+ invite.entity + '/invites/' + invite.uuid)
-  //                   .map((res: Response) => res.json())
-  //                   .catch(this.handleError);
-  // }
+  delete(id:string): Promise<Invite> {
+    let user = this.getUser();
+    let api = this.helper.apiFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.delete('/invites/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
+  }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
@@ -141,7 +160,8 @@ export class InviteService {
       invitee_name:invite.invitee_name,
       inviter_worker_id:invite.inviter_worker_id,
       invitee_worker_id:invite.invitee_worker_id,
-      inviter_name:invite.inviter_name
+      inviter_name:invite.inviter_name,
+      status:invite.status
     };
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
