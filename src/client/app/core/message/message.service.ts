@@ -19,16 +19,11 @@ export class MessageService {
 
 // Add Notices, messages that must be dismissed. Notices stack.
 
-    instance: string;
-
     public flashMessage: ReplaySubject<any> = new ReplaySubject(1);
     public processMessage: ReplaySubject<any> = new ReplaySubject(1);
+    public stickyMessage: ReplaySubject<any> = new ReplaySubject(1);
     public workerQueue: ReplaySubject<any> = new ReplaySubject(1);
     public processQueue: ReplaySubject<any> = new ReplaySubject(1);
-
-    constructor() {
-        this.instance = Math.random().toString().split('.').pop();
-    }
 
     public setFlash(message:string, alert:string = 'info') {
         let flashMessage = new Message(true,message,alert);
@@ -44,6 +39,11 @@ export class MessageService {
         control.subscribe(x => processMessage.show = false);
     }
 
+    public addStickyMessage(message:string, alert:string = 'info') {
+        let stickyMessage = new Message(true,message,alert);
+        this.stickyMessage.next(stickyMessage);
+    }
+
     public processSignal(message: WorkerMessage) {
         this.workerQueue.next(message);
     }
@@ -56,9 +56,14 @@ export class MessageService {
         return this.flashMessage;
     }
 
+    public getStickyMessageRelay(): ReplaySubject<any> {
+        return this.stickyMessage;
+    }
+
     public getProcessMessageRelay(): ReplaySubject<any> {
         return this.processMessage;
     }
+
 
     public getWorkerQueue(): ReplaySubject<any> {
         return this.workerQueue;

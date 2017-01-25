@@ -96,7 +96,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_invite_view_complete',
             'Load Invite',
             'loadInvite',
-            {id:'string',user:'User'}
+            {hash:'string',user:'User'}
         ),
         load_invite_complete: new ProcessTask(
             'link_invite',
@@ -178,20 +178,28 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public loadInvite(control_uuid: string, params: any): Observable<any> {
-    let id: string = params.id;
+    let hash: string = params.hash;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.get(id).then(
+      this.service.get(hash).then(
         response => {
           let invite = <Invite>(<any>response).data;
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Invite fetched successfully.',
-            context:{params:{invite:invite}}
-          });
-          observer.complete();
+          if(invite.id == null || invite.id == ''){
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'Invalid or Expired Invitation.'
+            });
+          } else {
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Invite fetched successfully.',
+              context:{params:{invite:invite}}
+            });
+            observer.complete();
+          }
         }
       ).catch(
         error => {
@@ -256,14 +264,14 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             context:{params:{invite:invite}}
           });
           observer.complete();
-          this.message.startProcess('navigate_to',{navigate_to:'/' + invite.entity + '/' + invite.entity_id});
+          this.message.startProcess('navigate_to',{navigate_to:'/teams'});
         }
       ).catch(
         error => {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured saving the invite.'
+            message:'An error has occured. Please check to make sure you are not already a member of this team.'
           });
         }
       );
@@ -281,6 +289,12 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'error',
             message:'This Invite has expired or is invalid.'
+        });
+      } else if(invite.inviter_worker_id == user.worker.id) {
+        observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'You cannot create a link to an invite that you created.'
         });
       } else {
         invite.invitee_worker_id = user.worker.id;

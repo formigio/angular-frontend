@@ -78,14 +78,14 @@ export class InviteService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  get(id:string): Promise<Invite> {
+  get(hash:string): Promise<Invite> {
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/invites/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
+    return api.get('/invites/{hash}',{path:{hash:hash},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
@@ -119,6 +119,7 @@ export class InviteService {
   post(invite:Invite): Promise<any> {
     let user = this.getUser();
     let body = {
+      hash:("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4),
       entity:invite.entity,
       entity_id:invite.entity_id,
       invitee_name:invite.invitee_name,

@@ -14,10 +14,11 @@ import { InviteService, Invite } from './index';
 
 export class InviteViewComponent implements OnInit {
 
-  @Input() id:string;
+  @Input() hash:string;
 
   invite: Invite = {
     id:'',
+    hash:'',
     entity: '',
     entity_id: '',
     invitee_name: '',
@@ -47,7 +48,7 @@ export class InviteViewComponent implements OnInit {
     this.service.getItemSubscription().subscribe(
       invite => this.invite = <Invite>invite
     );
-    this.message.startProcess('invite_view',{id:this.id});
+    this.message.startProcess('invite_view',{hash:this.hash});
   }
 
   /**
@@ -61,8 +62,7 @@ export class InviteViewComponent implements OnInit {
   }
 
   getInviteLink(full:boolean):string {
-    let href = '/invite/' + this.invite.id + '/' + this.invite.entity + '/'
-        + this.invite.entity_id;
+    let href = '/invite/' + this.invite.hash;
       if(full) {
         return window.location.origin + href;
       }

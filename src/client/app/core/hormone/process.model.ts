@@ -171,7 +171,13 @@ export class WorkerMessage {
                   response => workerResponse = response,
                   error => {
                       workerMessage.signal = processTask.identifier + '_error';
-                      worker.message.setFlash('Worker Error: ' + JSON.stringify(error.message),'danger');
+                      let errorMessage:string = '';
+                      if(typeof error.message == "string") {
+                        errorMessage = error.message;
+                      } else {
+                        errorMessage = JSON.stringify(error.message);
+                      }
+                      worker.message.addStickyMessage(errorMessage,'danger');
                       worker.message.processSignal(workerMessage);
                   },
                   () => {

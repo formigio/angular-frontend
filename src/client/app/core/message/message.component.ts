@@ -14,6 +14,7 @@ export class MessageComponent implements OnInit {
 
     public flashMessage: Message = {show: false, message: '', alert: 'info'};
     public processMessages: Message[] = [];
+    public stickyMessages: Message[] = [];
     public errorMessage: any;
 
     constructor(protected service: MessageService) {}
@@ -25,6 +26,12 @@ export class MessageComponent implements OnInit {
         this.service.getProcessMessageRelay().subscribe(
             message => this.processMessages.push(message)
         );
+        this.service.getStickyMessageRelay().subscribe(
+            message => this.stickyMessages.push(message)
+        );
     }
 
+    dismiss(message:Message) {
+        message.show = false;
+    }
 }

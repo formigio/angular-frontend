@@ -23,6 +23,7 @@ export class InviteListComponent implements OnInit {
   invites: Invite[] = [];
   invite: Invite = {
     id:'',
+    hash:'',
     entity: '',
     entity_id: '',
     invitee_name: '',
