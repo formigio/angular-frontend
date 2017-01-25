@@ -185,7 +185,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
       this.service.get(hash).then(
         response => {
           let invite = <Invite>(<any>response).data;
-          if(invite.id == null || invite.id == ''){
+          if(invite.id === null || invite.id === '') {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
@@ -284,13 +284,13 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     let invite: Invite = params.invite;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      if(invite.invitee_worker_id && invite.invitee_worker_id !== user.worker.id){
+      if(invite.invitee_worker_id && invite.invitee_worker_id !== user.worker.id) {
         observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
             message:'This Invite has expired or is invalid.'
         });
-      } else if(invite.inviter_worker_id == user.worker.id) {
+      } else if(invite.inviter_worker_id === user.worker.id) {
         observer.error({
             control_uuid: control_uuid,
             outcome: 'error',

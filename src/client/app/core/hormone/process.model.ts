@@ -172,7 +172,7 @@ export class WorkerMessage {
                   error => {
                       workerMessage.signal = processTask.identifier + '_error';
                       let errorMessage:string = '';
-                      if(typeof error.message == "string") {
+                      if(typeof error.message === 'string') {
                         errorMessage = error.message;
                       } else {
                         errorMessage = JSON.stringify(error.message);

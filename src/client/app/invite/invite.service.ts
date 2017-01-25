@@ -119,7 +119,7 @@ export class InviteService {
   post(invite:Invite): Promise<any> {
     let user = this.getUser();
     let body = {
-      hash:("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4),
+      hash:('0000' + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4),
       entity:invite.entity,
       entity_id:invite.entity_id,
       invitee_name:invite.invitee_name,
