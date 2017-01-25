@@ -702,7 +702,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'Google Login Failed. ('+err+')',
+              message:'It looks like we need to get you logged back in.',
               context:{params:{}}
             });
           }
@@ -970,7 +970,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'Login Required',
+          message:'Authentication Required',
           context:{params:{}}
         });
       } else {

@@ -64,7 +64,6 @@ export class MessageService {
         return this.processMessage;
     }
 
-
     public getWorkerQueue(): ReplaySubject<any> {
         return this.workerQueue;
     }
