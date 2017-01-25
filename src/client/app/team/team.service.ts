@@ -64,6 +64,20 @@ export class TeamService {
     this.publishTeams(this.teams);
   }
 
+  removeTeam(id:string) {
+    let checked:Team[] = [];
+    let teams:Team[] = [];
+    this.teams.forEach((team) => {
+      if(id !== team.id) {
+        teams.push(team);
+      }
+      checked.push(team);
+      if(checked.length===this.teams.length) {
+        this.publishTeams(teams);
+      }
+    });
+  }
+
   setUser(user:User) {
     this.user = user;
   }
@@ -164,7 +178,7 @@ export class TeamService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.delete('/teams/{id}',{path:{id:id}});
+    return api.delete('/teams/{id}',{path:{id:id},'headers':{'x-identity-id':user.worker.identity}});
   }
 
 

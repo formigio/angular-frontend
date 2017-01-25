@@ -157,15 +157,16 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Teams removed.',
+            message:'Team removed.',
             context:{params:{}}
           });
           observer.complete();
+          this.service.removeTeam(team.id);
         }).catch((error:any) => {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message: 'Team delete failed',
+            message: 'Team delete failed, We cannot delete a team that still has goals.',
             context:{
               params:{}
             }

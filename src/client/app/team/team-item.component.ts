@@ -56,6 +56,7 @@ export class TeamItemComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteTeam(team:Team) {
+    team.changed = true;
     this.message.startProcess('team_delete',{team:team});
     return false;
   }
