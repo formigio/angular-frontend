@@ -255,7 +255,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Remove Failed.',
+            message:'Goal Remove Failed. You can only delete empty Goals.',
             context:{params:{}}
         })
       );
@@ -270,6 +270,8 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       this.service.setUser(user);
       this.service.put(goal).then(
         response => {
+          goal = <Goal>response.data;
+          this.service.updateGoal(goal);
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',

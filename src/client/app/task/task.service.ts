@@ -42,8 +42,14 @@ export class TaskService {
   }
 
   publishTasks(tasks:Task[]) {
+    this.helper.sortBy(tasks,'title');
     this.tasks = tasks;
     this.listSubscription.next(tasks);
+  }
+
+  sortTasks() {
+    this.helper.sortBy(this.tasks,'title');
+    this.listSubscription.next(this.tasks);
   }
 
   removeTask(id:string) {
@@ -59,14 +65,22 @@ export class TaskService {
     });
   }
 
-  addTask(task:Task) {
-    this.tasks.push(task);
-    this.sortTasks();
-    this.listSubscription.next(this.tasks);
+  publishTask(taskToPublish:Task) {
+    let checked:Task[] = [];
+    this.tasks.forEach((task) => {
+      if(taskToPublish.id === task.id) {
+        task = taskToPublish;
+      }
+      checked.push(task);
+      if(checked.length===this.tasks.length) {
+        this.publishTasks(checked);
+      }
+    });
   }
 
-  sortTasks() {
-    this.helper.sortBy(this.tasks,'title');
+  addTask(task:Task) {
+    this.tasks.push(task);
+    this.publishTasks(this.tasks);
   }
 
   setUser(user:User) {

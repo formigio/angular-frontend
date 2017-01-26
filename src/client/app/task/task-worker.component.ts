@@ -165,6 +165,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
       this.service.put(task).then(
         response => {
           let task = <Task>response.data;
+          this.service.publishTask(task);
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',

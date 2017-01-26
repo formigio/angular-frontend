@@ -44,6 +44,7 @@ export class GoalItemComponent implements OnInit {
 
   persistGoal() {
     this.state='view';
+    this.goal.changed = true;
     this.message.startProcess('goal_save',{goal:this.goal});
   }
 
@@ -52,6 +53,7 @@ export class GoalItemComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteGoal(goal:Goal): boolean {
+    this.goal.changed = true;
     this.message.startProcess('goal_delete',{goal:goal.id});
     return false;
   }

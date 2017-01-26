@@ -10,7 +10,7 @@
     <div class="col-xs-10">
         <div style="display:inline-block;" *ngIf="state==='view'">
             <span [innerHTML]="task.title"></span>
-            <!--<button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>-->
+            <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
             <!--<button type="button" *ngIf="task.notes!==''" (click)="toggleNotes()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-align-left"></span></button>-->
             <!--<div [innerHTML]="task.notes" *ngIf="showNotes===true"></div>-->
         </div>

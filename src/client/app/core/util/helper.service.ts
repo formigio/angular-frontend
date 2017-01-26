@@ -28,12 +28,18 @@ export class HelperService {
 
     sortBy(arr:any[],property:string) {
         arr.sort((a,b) => {
-                    if(a[property] < b[property])
-                        return -1;
-                    if(a[property] > b[property])
-                        return 1;
-                    return 0;
-                    });
+            let sortvala = a[property];
+            let sortvalb = b[property];
+            // if(typeof a[property] == 'string' && a[property].match(/([0-9]+)\./))
+            //     sortvala = Number(a[property].match(/([0-9]+)\./).pop());
+            // if(typeof a[property] == 'string' && b[property].match(/([0-9]+)\./))
+            //     sortvalb = Number(b[property].match(/([0-9]+)\./).pop());
+            if(sortvala < sortvalb)
+                return -1;
+            if(sortvala > sortvalb)
+                return 1;
+            return 0;
+        });
     }
 
     getServiceInstance(service:any,alias:string): any {

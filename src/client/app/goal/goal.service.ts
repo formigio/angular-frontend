@@ -48,8 +48,9 @@ export class GoalService {
 
   publishGoals(goals:Goal[]) {
     this.goals = goals;
+    this.sort();
     this.storeGoals();
-    this.listSubscription.next(goals);
+    this.listSubscription.next(this.goals);
   }
 
   storeGoals() {
@@ -65,6 +66,19 @@ export class GoalService {
     this.goals.forEach((goal) => {
       if(id === goal.id) {
         goal.title = '';
+      }
+      checked.push(goal);
+      if(checked.length===this.goals.length) {
+        this.publishGoals(checked);
+      }
+    });
+  }
+
+  updateGoal(goalToUpdate:Goal) {
+    let checked:Goal[] = [];
+    this.goals.forEach((goal) => {
+      if(goalToUpdate.id === goal.id) {
+        goal = goalToUpdate;
       }
       checked.push(goal);
       if(checked.length===this.goals.length) {
@@ -154,7 +168,7 @@ export class GoalService {
    */
   put(goal:Goal): Promise<any> {
     goal.title = this.htmlEntities(goal.title);
-    let body = goal;
+    let body = {title:goal.title};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,

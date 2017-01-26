@@ -58,6 +58,7 @@ export class TaskItemComponent implements OnInit {
   persistTask() {
     this.state='view';
     // this.showNotes = false;
+    this.task.changed = true;
     this.message.startProcess('task_save',{task:this.task});
   }
 
