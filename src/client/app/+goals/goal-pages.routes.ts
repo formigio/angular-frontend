@@ -7,7 +7,7 @@ export const GoalPagesRoutes: Route[] = [
     component: GoalPageComponent
   },
   {
-    path: 'goal/:goal_uuid/invite/:invite_uuid',
+    path: 'goal/:id/invite/:hash',
     component: GoalReadonlyComponent
   }
 ];
