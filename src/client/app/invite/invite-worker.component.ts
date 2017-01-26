@@ -298,6 +298,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         });
       } else {
         invite.invitee_worker_id = user.worker.id;
+        invite.invitee_name = user.worker.name;
         this.service.setUser(user);
         this.service.put(invite).then(
           response => {
