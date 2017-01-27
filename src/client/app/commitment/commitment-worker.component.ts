@@ -27,15 +27,21 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'The Process Used to Control the Save a Commitment',
             new ProcessContext,
             ''
+        ),
+        load_commitments: new ProcessRoutine(
+            'commitment_save',
+            'The Process Used to Control the Load Commitments',
+            new ProcessContext,
+            ''
         )
     };
 
     public tasks: {} = {
-        get_user_for_load_commitment_list_complete: new ProcessTask(
+        get_user_for_load_commitments_complete: new ProcessTask(
             'load_commitments',
             'get_user_for_load_commitment_list_complete',
             'Fetch Commitments',
-            'loadTasks',
+            'loadCommitments',
             {user:'User'}
         ),
         get_user_for_commitment_create_complete: new ProcessTask(
