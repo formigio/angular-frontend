@@ -12,9 +12,11 @@ import { TeamModule } from './team/team.module';
 import { TeamMemberModule } from './team-member/team-member.module';
 import { GoalModule } from './goal/goal.module';
 import { TaskModule } from './task/task.module';
+import { CommitmentModule } from './commitment/commitment.module';
 import { InviteModule } from './invite/invite.module';
 import { TeamPagesModule } from './+teams/team-pages.module';
 import { GoalPagesModule } from './+goals/goal-pages.module';
+import { CommitmentPagesModule } from './+commitments/commitment-pages.module';
 import { InvitePagesModule } from './+invites/invite-pages.module';
 import { LoginModule } from './+login/login.module';
 import { UserModule } from './user/user.module';
@@ -26,7 +28,8 @@ import { NavModule } from './nav/nav.module';
   imports: [
     BrowserModule, HttpModule, routing, CoreModule, LoginModule,
     UserModule, TeamModule, TeamMemberModule, GoalModule, TaskModule,
-    InviteModule, TeamPagesModule, GoalPagesModule, InvitePagesModule,
+    InviteModule, CommitmentModule, TeamPagesModule, GoalPagesModule, InvitePagesModule,
+    CommitmentPagesModule,
     HomeModule, NavModule, SharedModule.forRoot()],
   declarations: [AppComponent],
   providers: [

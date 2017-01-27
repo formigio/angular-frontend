@@ -27,7 +27,7 @@ export class TaskListComponent implements OnInit {
     title: '',
     sequence: '0',
     goal_id: '',
-    worker_status: 'notstarted',
+    work_status: 'notstarted',
     system_status: 'pending',
     changed: false
   };
@@ -79,17 +79,18 @@ export class TaskListComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addTask(): void {
+    let newTask:Task;
     this.task.goal_id = this.goal;
     let taskLines = this.task.title.split('\n');
     taskLines.forEach((taskTitle) => {
       if(taskTitle) {
         // let uuid = Math.random().toString().split('.').pop();
-        let newTask:Task = {
-          worker_status: 'notstarted',
-          system_status: 'notstarted',
+        newTask = {
           id: '',
-          title: taskTitle,
           goal_id: this.task.goal_id,
+          work_status: 'notstarted',
+          system_status: 'pending',
+          title: taskTitle,
           sequence: '0',
           // notes: '',
           changed: true

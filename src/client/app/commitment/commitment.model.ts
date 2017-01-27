@@ -1,12 +1,10 @@
-import { Task } from '../task/index';
-import { Goal } from '../goal/index';
-
 export class Commitment {
+  public changed:boolean = false;
   constructor(
-    public uuid: string,
-    public when: string, // Timedate
-    public hours: string, // Float
-    public task_doc: Task,
-    public goal_doc: Goal
+    public id: string,
+    public worker_id: string,
+    public task_id: string,
+    public promised_start: string,
+    public promised_minutes: string
   ) {}
 }

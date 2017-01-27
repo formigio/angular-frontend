@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-//import { Config } from './shared/index';
 import { ToolbarComponent, NavbarComponent } from './nav/index';
 import { MessageComponent, ProcessComponent } from './core/index';
 
