@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService, HelperService } from '../core/index';
-import { TaskService, Task } from './index';
+import { TaskService, Task, TaskStruct } from './index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -22,15 +22,7 @@ export class TaskListComponent implements OnInit {
 
   tasks: Task[] = [];
 
-  task: Task = {
-    id: '',
-    title: '',
-    sequence: '0',
-    goal_id: '',
-    work_status: 'notstarted',
-    system_status: 'pending',
-    changed: false
-  };
+  task: Task = TaskStruct;
 
   goal: string;
 
@@ -84,17 +76,10 @@ export class TaskListComponent implements OnInit {
     let taskLines = this.task.title.split('\n');
     taskLines.forEach((taskTitle) => {
       if(taskTitle) {
-        // let uuid = Math.random().toString().split('.').pop();
-        newTask = {
-          id: '',
-          goal_id: this.task.goal_id,
-          work_status: 'notstarted',
-          system_status: 'pending',
-          title: taskTitle,
-          sequence: '0',
-          // notes: '',
-          changed: true
-        };
+        newTask = TaskStruct;
+        newTask.goal_id = this.task.goal_id;
+        newTask.title = taskTitle;
+        newTask.changed = true;
         this.tasks.push(newTask);
       } // If Task Title
     }); // Task Lines foreach

@@ -118,6 +118,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
         response => {
           let commitment = <Commitment>response.data;
           task.changed = false;
+          task.commitment_promised_start = commitment.promised_start;
+          task.commitment_worker_id = commitment.worker_id;
+          task.commitment_worker_name = user.worker.name;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Task } from './index';
+import { Task, TaskStruct } from './index';
 import { MessageService } from '../core/index';
-import { Commitment } from '../commitment/index';
+import { Commitment, CommitmentStruct } from '../commitment/index';
 
 
 /**
@@ -18,23 +18,7 @@ export class TaskCommitFormComponent implements OnInit {
 
   @Input() task:Task;
 
-  commitment:Commitment = {
-    id: '',
-    task_id: '',
-    worker_id: '',
-    promised_start: '',
-    promised_minutes: '',
-    changed: false,
-    task: {
-      id:'',
-      goal_id:'',
-      title:'',
-      sequence: '',
-      work_status:'',
-      system_status:'',
-      changed: false
-    }
-  };
+  commitment:Commitment = CommitmentStruct;
 
   minutes:{} = [
     {value:5,label:'5 Minutes'},

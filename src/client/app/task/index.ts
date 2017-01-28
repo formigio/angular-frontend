@@ -7,3 +7,4 @@ export * from './task-worker.component';
 export * from './task-list.component';
 export * from './task-item.component';
 export * from './task-commit-form.component';
+export * from './task-commit-info.component';

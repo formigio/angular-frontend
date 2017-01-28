@@ -1,3 +1,16 @@
+export const TaskStruct = {
+      id:'',
+      goal_id:'',
+      title:'',
+      sequence: '',
+      work_status: 'notstarted',
+      system_status: 'pending',
+      commitment_worker_id:'',
+      commitment_worker_name:'',
+      commitment_promised_start:'',
+      changed: false
+    }
+
 export class Task {
   public changed:boolean =  false;
   constructor(
@@ -6,7 +19,10 @@ export class Task {
     public sequence: string,
     public goal_id: string,
     public work_status: string,
-    public system_status: string
+    public system_status: string,
+    public commitment_worker_id: string,
+    public commitment_promised_start: string,
+    public commitment_worker_name: string
   ) {}
 
   // getWorkStatus() {
