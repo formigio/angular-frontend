@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Task, TaskStruct } from './index';
+import { Component, Input } from '@angular/core';
+import { Task } from './index';
 import { MessageService } from '../core/index';
 import { Commitment, CommitmentStruct } from '../commitment/index';
 
@@ -14,7 +14,7 @@ import { Commitment, CommitmentStruct } from '../commitment/index';
   providers: [ ]
 })
 
-export class TaskCommitInfoComponent implements OnInit {
+export class TaskCommitInfoComponent {
 
   @Input() task:Task;
 
@@ -40,11 +40,5 @@ export class TaskCommitInfoComponent implements OnInit {
   constructor(
     protected message: MessageService
   ) {}
-
-  /**
-   * Get the names OnInit
-   */
-  ngOnInit() {
-  }
 
 }

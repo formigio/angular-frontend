@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Task, TaskStruct } from './index';
+import { Task } from './index';
 import { MessageService } from '../core/index';
 import { Commitment, CommitmentStruct } from '../commitment/index';
 

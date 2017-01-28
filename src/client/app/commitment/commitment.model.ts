@@ -8,7 +8,7 @@ export const CommitmentStruct = {
     promised_minutes: '',
     changed: false,
     task: TaskStruct
-  }
+  };
 
 export class Commitment {
   public changed:boolean = false;

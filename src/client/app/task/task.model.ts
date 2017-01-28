@@ -9,7 +9,7 @@ export const TaskStruct = {
       commitment_worker_name:'',
       commitment_promised_start:'',
       changed: false
-    }
+    };
 
 export class Task {
   public changed:boolean =  false;

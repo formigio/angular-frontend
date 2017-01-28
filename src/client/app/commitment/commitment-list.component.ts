@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService, HelperService } from '../core/index';
-import { CommitmentService, Commitment, CommitmentItemComponent } from './index';
+import { CommitmentService, Commitment } from './index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
