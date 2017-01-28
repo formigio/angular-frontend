@@ -76,7 +76,7 @@ export class TaskListComponent implements OnInit {
     let taskLines = this.task.title.split('\n');
     taskLines.forEach((taskTitle) => {
       if(taskTitle) {
-        newTask = TaskStruct;
+        newTask = JSON.parse(JSON.stringify(TaskStruct));
         newTask.goal_id = this.task.goal_id;
         newTask.title = taskTitle;
         newTask.changed = true;
