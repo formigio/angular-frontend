@@ -91,6 +91,13 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'Save Task for a specific goal',
             'saveTask',
             {task:'Task',user:'User'}
+        ),
+        create_commitment_complete: new ProcessTask(
+            'publish_task',
+            'create_commitment_complete',
+            'Publish Task from the Process Context',
+            'publishTask',
+            {task:'Task'}
         )
     };
 
@@ -183,6 +190,22 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           });
         }
       );
+    });
+
+    return obs;
+  }
+
+  public publishTask(control_uuid: string, params: any): Observable<any> {
+    let task: Task = params.task;
+    let obs = new Observable((observer:any) => {
+      this.service.publishTask(task);
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message:'Task Updated.',
+        context:{params:{task:task}}
+      });
+      observer.complete();
     });
 
     return obs;

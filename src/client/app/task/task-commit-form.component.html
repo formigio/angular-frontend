@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-xs-10">
+        <button *ngIf="!showForm" (click)="openForm()" class="btn btn-xs" type="button"><span>Claim</span></button>
+        <form *ngIf="showForm" class="form" (submit)="submit()">
+            <div class="form-group well">
+              <p>Commit to the Task</p>
+              <label>When you promise to start?</label>
+              <select [(ngModel)]="commitment.promised_start" name="commitment.promised_start" type="text" class="form-control" placeholder="Promised Start">
+                <option value="">Select Promised Start</option>
+                <option *ngFor="let time of starttimes" value="{{time.value}}">{{time.label}}</option>
+              </select>
+              <label>For how long are you going to work?</label>
+              <select [(ngModel)]="commitment.promised_minutes" name="commitment.promised_minutes" type="text" class="form-control" placeholder="Promised Minutes">
+                <option value="">Select Promised Time</option>
+                <option *ngFor="let minute of minutes" value="{{minute.value}}">{{minute.label}}</option>
+              </select>
+              <button type="submit" class="btn btn-success btn-xs">Save</button>
+              <button type="button" class="btn btn-default btn-xs" (click)="closeForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

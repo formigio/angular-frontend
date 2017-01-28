@@ -21,6 +21,7 @@ export class TaskItemComponent implements OnInit {
   state: string = 'view';
   response: any;
   showNotes: boolean = false;
+  showCommitForm: boolean = false;
 
   /**
    *
@@ -79,16 +80,6 @@ export class TaskItemComponent implements OnInit {
   completeTask(task:Task): boolean {
     task.work_status = 'completed';
     this.message.startProcess('task_save',{task:task});
-    return false;
-  }
-
-  /**
-   * Puts the accomplished Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  claimTask(task:Task): boolean {
-    task.work_status = 'scheduled';
-    this.message.startProcess('task_commit',{task:task});
     return false;
   }
 

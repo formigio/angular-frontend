@@ -122,9 +122,9 @@ export class CommitmentService {
   post(commitment:Commitment): Promise<any> {
     let body = {
       worker_id:commitment.worker_id,
-      task_id:commitment.worker_id,
+      task_id:commitment.task_id,
       promised_start:commitment.promised_start,
-      goal_id:commitment.promised_minutes
+      promised_minutes:commitment.promised_minutes
     };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
@@ -157,7 +157,8 @@ export class CommitmentService {
     let body = {
       promised_start:commitment.promised_start,
       goal_id:commitment.promised_minutes
-    };    let user = this.getUser();
+    };
+    let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,

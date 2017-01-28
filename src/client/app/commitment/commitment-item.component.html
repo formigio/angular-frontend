@@ -1,5 +1,6 @@
-<div class="row" *ngIf="commitment">
-    <div class="col-xs-12">
-        <span>Task: {{commitment.task_id}} Promised: {{commitment.promised}}</span>
-    </div>
+<div *ngIf="commitment">
+    <button class="btn btn-default btn-xs" (click)="navigateToGoal()">Goal</button>
+    <span>{{commitment.task.title}}</span>
+    <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteCommitment()"><span class="glyphicon glyphicon-remove-sign"></span></button>
+    <p class="small">Promised Start: {{commitment.promised_start | date:'short'}} {{commitment.promised_start | date:'z'}} for {{commitment.promised_minutes}} mins</p>
 </div>

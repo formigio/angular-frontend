@@ -38,6 +38,7 @@ export class CommitmentListComponent implements OnInit {
         this.commitments = <Commitment[]>commitments;
       }
     );
+    this.message.startProcess('load_commitments',{});
   }
 
   refreshCommitments() {

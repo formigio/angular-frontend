@@ -6,6 +6,7 @@ import { InviteWorkerComponent } from '../../invite/index';
 import { RouteWorkerComponent } from '../../shared/index';
 import { UserWorkerComponent } from '../../user/index';
 import { TeamMemberWorkerComponent } from '../../team-member/index';
+import { CommitmentWorkerComponent } from '../../commitment/index';
 
 /**
  * This class represents the toolbar component.
@@ -17,7 +18,7 @@ import { TeamMemberWorkerComponent } from '../../team-member/index';
   directives: [TeamWorkerComponent, GoalWorkerComponent,
     TaskWorkerComponent, InviteWorkerComponent,
     RouteWorkerComponent, UserWorkerComponent,
-    TeamMemberWorkerComponent]
+    TeamMemberWorkerComponent, CommitmentWorkerComponent]
 })
 export class ProcessComponent {
 

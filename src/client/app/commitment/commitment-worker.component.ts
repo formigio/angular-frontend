@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
 import { User } from '../user/index';
+import { Task } from '../task/index';
 import { Commitment, CommitmentService } from './index';
 
 /**
@@ -13,7 +14,7 @@ import { Commitment, CommitmentService } from './index';
   template: `<div></div>`,
   providers: [ CommitmentService ]
 })
-export class TaskWorkerComponent implements OnInit, WorkerComponent {
+export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
 
     public routines: {} = {
         commitment_create: new ProcessRoutine(
@@ -25,6 +26,12 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         commitment_save: new ProcessRoutine(
             'commitment_save',
             'The Process Used to Control the Save a Commitment',
+            new ProcessContext,
+            ''
+        ),
+        commitment_delete: new ProcessRoutine(
+            'commitment_delete',
+            'The Process Used to Control the Deleting a Commitment',
             new ProcessContext,
             ''
         ),
@@ -56,6 +63,13 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'get_user_for_commitment_save_complete',
             'Save Commitment',
             'saveCommitment',
+            {commitment:'Commitment',user:'User'}
+        ),
+        get_user_for_commitment_delete_complete: new ProcessTask(
+            'delete_commitment',
+            'get_user_for_commitment_delete_complete',
+            'Delete Commitment',
+            'deleteCommitment',
             {commitment:'Commitment',user:'User'}
         )
     };
@@ -94,17 +108,21 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
 
   public createCommitment(control_uuid: string, params: any): Observable<any> {
     let commitment: Commitment = params.commitment;
+    let task: Task = params.task;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
+      commitment.task_id = task.id;
+      commitment.worker_id = user.worker.id;
       this.service.setUser(user);
       this.service.post(commitment).then(
         response => {
           let commitment = <Commitment>response.data;
+          task.changed = false;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Commitment Created.',
-            context:{params:{commitment:commitment}}
+            context:{params:{commitment:commitment,task:task}}
           });
           observer.complete();
         }
@@ -134,6 +152,36 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Commitment Saved.',
+            context:{params:{commitment:commitment}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured saving the Commitment.'
+          });
+        }
+      );
+    });
+
+    return obs;
+  }
+
+  public deleteCommitment(control_uuid: string, params: any): Observable<any> {
+    let commitment: Commitment = params.commitment;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.delete(commitment.id).then(
+        response => {
+          this.service.removeCommitment(commitment.id);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Commitment Remove.',
             context:{params:{commitment:commitment}}
           });
           observer.complete();

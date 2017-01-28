@@ -120,7 +120,7 @@ export class TaskService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(task:Task): Promise<any> {
-    task.title = this.htmlEntities(task.title);
+    // task.title = this.htmlEntities(task.title);
     let body = {title:task.title,goal_id:task.goal_id};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
@@ -150,7 +150,7 @@ export class TaskService {
    * @return {string[]} The Observable for the HTTP request.
    */
   put(task:Task): Promise<any> {
-    task.title = this.htmlEntities(task.title);
+    // task.title = this.htmlEntities(task.title);
     let body = {title:task.title};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
@@ -176,8 +176,8 @@ export class TaskService {
   /**
     * Handle Convert HTML entities
     */
-  private htmlEntities(str:string): string {
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
+  // private htmlEntities(str:string): string {
+  //   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // }
 
 }

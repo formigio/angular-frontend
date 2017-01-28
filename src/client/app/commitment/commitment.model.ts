@@ -1,3 +1,5 @@
+import { Task } from '../task/index';
+
 export class Commitment {
   public changed:boolean = false;
   constructor(
@@ -5,6 +7,7 @@ export class Commitment {
     public worker_id: string,
     public task_id: string,
     public promised_start: string,
-    public promised_minutes: string
+    public promised_minutes: string,
+    public task: Task
   ) {}
 }

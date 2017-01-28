@@ -35,6 +35,10 @@ export class CommitmentItemComponent implements OnInit {
     // }
   }
 
+  navigateToGoal() {
+    this.message.startProcess('navigate_to',{navigate_to:'/goal/' + this.commitment.task.goal_id});
+  }
+
   // persistTask() {
   //   this.state='view';
   //   // this.showNotes = false;
@@ -46,11 +50,11 @@ export class CommitmentItemComponent implements OnInit {
    * Deletes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  // deleteTask(task:Task) {
-  //   task.changed = true;
-  //   this.message.startProcess('task_delete',{task:task});
-  //   return false;
-  // }
+  deleteCommitment() {
+    this.commitment.changed = true;
+    this.message.startProcess('commitment_delete',{commitment:this.commitment});
+    return false;
+  }
 
   /**
    * Puts the accomplished Goal Object to the Goal List Service

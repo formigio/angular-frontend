@@ -11,8 +11,10 @@
         <input [(ngModel)]="goal.title" name="title" type="text" style="min-width:75%">
         <button type="submit" class="btn btn-success btn-xs">Save</button>
     </form>
-    <button name="accomplished" class="btn btn-xs btn-default pull-right" type="button" (click)="navigateTo(goal)">
+    <button class="btn btn-xs btn-default pull-right" type="button" (click)="navigateTo(goal)">
         <span class="glyphicon glyphicon-list"></span>
     </button>
-    <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteGoal(goal)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+    <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteGoal(goal)">
+        <span class="glyphicon glyphicon-remove-sign"></span>
+    </button>
 </div>
