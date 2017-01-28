@@ -7,7 +7,7 @@
             <!--<span [class.glyphicon-ok]="task.complete" [class.glyphicon-stop]="!task.complete" class="glyphicon"></span>-->
         <!--</button>-->
     </div>
-    <div class="col-xs-10">
+    <div class="col-xs-9 col-sm-10">
         <div style="display:inline-block;" *ngIf="state==='view'">
             <span>{{task.title}}</span>
             <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
