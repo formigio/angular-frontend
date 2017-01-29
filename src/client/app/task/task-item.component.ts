@@ -47,7 +47,7 @@ export class TaskItemComponent implements OnInit {
   }
 
   toggleMenu() {
-    if(this.showMenu === false){
+    if(this.showMenu === false) {
       this.showMenu = true;
     } else {
       this.showMenu = false;
