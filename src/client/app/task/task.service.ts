@@ -151,7 +151,10 @@ export class TaskService {
    */
   put(task:Task): Promise<any> {
     // task.title = this.htmlEntities(task.title);
-    let body = {title:task.title};
+    let body = {
+      title:task.title,
+      work_status:task.work_status
+    };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,

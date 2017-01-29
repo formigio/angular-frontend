@@ -1,8 +1,41 @@
 <div class="row">
     <div class="col-xs-1">
-        <!--<button *ngIf="editable===true" (click)="completeTask(task)" [class.btn-success]="task.complete" [class.btn-default]="task.complete" name="complete" class="btn btn-xs" type="button">-->
-            <span [class.glyphicon-ok]="task.complete" [class.glyphicon-minus]="!task.complete" class="glyphicon"></span>
-        <!--</button>-->
+        <div class="dropdown" [class.open]="showMenu">
+            <button id="taskActionMenu_{{task.id}}" *ngIf="editable===true" (click)="toggleMenu()"
+                [class.btn-success]="task.work_status=='completed'"
+                [class.btn-primary]="task.work_status=='started'"
+                [class.btn-danger]="task.work_status=='blocked'"
+                [class.btn-warning]="task.work_status=='paused'"
+                [class.btn-default]="task.work_status!='completed'"
+                name="complete" class="btn btn-xs dropdown-toggle"
+                data-toggle="dropdown" type="button">
+                <span
+                    [class.glyphicon-minus]="task.work_status=='notstarted' && !task.commitment_promised_start"
+                    [class.glyphicon-calendar]="task.work_status=='notstarted' && task.commitment_promised_start"
+                    [class.glyphicon-cog.spinner]="task.work_status=='started'"
+                    [class.spinner]="task.work_status=='started'"
+                    [class.glyphicon-pause]="task.work_status=='paused'"
+                    [class.glyphicon-warning-sign]="task.work_status=='blocked'"
+                    [class.glyphicon-ok]="task.work_status=='completed'"
+                    class="glyphicon"></span>
+                    <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-haspopup="true" >
+                <li class="dropdown-header">Set Work Status</li>
+                <li>
+                    <button type="button" (click)="setStatus('started')" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-cog"></span> Start</button>
+                </li>
+                <li>
+                    <button type="button" (click)="setStatus('completed')" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-ok"></span> Complete</button>
+                </li>
+                <li>
+                    <button type="button" (click)="setStatus('paused')" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pause"></span> Pause</button>
+                </li>
+                <li>
+                    <button type="button" (click)="setStatus('blocked')" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-warning-sign"></span> Blocked</button>
+                </li>
+            </ul>
+        </div>
         <!--<button *ngIf="editable===false" [class.btn-success]="task.complete" [class.btn-default]="!task.complete" name="complete" class="btn btn-xs" type="button">-->
             <!--<span [class.glyphicon-ok]="task.complete" [class.glyphicon-stop]="!task.complete" class="glyphicon"></span>-->
         <!--</button>-->
@@ -16,10 +49,11 @@
             <!--<button type="button" *ngIf="task.notes!==''" (click)="toggleNotes()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-align-left"></span></button>-->
             <!--<div [innerHTML]="task.notes" *ngIf="showNotes===true"></div>-->
         </div>
-        <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistTask()" *ngIf="state==='edit'">
-            <input [(ngModel)]="task.title" name="task.title" type="text" style="min-width:75%">
+        <form style="/*display:inline-block;min-width:50%*/" class="form" (submit)="persistTask()" *ngIf="state==='edit'">
+            <input [(ngModel)]="task.title" name="task.title" class="form-control" type="text" style="/*min-width:75%*/">
             <!--<textarea [(ngModel)]="task.notes" name="task.notes" type="text" style="min-width:75%" *ngIf="showNotes===true"></textarea>-->
-            <button type="submit" class="btn btn-success btn-xs">Save</button>
+            <button type="submit" class="btn btn-primary btn-xs">Save</button>
+            <button type="button" (click)="closeForm()" class="btn btn-default btn-xs">Cancel</button>
         </form>
     </div>
     <div class="col-xs-1">

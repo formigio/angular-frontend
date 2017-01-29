@@ -1,9 +1,9 @@
+<button *ngIf="!showForm" (click)="openForm()" class="btn btn-xs btn-primary" type="button"><span>Claim &amp; Commit</span></button>
 <div class="row">
     <div class="col-xs-10">
-        <button *ngIf="!showForm" (click)="openForm()" class="btn btn-xs" type="button"><span>Claim</span></button>
         <form *ngIf="showForm" class="form" (submit)="submit()">
             <div class="form-group well">
-              <p>Commit to the Task</p>
+              <h3>Commit to the Task</h3>
               <label>When you promise to start?</label>
               <select [(ngModel)]="commitment.promised_start" name="commitment.promised_start" type="text" class="form-control" placeholder="Promised Start">
                 <option value="">Select Promised Start</option>

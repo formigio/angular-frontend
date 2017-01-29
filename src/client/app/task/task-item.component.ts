@@ -21,6 +21,7 @@ export class TaskItemComponent implements OnInit {
   state: string = 'view';
   response: any;
   showNotes: boolean = false;
+  showMenu: boolean = false;
   showCommitForm: boolean = false;
 
   /**
@@ -43,8 +44,18 @@ export class TaskItemComponent implements OnInit {
 
   makeEditable() {
     this.state = 'edit';
-    // this.showNotes = true;
-    // this.task.notes = this.task.notes.split('|').join('\n');
+  }
+
+  toggleMenu() {
+    if(this.showMenu === false){
+      this.showMenu = true;
+    } else {
+      this.showMenu = false;
+    }
+  }
+
+  closeForm() {
+    this.state = 'view';
   }
 
   // toggleNotes() {
@@ -55,6 +66,12 @@ export class TaskItemComponent implements OnInit {
   //     this.showNotes = false;
   //   }
   // }
+
+  setStatus(status:string) {
+    this.closeForm();
+    this.task.work_status = status;
+    this.persistTask();
+  }
 
   persistTask() {
     this.state='view';
@@ -70,16 +87,6 @@ export class TaskItemComponent implements OnInit {
   deleteTask(task:Task) {
     task.changed = true;
     this.message.startProcess('task_delete',{task:task});
-    return false;
-  }
-
-  /**
-   * Puts the accomplished Goal Object to the Goal List Service
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
-  completeTask(task:Task): boolean {
-    task.work_status = 'completed';
-    this.message.startProcess('task_save',{task:task});
     return false;
   }
 
