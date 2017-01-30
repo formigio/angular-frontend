@@ -1,20 +1,17 @@
 <div *ngIf="goal.title">
-    <!--<button [class.btn-success]="goal.accomplished==='true'" [class.btn-default]="goal.accomplished==='false'" name="accomplished" class="btn btn-xs" type="button" (click)="accomplishGoal(goal)">-->
-        <!--<span [class.glyphicon-ok]="goal.accomplished==='true'" [class.glyphicon-stop]="goal.accomplished==='false'" class="glyphicon"></span>-->
-    <!--</button>-->
-
-    <div style="display:inline-block;" *ngIf="state==='view'">
+    <div *ngIf="state==='view'">
         <span [innerHtml]="goal.title" (click)="navigateTo(goal)"></span>
-        <button type="button" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+        <button type="button" (click)="edit()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+        <button class="btn btn-xs btn-default pull-right" type="button" (click)="navigateTo(goal)">
+            <span class="glyphicon glyphicon-list"></span>
+        </button>
+        <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteGoal(goal)">
+            <span class="glyphicon glyphicon-remove-sign"></span>
+        </button>
     </div>
-    <form style="display:inline-block;min-width:50%" class="form-inline" (submit)="persistGoal()" *ngIf="state==='edit'">
-        <input [(ngModel)]="goal.title" name="title" type="text" style="min-width:75%">
-        <button type="submit" class="btn btn-success btn-xs">Save</button>
+    <form class="form-inline" (submit)="persistGoal()" *ngIf="state==='edit'">
+        <input [(ngModel)]="goal.title" name="title" type="text" class="form-control">
+        <button type="submit" class="btn btn-primary btn-xs">Save</button>
+        <button type="button" class="btn btn-default btn-xs" (click)="cancel()">Cancel</button>
     </form>
-    <button class="btn btn-xs btn-default pull-right" type="button" (click)="navigateTo(goal)">
-        <span class="glyphicon glyphicon-list"></span>
-    </button>
-    <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteGoal(goal)">
-        <span class="glyphicon glyphicon-remove-sign"></span>
-    </button>
 </div>

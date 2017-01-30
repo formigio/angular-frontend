@@ -62,6 +62,7 @@ li {
   -webkit-animation: load8 3s infinite linear;
   animation: load8 3s infinite linear;
 }
+.form-control,
 select,
 textarea,
 input[type="text"],
@@ -78,7 +79,7 @@ input[type="url"],
 input[type="search"],
 input[type="tel"],
 input[type="color"] {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .dropdown-menu>li>button {

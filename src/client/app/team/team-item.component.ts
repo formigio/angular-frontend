@@ -41,8 +41,12 @@ export class TeamItemComponent implements OnInit {
     }
   }
 
-  makeEditable() {
+  edit() {
     this.state = 'edit';
+  }
+
+  cancel() {
+    this.state = 'view';
   }
 
   persistTeam() {

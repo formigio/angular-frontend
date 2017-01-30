@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { ReplaySubject } from 'rxjs/Rx';
 import { HelperService } from '../core/index';
-// import { Config } from '../shared/index';
 import { User } from '../user/index';
 import { Invite } from './index';
 import 'rxjs/add/operator/map';
@@ -171,24 +170,5 @@ export class InviteService {
     });
     return api.put('/invites/{id}',{path:{id:invite.id},headers:{'x-identity-id':user.worker.identity}},body);
   }
-
-  // /**
-  //   * Handle HTTP error
-  //   */
-  // private handleError (error: any) {
-  //   // In a real world app, we might use a remote logging infrastructure
-  //   // We'd also dig deeper into the error to get a better message
-  //   let errMsg = (error.message) ? error.message :
-  //     error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-  //   console.error(errMsg); // log to console instead
-  //   return Observable.throw(errMsg);
-  // }
-
-  /**
-    * Handle Convert HTML entities
-    */
-  // private htmlEntities(str:string): string {
-  //   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  // }
 
 }

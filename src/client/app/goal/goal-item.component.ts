@@ -38,8 +38,12 @@ export class GoalItemComponent implements OnInit {
     }
   }
 
-  makeEditable() {
+  edit() {
     this.state = 'edit';
+  }
+
+  cancel() {
+    this.state = 'view';
   }
 
   persistGoal() {
@@ -57,31 +61,6 @@ export class GoalItemComponent implements OnInit {
     this.message.startProcess('goal_delete',{goal:goal.id});
     return false;
   }
-
-  // /**
-  //  * Returns whether or not a goal is accomplished.
-  //  * @return {boolean}
-  //  */
-  // isAccomplished(goal: Goal): boolean {
-  //   let acc = false;
-  //   if(goal.accomplished==='true') {
-  //     acc = true;
-  //   }
-  //   return acc;
-  // }
-
-  // /**
-  //  * Puts the accomplished Goal Object to the Goal List Service
-  //  * @return {boolean} false to prevent default form submit behavior to refresh the page.
-  //  */
-  // accomplishGoal(goal:Goal): boolean {
-  //   // goal.accomplished = 'true';
-  //   this.service.put(goal)
-  //     .subscribe(
-  //       error => this.errorMessage = <any>error
-  //     );
-  //   return false;
-  // }
 
   navigateTo(goal:Goal) {
     this.router.navigate(['/goal/',goal.id]);

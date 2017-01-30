@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-// import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HelperService } from '../core/index';
-// import { Config } from '../shared/index';
 import { User } from '../user/index';
 import { Task } from './index';
 import 'rxjs/add/operator/map';
@@ -95,16 +93,6 @@ export class TaskService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  // get(guid:string): Observable<Task> {
-  //   return this.http.get(Config.API + '/goals/' + guid + '/tasks')
-  //                   .map((res: Response) => res.json())
-  //                   .catch(this.handleError);
-  // }
-
-  /**
-   * Returns an Observable for the HTTP GET request for the JSON resource.
-   * @return {string[]} The Observable for the HTTP request.
-   */
   list(goal:string): Promise<any> {
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
@@ -120,7 +108,6 @@ export class TaskService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(task:Task): Promise<any> {
-    // task.title = this.htmlEntities(task.title);
     let body = {title:task.title,goal_id:task.goal_id};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
@@ -150,7 +137,6 @@ export class TaskService {
    * @return {string[]} The Observable for the HTTP request.
    */
   put(task:Task): Promise<any> {
-    // task.title = this.htmlEntities(task.title);
     let body = {
       title:task.title,
       work_status:task.work_status
@@ -163,24 +149,5 @@ export class TaskService {
     });
     return api.put('/tasks/{id}',{path:{id:task.id},headers:{'x-identity-id':user.worker.identity}},body);
   }
-
-  // /**
-  //   * Handle HTTP error
-  //   */
-  // private handleError(error: any) {
-  //   // In a real world app, we might use a remote logging infrastructure
-  //   // We'd also dig deeper into the error to get a better message
-  //   let errMsg = (error.message) ? error.message :
-  //     error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-  //   console.error(errMsg); // log to console instead
-  //   return Observable.throw(errMsg);
-  // }
-
-  /**
-    * Handle Convert HTML entities
-    */
-  // private htmlEntities(str:string): string {
-  //   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  // }
 
 }

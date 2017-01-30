@@ -5,9 +5,9 @@ html {
 }
 #flash_message {
     position: fixed;
-    top: 0;
-    height: 60px;
+    bottom: 0;
     right: 0;
     margin: 3px;
-    max-width: 33%;
+    max-width: 50%;
+    font-size: 75%;
 }
