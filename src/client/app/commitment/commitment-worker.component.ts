@@ -40,6 +40,12 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
             'The Process Used to Control the Load Commitments',
             new ProcessContext,
             ''
+        ),
+        commitment_task_save: new ProcessRoutine(
+            'commitment_task_save',
+            'The Process Used to Control the Saving a Task from Commitment',
+            new ProcessContext,
+            ''
         )
     };
 
@@ -71,6 +77,13 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
             'Delete Commitment',
             'deleteCommitment',
             {commitment:'Commitment',user:'User'}
+        ),
+        save_task_from_commitment_complete: new ProcessTask(
+            'load_commitments_after_task_save',
+            'save_task_from_commitment_complete',
+            'Load Commitments',
+            'loadCommitments',
+            {user:'User'}
         )
     };
 

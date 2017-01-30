@@ -92,6 +92,13 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'saveTask',
             {task:'Task',user:'User'}
         ),
+        get_user_for_commitment_task_save_complete: new ProcessTask(
+            'save_task_from_commitment',
+            'get_user_for_commitment_task_save_complete',
+            'Save Task for a specific goal',
+            'saveTask',
+            {task:'Task',user:'User'}
+        ),
         create_commitment_complete: new ProcessTask(
             'publish_task',
             'create_commitment_complete',

@@ -17,6 +17,8 @@ export class CommitmentItemComponent implements OnInit {
 
   @Input() commitment:Commitment;
 
+  showMenu:boolean = false;
+
   /**
    *
    * @param
@@ -55,6 +57,21 @@ export class CommitmentItemComponent implements OnInit {
     this.message.startProcess('commitment_delete',{commitment:this.commitment});
     return false;
   }
+
+  setTaskStatus(status:string) {
+    this.commitment.task.work_status = status;
+    this.commitment.changed = true;
+    this.message.startProcess('commitment_task_save',{task:this.commitment.task,commitment:this.commitment});
+  }
+
+  toggleMenu() {
+    if(this.showMenu === false) {
+      this.showMenu = true;
+    } else {
+      this.showMenu = false;
+    }
+  }
+
 
   /**
    * Puts the accomplished Goal Object to the Goal List Service

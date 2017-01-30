@@ -1,5 +1,44 @@
 <div *ngIf="commitment">
+
     <button class="btn btn-default btn-xs" (click)="navigateToGoal()"> &lt; Goal</button>
+
+    <div style="display:inline-block" class="dropdown" [class.open]="showMenu">
+        <button id="taskActionMenu_{{commitment.task.id}}" (click)="toggleMenu()"
+            [class.btn-success]="commitment.task.work_status=='completed'"
+            [class.btn-primary]="commitment.task.work_status=='started'"
+            [class.btn-danger]="commitment.task.work_status=='blocked'"
+            [class.btn-warning]="commitment.task.work_status=='paused'"
+            [class.btn-default]="commitment.task.work_status!='completed'"
+            name="complete" class="btn btn-xs dropdown-toggle"
+            data-toggle="dropdown" type="button">
+            <span
+                [class.glyphicon-minus]="commitment.task.work_status=='notstarted' && !commitment.task.commitment_promised_start"
+                [class.glyphicon-calendar]="commitment.task.work_status=='notstarted' && commitment.task.commitment_promised_start"
+                [class.glyphicon-cog.spinner]="commitment.task.work_status=='started'"
+                [class.spinner]="commitment.task.work_status=='started'"
+                [class.glyphicon-pause]="commitment.task.work_status=='paused'"
+                [class.glyphicon-warning-sign]="commitment.task.work_status=='blocked'"
+                [class.glyphicon-ok]="commitment.task.work_status=='completed'"
+                class="glyphicon"></span>
+                <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-haspopup="true" >
+            <li class="dropdown-header">Set Work Status</li>
+            <li>
+                <button type="button" (click)="setTaskStatus('started')" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-cog"></span> Start</button>
+            </li>
+            <li>
+                <button type="button" (click)="setTaskStatus('completed')" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-ok"></span> Complete</button>
+            </li>
+            <li>
+                <button type="button" (click)="setTaskStatus('paused')" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pause"></span> Pause</button>
+            </li>
+            <li>
+                <button type="button" (click)="setTaskStatus('blocked')" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-warning-sign"></span> Blocked</button>
+            </li>
+        </ul>
+    </div>
+
     <span>{{commitment.task.title}}</span>
     <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteCommitment()"><span class="glyphicon glyphicon-remove-sign"></span></button>
     <p class="small">Promised Start: {{commitment.promised_start | date:'short'}} {{commitment.promised_start | date:'z'}} for {{commitment.promised_minutes}} mins</p>
