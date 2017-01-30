@@ -86,6 +86,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
+      // Register Worker
+      this.message.registerWorker(this);
+
       // Subscribe to Process Queue
       // Process Tasks based on messages received
       if(Object.keys(this.tasks).length > 0) {

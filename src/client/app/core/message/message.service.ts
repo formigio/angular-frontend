@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { WorkerMessage, ProcessMessage } from '../index';
+import { WorkerMessage, ProcessMessage, ProcessRegistrar } from '../index';
 
 export class Message {
   constructor(
@@ -18,6 +18,8 @@ export class Message {
 export class MessageService {
 
 // Add Notices, messages that must be dismissed. Notices stack.
+
+    public processRegistrar: ProcessRegistrar = new ProcessRegistrar();
 
     public flashMessage: ReplaySubject<any> = new ReplaySubject(1);
     public processMessage: ReplaySubject<any> = new ReplaySubject(1);
@@ -50,6 +52,10 @@ export class MessageService {
 
     public startProcess(routine: string, params: {}) {
         this.processQueue.next(new ProcessMessage(routine,params));
+    }
+
+    public registerWorker(workerComponent:any) {
+        this.processRegistrar.registerWorker(workerComponent);
     }
 
     public getFlashMessage(): ReplaySubject<any> {

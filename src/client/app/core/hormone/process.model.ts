@@ -6,6 +6,35 @@ export interface WorkerComponent {
     message: any;
 }
 
+export class ProcessRegistrar {
+    routines:{};
+    tasks:{};
+    triggers:{};
+
+    registerWorker(worker:WorkerComponent) {
+        this.registerWorkerRoutines(worker.routines);
+        this.registerWorkerTasks(worker.tasks);
+    }
+
+    registerWorkerRoutines(routines:any) {
+        let keys = Object.keys(routines);
+        let allroutines = this.routines;
+        keys.forEach((key:string) => {
+            let routine = routines[key];
+            (<any>this.routines)[routine.identifier] = routine;
+        });
+    }
+
+    registerWorkerTasks(tasks:any) {
+        let keys = Object.keys(tasks);
+        keys.forEach((key:string) => {
+            let task = tasks[key];
+            (<any>this.tasks)[task.identifier] = task;
+            (<any>this.tasks)[task.trigger] = task;
+        });
+    }
+}
+
 export class ProcessRoutine {
     constructor(
         public identifier: string,
