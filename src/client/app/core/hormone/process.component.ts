@@ -7,6 +7,7 @@ import { RouteWorkerComponent } from '../../shared/index';
 import { UserWorkerComponent } from '../../user/index';
 import { TeamMemberWorkerComponent } from '../../team-member/index';
 import { CommitmentWorkerComponent } from '../../commitment/index';
+import { ProcessWorkerComponent } from '../index';
 
 /**
  * This class represents the toolbar component.
@@ -15,10 +16,9 @@ import { CommitmentWorkerComponent } from '../../commitment/index';
   moduleId: module.id,
   selector: 'sd-process',
   templateUrl: 'process.component.html',
-  directives: [TeamWorkerComponent, GoalWorkerComponent,
-    TaskWorkerComponent, InviteWorkerComponent,
-    RouteWorkerComponent, UserWorkerComponent,
-    TeamMemberWorkerComponent, CommitmentWorkerComponent]
+  directives: [TeamWorkerComponent, GoalWorkerComponent, TaskWorkerComponent,
+    InviteWorkerComponent,RouteWorkerComponent, UserWorkerComponent,
+    TeamMemberWorkerComponent, CommitmentWorkerComponent, ProcessWorkerComponent]
 })
 export class ProcessComponent {
 

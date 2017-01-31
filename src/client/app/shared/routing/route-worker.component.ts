@@ -52,13 +52,6 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           'navigateTo',
           {navigate_to:'string'}
       ),
-      store_google_user_complete: new ProcessTask(
-          'navigate',
-          'store_google_user_complete',
-          'Navigate after Google Login',
-          'navigateTo',
-          {navigate_to:'string'}
-      ),
       test_user_auth_error: new ProcessTask(
           'navigate',
           'test_user_auth_error',

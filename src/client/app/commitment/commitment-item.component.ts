@@ -59,6 +59,7 @@ export class CommitmentItemComponent implements OnInit {
   }
 
   setTaskStatus(status:string) {
+    this.showMenu = false;
     this.commitment.task.work_status = status;
     this.commitment.changed = true;
     this.message.startProcess('commitment_task_save',{task:this.commitment.task,commitment:this.commitment});

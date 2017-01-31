@@ -45,10 +45,12 @@ export class MessageService {
     }
 
     public processSignal(message: WorkerMessage) {
+        console.log('Signal: ' + message.signal);
         this.workerQueue.next(message);
     }
 
     public startProcess(routine: string, params: {}) {
+        console.log('Process: ' + routine);
         this.processQueue.next(new ProcessMessage(routine,params));
     }
 

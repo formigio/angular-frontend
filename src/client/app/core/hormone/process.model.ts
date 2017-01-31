@@ -29,6 +29,10 @@ export class ProcessTask {
         let paramCount = params.length;
         let obs = new Observable((observer:any) => {
             let paramsChecked: string[] = [];
+            if(processRoutine === null) {
+                observer.complete();
+                return;
+            }
             if(params.length === 0) {
                 observer.complete();
             }
@@ -103,9 +107,11 @@ export class ProcessMessage {
     }
 
     public initProcess(worker:WorkerComponent): boolean {
+
         let identifier = this.routine;
         let params = this.params;
         let control_uuid: string = Math.random().toString().split('.').pop().toString();
+
         let context = this.createContextParams(params);
         // We can potentially create a ReplaySubject here
         // Then the initiator of the process can subscribe to Process Events
@@ -145,6 +151,9 @@ export class WorkerMessage {
 
       // Get the processRoutine from local storage
       let processRoutine = JSON.parse(localStorage.getItem('process_' + control_uuid));
+      if(processRoutine === null) {
+          return false;
+      }
 
       // Initiate ProcessTask
       let processTask: ProcessTask = (<any>worker.tasks)[signal];
@@ -181,13 +190,19 @@ export class WorkerMessage {
                       worker.message.processSignal(workerMessage);
                   },
                   () => {
-                      workerMessage.signal = processTask.identifier + '_complete';
-                      worker.message.setFlash(workerResponse.message,'success');
-                      processTask.updateProcessAfterWork(control_uuid, workerResponse.context).subscribe(
-                          null,
-                          null,
-                          () => worker.message.processSignal(workerMessage)
-                      );
+                      if(workerResponse.outcome === 'end') {
+                        localStorage.removeItem('process_' + control_uuid);
+                      } else {
+                        workerMessage.signal = processTask.identifier + '_complete';
+                        if(workerResponse.message) {
+                            worker.message.setFlash(workerResponse.message,'success');
+                        }
+                        processTask.updateProcessAfterWork(control_uuid, workerResponse.context).subscribe(
+                            null,
+                            null,
+                            () => worker.message.processSignal(workerMessage)
+                        );
+                      }
                   }
               );
           }

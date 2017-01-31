@@ -436,7 +436,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       if(Object.keys(this.routines).length > 0) {
         this.message.getProcessQueue().subscribe(
           message => {
-            console.log('Process: ' + message.routine);
             // Process Inits
             message.initProcess(this);
           }
@@ -446,7 +445,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       if(Object.keys(this.tasks).length > 0) {
         this.message.getWorkerQueue().subscribe(
           message => {
-            console.log('Task: ' + message.signal);
             // Process Signals
             message.processSignal(this);
           }
@@ -564,6 +562,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             context:{params:{user:user}}
           });
           observer.complete();
+          this.message.startProcess('navigate_to',{navigate_to:'/'});
         }).catch((response:any) => {
           console.log(response);
           observer.error({
