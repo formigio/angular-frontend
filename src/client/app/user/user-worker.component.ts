@@ -403,6 +403,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'getUser',
           {}
         ),
+        process_every_minute_init: new ProcessTask(
+          'get_user_for_keeping_active_user',
+          'process_every_minute_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
+        ),
         refresh_google_token_error: new ProcessTask(
             'logout_after_google_token_refresh_failed',
             'refresh_google_token_error',

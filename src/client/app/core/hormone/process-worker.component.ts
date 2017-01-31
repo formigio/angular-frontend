@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, HelperService, ProcessTask, WorkerComponent } from '../index';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
@@ -13,7 +13,14 @@ import { MessageService, HelperService, ProcessTask, WorkerComponent } from '../
 })
 export class ProcessWorkerComponent implements OnInit, WorkerComponent {
 
-  public routines: {} = {};
+  public routines: {} = {
+    process_every_minute: new ProcessRoutine(
+      'process_every_minute',
+      'The Process Used to Control the Automated Tasks',
+      new ProcessContext,
+      ''
+    )
+  };
 
   public tasks: {} = {
       load_user_for_app_complete: new ProcessTask(
@@ -239,6 +246,13 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
           'End Process',
           'endProcess',
           {}
+      ),
+      get_user_for_keeping_active_user_complete: new ProcessTask(
+          'end_process',
+          'get_user_for_keeping_active_user_complete',
+          'End Process',
+          'endProcess',
+          {}
       )
   };
 
@@ -271,6 +285,11 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
           }
         );
       }
+
+      // Run Timed Events
+      setInterval(() => {
+        this.message.startProcess('process_every_minute',{});
+      }, 60000);
   }
 
   public endProcess(control_uuid: string, params: any): Observable<any> {

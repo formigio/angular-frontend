@@ -15,8 +15,13 @@ import { CommitmentService, Commitment } from './index';
 
 export class CommitmentListComponent implements OnInit {
 
-  commitments: Commitment[] = [];
+  allCommitments: Commitment[] = [];
+  completedCommitments: Commitment[] = [];
+  activeCommitments: Commitment[] = [];
+  futureCommitments: Commitment[] = [];
   loading: boolean = false;
+  showFuture: boolean = false;
+  showCompleted: boolean = false;
 
   /**
    *
@@ -36,17 +41,57 @@ export class CommitmentListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription().subscribe(
       commitments => {
-        this.loading = false;
-        this.commitments = <Commitment[]>commitments;
+        this.allCommitments = commitments;
+        this.processCommitments();
       }
     );
-    this.commitments = [];
     this.refreshCommitments();
+  }
+
+  processCommitments() {
+    let commitments = this.allCommitments;
+    this.loading = false;
+    this.completedCommitments = [];
+    this.futureCommitments = [];
+    this.activeCommitments = [];
+
+    commitments.forEach((commitment:Commitment) => {
+      let future = new Date();
+      future.setTime(future.getTime() + (60000*15)); // Get a date in the future 15 mins
+      let promised = new Date(commitment.promised_start);
+
+      if(commitment.task.work_status === 'completed' && this.showCompleted === false) {
+        this.completedCommitments.push(commitment);
+      } else if(promised > future && this.showFuture === false) {
+        this.futureCommitments.push(commitment);
+      } else {
+        this.activeCommitments.push(commitment);
+      }
+    });
   }
 
   refreshCommitments() {
     this.loading = true;
     this.message.startProcess('load_commitments',{});
   }
+
+  toggleFuture() {
+    if(this.showFuture) {
+      this.showFuture = false;
+    } else {
+      this.showFuture = true;
+    }
+    this.processCommitments();
+  }
+
+  toggleCompleted() {
+    if(this.showCompleted) {
+      this.showCompleted = false;
+    } else {
+      this.showCompleted = true;
+    }
+    this.processCommitments();
+  }
+
 
 } // Component end
