@@ -59,6 +59,7 @@ export class TaskListComponent implements OnInit {
         this.tasks = newtasks;
       }
     );
+    this.tasks = [];
     this.route.params.subscribe(params => {
       this.goal = params['goal_uuid'];
       this.refreshTasks();
@@ -67,7 +68,6 @@ export class TaskListComponent implements OnInit {
 
   refreshTasks() {
     this.loading = true;
-    this.tasks = [];
     this.message.startProcess('load_task_list',{goal:this.goal});
   }
 

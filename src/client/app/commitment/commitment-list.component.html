@@ -4,12 +4,12 @@
       <li class="list-group-item" *ngFor="let commitment of commitments" [class.list-group-item-warning]="commitment.changed">
         <commitment-item [commitment]="commitment"></commitment-item>
       </li>
-      <div class="list-group-item" *ngIf="loading">
-        Loading...
-      </div>
       <li class="list-group-item">
         <button type="button" class="btn btn-secondary" (click)="refreshCommitments()">
-          <span class="glyphicon glyphicon-refresh" [class.spinner]="loading"></span> Refresh</button>
+          <span class="glyphicon glyphicon-refresh" [class.spinner]="loading"></span>
+          <span *ngIf="!loading">Refresh</span>
+          <span *ngIf="loading">Loading...</span>
+        </button>
       </li>
     </ul>
   </div>

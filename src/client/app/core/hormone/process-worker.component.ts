@@ -232,6 +232,13 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
           'End Process',
           'endProcess',
           {}
+      ),
+      store_refreshed_user_complete: new ProcessTask(
+          'end_process',
+          'store_refreshed_user_complete',
+          'End Process',
+          'endProcess',
+          {}
       )
   };
 

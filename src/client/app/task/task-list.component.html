@@ -4,7 +4,7 @@
       <li class="list-group-item" *ngFor="let task of tasks" [class.list-group-item-warning]="task.changed">
         <task-item [task]="task" [editable]="editable"></task-item>
       </li>
-      <div class="list-group-item" *ngIf="loading">
+      <div class="list-group-item" *ngIf="loading && tasks.length===0">
         <span class="glyphicon glyphicon-cog spinner"></span> Loading...
       </div>
       <li class="list-group-item" *ngIf="editable===true">
@@ -16,7 +16,8 @@
           <textarea [(ngModel)]="task.title" name="newTaskTitle" class="form-control"
               placeholder="Enter Tasks, Will create a task for each new line" ></textarea>
           <button type="submit" class="btn btn-primary">Add</button>
-          <button *ngIf="tasks.length>0" type="button" class="btn btn-secondary" (click)="refreshTasks()"><span class="glyphicon glyphicon-refresh"></span></button>
+          <button *ngIf="tasks.length>0" type="button" class="btn btn-secondary" (click)="refreshTasks()">
+            <span class="glyphicon glyphicon-refresh" [class.spinner]="loading"></span></button>
         </div>
         </form>
       </li>
