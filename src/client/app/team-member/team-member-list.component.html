@@ -5,6 +5,9 @@
       <div class="list-group-item" *ngFor="let member of members">
         <team-member-item [member]="member"></team-member-item>
       </div>
+      <div class="list-group-item" *ngIf="loading">
+        <span class="glyphicon glyphicon-cog spinner"></span> Loading...
+      </div>
     </div>
   </div>
 </div>

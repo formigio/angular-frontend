@@ -16,6 +16,7 @@ import { CommitmentService, Commitment } from './index';
 export class CommitmentListComponent implements OnInit {
 
   commitments: Commitment[] = [];
+  loading: boolean = false;
 
   /**
    *
@@ -35,13 +36,16 @@ export class CommitmentListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription().subscribe(
       commitments => {
+        this.loading = false;
         this.commitments = <Commitment[]>commitments;
       }
     );
-    this.message.startProcess('load_commitments',{});
+    this.refreshCommitments();
   }
 
   refreshCommitments() {
+    this.loading = true;
+    this.commitments = [];
     this.message.startProcess('load_commitments',{});
   }
 

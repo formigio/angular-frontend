@@ -4,6 +4,9 @@
       <li class="list-group-item" *ngFor="let task of tasks" [class.list-group-item-warning]="task.changed">
         <task-item [task]="task" [editable]="editable"></task-item>
       </li>
+      <div class="list-group-item" *ngIf="loading">
+        <span class="glyphicon glyphicon-cog spinner"></span> Loading...
+      </div>
       <li class="list-group-item" *ngIf="editable===true">
         <form (submit)="addTask()" class="form-inline">
         <div class="form-group">

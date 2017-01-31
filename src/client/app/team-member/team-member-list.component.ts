@@ -27,6 +27,8 @@ export class TeamMemberListComponent implements OnInit {
 
   team: string; // Team UUID from URL
 
+  loading:boolean = false;
+
   /**
    * Creates an instance of the HomeComponent with the injected
    * GoalListService.
@@ -48,7 +50,10 @@ export class TeamMemberListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription()
             .subscribe(
-                members => this.members = members
+                members => {
+                  this.loading = false;
+                  this.members = members;
+                }
             );
     this.route.params.subscribe(params => {
       this.team = params['uuid'];
@@ -57,6 +62,8 @@ export class TeamMemberListComponent implements OnInit {
   }
 
   refreshTeamMembers() {
+    this.loading = true;
+    this.members = [];
     this.message.startProcess('teammember_fetch_team_members',{team:this.team});
   }
 

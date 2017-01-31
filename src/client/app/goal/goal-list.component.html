@@ -5,6 +5,9 @@
       <div class="list-group-item" *ngFor="let goal of goals" [class.list-group-item-warning]="goal.changed===true">
         <goal-item [goal]="goal"></goal-item>
       </div>
+      <div class="list-group-item" *ngIf="loading">
+        <span class="glyphicon glyphicon-cog spinner"></span> Loading...
+      </div>
       <div class="list-group-item">
         <form (submit)="addGoal()" class="form-inline">
         <div class="form-group">

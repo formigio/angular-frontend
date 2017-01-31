@@ -60,10 +60,10 @@ export class InviteItemComponent implements OnInit {
   }
 
   claimed(): string {
-    if(this.invite.invitee_worker_id !== '') {
-      return '(linked)';
-    } else {
+    if(String(this.invite.invitee_worker_id) === '0') {
       return '(unclaimed)';
+    } else {
+      return '(linked)';
     }
   }
 

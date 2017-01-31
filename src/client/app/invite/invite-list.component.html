@@ -5,6 +5,9 @@
       <li class="list-group-item" *ngFor="let invite of invites" [class.disabled]="invite.changed===true">
         <invite-item [invite]="invite"></invite-item>
       </li>
+      <div class="list-group-item" *ngIf="loading">
+        <span class="glyphicon glyphicon-cog spinner"></span> Loading...
+      </div>
       <li class="list-group-item">
         <form (submit)="addInvite()" class="form-inline">
         <div class="form-group">

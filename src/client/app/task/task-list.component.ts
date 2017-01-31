@@ -26,6 +26,8 @@ export class TaskListComponent implements OnInit {
 
   goal: string;
 
+  loading: boolean = false;
+
   /**
    *
    * @param
@@ -45,6 +47,7 @@ export class TaskListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription().subscribe(
       tasks => {
+        this.loading = false;
         this.tasks = <Task[]>tasks;
         let newtasks:Task[] = [];
         let alltasks:Task[] = tasks;
@@ -63,6 +66,8 @@ export class TaskListComponent implements OnInit {
   }
 
   refreshTasks() {
+    this.loading = true;
+    this.tasks = [];
     this.message.startProcess('load_task_list',{goal:this.goal});
   }
 

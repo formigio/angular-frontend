@@ -28,6 +28,7 @@ export class GoalListComponent implements OnInit {
     changed: false
   };
   team: string = '';
+  loading:boolean = true;
 
   /**
    * Creates an instance of the HomeComponent with the injected
@@ -51,6 +52,7 @@ export class GoalListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription().subscribe(
       goals => {
+        this.loading = false;
         this.goals = <Goal[]>goals;
         let newgoals:Goal[] = [];
         let allgoals:Goal[] = this.goals;
@@ -69,6 +71,8 @@ export class GoalListComponent implements OnInit {
   }
 
   refreshGoals() {
+    this.loading = true;
+    this.goals = [];
     this.message.startProcess('load_goal_list',{team:this.team});
   }
 

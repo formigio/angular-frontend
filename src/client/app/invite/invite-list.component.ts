@@ -33,6 +33,7 @@ export class InviteListComponent implements OnInit {
     status: '',
     changed: false
   };
+  loading:boolean = false;
 
   /**
    *
@@ -56,6 +57,7 @@ export class InviteListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription().subscribe(
       invites => {
+        this.loading = false;
         let newinvites:Invite[] = [];
         let allinvites:Invite[] = invites;
         allinvites.forEach((invite) => {
@@ -70,6 +72,8 @@ export class InviteListComponent implements OnInit {
   }
 
   refreshInvites() {
+    this.loading = true;
+    this.invites = [];
     this.message.startProcess('invite_fetch',{
       entity:this.entity,
       entity_id:this.entity_id

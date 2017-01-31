@@ -24,6 +24,8 @@ export class TeamListComponent implements OnInit {
     changed: false
   };
 
+  loading:boolean = false;
+
   /**
    * Creates an instance of the HomeComponent with the injected
    * GoalListService.
@@ -45,6 +47,7 @@ export class TeamListComponent implements OnInit {
   ngOnInit() {
     this.service.getListSubscription().subscribe(
       teams => {
+        this.loading = false;
         let newteams:Team[] = [];
         let allteams:Team[] = teams;
         allteams.forEach((team) => {
@@ -59,6 +62,8 @@ export class TeamListComponent implements OnInit {
   }
 
   refreshTeams() {
+    this.loading = true;
+    this.teams = [];
     this.message.startProcess('team_fetch_user_teams',{});
   }
 
