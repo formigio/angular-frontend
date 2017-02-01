@@ -4,9 +4,6 @@
       <div class="list-group-item" *ngFor="let team of teams" [class.list-group-item-warning]="team.changed===true">
         <team-item [team]="team"></team-item>
       </div>
-      <div class="list-group-item" *ngIf="loading">
-        Loading...
-      </div>
       <div class="list-group-item">
         <form (submit)="addTeam()" class="form-inline">
         <div class="form-group">
@@ -14,6 +11,7 @@
           <button type="submit" class="btn btn-primary">Add</button>
           <button type="button" class="btn btn-secondary" (click)="refreshTeams()">
             <span class="glyphicon glyphicon-refresh" [class.spinner]="loading"></span>
+            <span *ngIf="loading">Loading...</span>
           </button>
         </div>
         </form>
