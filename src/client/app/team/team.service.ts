@@ -53,6 +53,10 @@ export class TeamService {
     this.teams.forEach(team => localStorage.setItem('team::' + team.id, JSON.stringify(team)));
   }
 
+  getTeams(): Team[] {
+    return this.teams;
+  }
+
   retrieveTeam(id:string): Team {
     return (<Team>JSON.parse(localStorage.getItem('team::' + id)));
   }

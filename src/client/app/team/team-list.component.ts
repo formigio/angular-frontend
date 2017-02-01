@@ -63,7 +63,7 @@ export class TeamListComponent implements OnInit {
 
   refreshTeams() {
     this.loading = true;
-    this.teams = [];
+    this.teams = this.service.getTeams();
     this.message.startProcess('team_fetch_user_teams',{});
   }
 
