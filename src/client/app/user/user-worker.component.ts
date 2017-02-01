@@ -124,7 +124,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'refresh_google_token',
             'user_google_token_refresh_init',
             'Refresh Google Token',
-            'loginGoogleUser',
+            'refreshGoogleUser',
             {token:'string',user:'User'}
         ),
         refresh_google_token_complete: new ProcessTask(
@@ -708,6 +708,56 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             console.log('user name is ' + cognitoUser.getUsername());
             observer.complete();
           }
+      });
+    });
+    return obs;
+  }
+
+  public refreshGoogleUser(control_uuid: string, params: any): Observable<any> {
+    let token: string = params.token;
+    let user: User = params.user;
+
+    AWS.config.region = Config.AWS_REGION; //This is required to derive the endpoint
+
+    let url = 'accounts.google.com';
+    let logins:{} = {};
+    (<any>logins)[url] = token;
+    let loginparams = {
+      IdentityPoolId: Config.COGNITO_IDENTITYPOOL, /* required */
+      Logins: logins
+    };
+
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials(loginparams);
+
+    let obs = new Observable((observer:any) => {
+
+      AWS.config.credentials.refresh((err:any) => {
+          if(err) {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'It looks like we need to get you logged back in.',
+              context:{params:{}}
+            });
+          }
+
+          user.credentials.accessKey = AWS.config.credentials.accessKeyId;
+          user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
+          user.credentials.sessionToken = AWS.config.credentials.sessionToken;
+          user.credentials.expireTime = AWS.config.credentials.expireTime;
+          if(AWS.config.credentials.identityId) {
+            user.worker.identity = AWS.config.credentials.identityId.split(':').pop();
+          }
+
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Google User is Authenticated.',
+            context:{params:{
+              user:user
+            }}
+          });
+          observer.complete();
       });
     });
     return obs;
