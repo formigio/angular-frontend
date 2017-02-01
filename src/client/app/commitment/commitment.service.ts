@@ -156,7 +156,7 @@ export class CommitmentService {
   put(commitment:Commitment): Promise<any> {
     let body = {
       promised_start:commitment.promised_start,
-      goal_id:commitment.promised_minutes
+      promised_minutes:commitment.promised_minutes
     };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({

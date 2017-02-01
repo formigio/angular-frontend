@@ -164,6 +164,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
       this.service.put(commitment).then(
         response => {
           let commitment = <Commitment>response.data;
+          this.service.publishCommitment(commitment);
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',

@@ -1,3 +1,9 @@
+export const TeamStruct = {
+  id: '',
+  title: '',
+  changed: false
+};
+
 export class Team {
   changed: boolean = false;
   constructor(

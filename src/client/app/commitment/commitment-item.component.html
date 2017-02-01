@@ -1,7 +1,4 @@
 <div *ngIf="commitment">
-
-    <button class="btn btn-default btn-xs" (click)="navigateToGoal()"> &lt; Goal</button>
-
     <div style="display:inline-block" class="dropdown" [class.open]="showMenu">
         <button id="taskActionMenu_{{commitment.task.id}}" (click)="toggleMenu()"
             [class.btn-success]="commitment.task.work_status=='completed'"
@@ -41,5 +38,27 @@
 
     <span>{{commitment.task.title}}</span>
     <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteCommitment()"><span class="glyphicon glyphicon-remove-sign"></span></button>
-    <p class="small">Promised Start: {{commitment.promised_start | date:'short'}} {{commitment.promised_start | date:'z'}} for {{commitment.promised_minutes}} mins</p>
+    <button type="button" class="btn btn-xs btn-link" (click)="editCommitment()"><span class="glyphicon glyphicon-edit"></span></button>
+    <p class="small">To Start: {{commitment.promised_start | date:'short'}} for {{commitment.promised_minutes}} mins</p>
+    <button class="btn btn-default btn-xs" (click)="navigateToGoal()"> &lt; {{commitment.goal.title}}</button>
+    <button class="btn btn-default btn-xs" (click)="navigateToTeam()"> &lt; {{commitment.team.title}}</button>
+
+    <form *ngIf="showForm" class="form" (submit)="submit()">
+        <div class="form-group well">
+            <h3>Edit Commitment</h3>
+            <label>When you promise to start?</label>
+            <select [(ngModel)]="commitment.promised_start" name="commitment.promised_start" type="text" class="form-control" placeholder="Promised Start">
+            <option value="">Select Promised Start</option>
+            <option *ngFor="let time of starttimes" value="{{time.value}}">{{time.label}}</option>
+            </select>
+            <label>For how long are you going to work?</label>
+            <select [(ngModel)]="commitment.promised_minutes" name="commitment.promised_minutes" type="text" class="form-control" placeholder="Promised Minutes">
+            <option value="">Select Promised Time</option>
+            <option *ngFor="let minute of minutes" value="{{minute.value}}">{{minute.label}}</option>
+            </select>
+            <button type="submit" class="btn btn-success btn-xs">Save</button>
+            <button type="button" class="btn btn-default btn-xs" (click)="cancel()">Cancel</button>
+        </div>
+    </form>
+
 </div>

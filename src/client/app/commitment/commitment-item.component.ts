@@ -17,6 +17,23 @@ export class CommitmentItemComponent implements OnInit {
 
   @Input() commitment:Commitment;
 
+  minutes:{} = [
+    {value:5,label:'5 Minutes'},
+    {value:10,label:'10 Minutes'},
+    {value:15,label:'15 Minutes'},
+    {value:20,label:'20 Minutes'},
+    {value:30,label:'30 Minutes'},
+    {value:60,label:'1 Hour'},
+    {value:120,label:'2 Hours'},
+    {value:240,label:'4 Hours'},
+    {value:360,label:'6 Hours'},
+    {value:480,label:'8 Hours'}
+  ];
+
+  starttimes:Object[] = [];
+
+  showForm:boolean = false;
+
   showMenu:boolean = false;
 
   /**
@@ -32,13 +49,38 @@ export class CommitmentItemComponent implements OnInit {
    * Get the names OnInit
    */
   ngOnInit() {
-    // if(!this.commitment.id) {
-    //   this.message.startProcess('commitment_create',{task:this.task});
-    // }
+    //
+  }
+
+  populateStartTimes() {
+    this.starttimes = [];
+    let now = new Date();
+    this.starttimes.push({value:now.toISOString(),label:'Immediately'});
+    let later = new Date();
+    later.setMinutes(later.getMinutes() + 15);
+    this.starttimes.push({value:later.toISOString(),label:'In 15 Mins ('+later+')'});
+    later = new Date();
+    later.setMinutes(later.getMinutes() + 30);
+    this.starttimes.push({value:later.toISOString(),label:'In 30 Mins ('+later+')'});
+    later = new Date();
+    later.setHours(later.getHours() + 1);
+    this.starttimes.push({value:later.toISOString(),label:'In an Hour ('+later+')'});
+    let tomorrow = new Date();
+    tomorrow.setDate(later.getDate() + 1);
+    tomorrow.setHours(8);
+    this.starttimes.push({value:tomorrow.toISOString(),label:'Early Tomorrow ('+tomorrow+')'});
+    tomorrow = new Date();
+    tomorrow.setDate(later.getDate() + 1);
+    tomorrow.setHours(13);
+    this.starttimes.push({value:tomorrow.toISOString(),label:'Mid Tomorrow ('+tomorrow+')'});
   }
 
   navigateToGoal() {
-    this.message.startProcess('navigate_to',{navigate_to:'/goal/' + this.commitment.task.goal_id});
+    this.message.startProcess('navigate_to',{navigate_to:'/goal/' + this.commitment.goal.id});
+  }
+
+  navigateToTeam() {
+    this.message.startProcess('navigate_to',{navigate_to:'/team/' + this.commitment.team.id});
   }
 
   // persistTask() {
@@ -71,6 +113,21 @@ export class CommitmentItemComponent implements OnInit {
     } else {
       this.showMenu = false;
     }
+  }
+
+  editCommitment() {
+    this.populateStartTimes();
+    this.showForm = true;
+  }
+
+  cancel() {
+    this.showForm = false;
+  }
+
+  submit(): boolean {
+    this.commitment.changed = true;
+    this.message.startProcess('commitment_save',{commitment:this.commitment});
+    return false;
   }
 
 

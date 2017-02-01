@@ -253,6 +253,20 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
           'End Process',
           'endProcess',
           {}
+      ),
+      save_commitment_error: new ProcessTask(
+          'end_process',
+          'save_commitment_error',
+          'End Process',
+          'endProcess',
+          {}
+      ),
+      save_commitment_complete: new ProcessTask(
+          'end_process',
+          'save_commitment_complete',
+          'End Process',
+          'endProcess',
+          {}
       )
   };
 

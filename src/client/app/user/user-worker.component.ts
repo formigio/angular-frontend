@@ -410,6 +410,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'getUser',
           {}
         ),
+        commitment_save_init: new ProcessTask(
+          'get_user_for_commitment_save',
+          'commitment_save_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
+        ),
         refresh_google_token_error: new ProcessTask(
             'logout_after_google_token_refresh_failed',
             'refresh_google_token_error',
