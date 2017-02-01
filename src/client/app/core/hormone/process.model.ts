@@ -186,7 +186,9 @@ export class WorkerMessage {
                       } else {
                         errorMessage = JSON.stringify(error.message);
                       }
-                      worker.message.addStickyMessage(errorMessage,'danger');
+                      if(errorMessage) {
+                        worker.message.addStickyMessage(errorMessage,'danger');
+                      }
                       worker.message.processSignal(workerMessage);
                   },
                   () => {

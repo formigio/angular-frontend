@@ -267,6 +267,13 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
           'End Process',
           'endProcess',
           {}
+      ),
+      check_user_for_keeping_active_user_error: new ProcessTask(
+          'end_process',
+          'check_user_for_keeping_active_user_complete',
+          'End Process',
+          'endProcess',
+          {}
       )
   };
 

@@ -404,6 +404,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           {}
         ),
         process_every_minute_init: new ProcessTask(
+          'check_user_for_keeping_active_user',
+          'process_every_minute_init',
+          'Get User for Process Context',
+          'checkUser',
+          {}
+        ),
+        check_user_for_keeping_active_user_complete: new ProcessTask(
           'get_user_for_keeping_active_user',
           'process_every_minute_init',
           'Get User for Process Context',
@@ -1006,6 +1013,30 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   //   return obs;
   // }
 
+  public checkUser(control_uuid: string, params: any): Observable<any> {
+    let obs = new Observable((observer:any) => {
+      let user:User = this.service.retrieveUser();
+
+      if(!user.email) {
+        observer.error({
+          control_uuid: control_uuid,
+          outcome: 'invalid',
+          message: '',
+          context:{params:{}}
+        });
+      } else {
+        observer.next({
+          control_uuid: control_uuid,
+          outcome: 'success',
+          message:'',
+          context:{params:{user:user}}
+        });
+        observer.complete();
+      }
+
+    });
+    return obs;
+  }
 
   public getUser(control_uuid: string, params: any): Observable<any> {
     let obs = new Observable((observer:any) => {
@@ -1014,7 +1045,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       // Check Expired for Expired Tokens
       let current = new Date();
       let future = new Date();
-      future.setTime(future.getTime() + (60000*15)); // Get a date in the future 15 mins
+      future.setTime(future.getTime() + (60000*45)); // Get a date in the future 45 mins
       let expire = new Date(user.credentials.expireTime);
 
       // If the token is about to expire we start the refresh token process.
