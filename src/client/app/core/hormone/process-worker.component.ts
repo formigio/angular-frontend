@@ -23,9 +23,16 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
   };
 
   public tasks: {} = {
-      load_user_for_app_complete: new ProcessTask(
+      start_google_api_on_load_complete: new ProcessTask(
           'end_process',
-          'load_user_for_app_complete',
+          'start_google_api_on_load_complete',
+          'End Process',
+          'endProcess',
+          {}
+      ),
+      start_google_api_complete: new ProcessTask(
+          'end_process',
+          'start_google_api_complete',
           'End Process',
           'endProcess',
           {}

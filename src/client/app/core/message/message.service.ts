@@ -45,7 +45,7 @@ export class MessageService {
     }
 
     public processSignal(message: WorkerMessage) {
-        console.log('Signal: ' + message.signal);
+        console.log('Signal: ' + message.signal + ' ID: ' + message.control_uuid);
         this.workerQueue.next(message);
     }
 

@@ -4,7 +4,9 @@ import { Http, Response, Headers, RequestOptions} from '@angular/http';
 import { Observable, ReplaySubject } from 'rxjs/Rx';
 import { MessageService, HelperService } from '../core/index';
 import { Config } from '../shared/index';
-import { User } from './index';
+import { User, UserStruct } from './index';
+
+declare let gapi:any;
 
 @Injectable()
 export class UserService {
@@ -12,34 +14,51 @@ export class UserService {
     errorMsg: string = '';
     successMsg: string = '';
     response: User;
-    user: User = new User(
-        '',
-        '',
-        '',
-        '',
-        '',
-        {
-            accessKey:'',
-            secretKey:'',
-            sessionToken:'',
-            expireTime: ''
-        },
-        {
-            id:'',
-            name:'',
-            username:'',
-            identity:'',
-        }
-    );
+    user: User = UserStruct;
 
     public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
+
+    public auth2: any;
+    public googleUser: any;
 
     constructor(
         private _router: Router,
         private http: Http,
-        private messaging: MessageService,
+        private message: MessageService,
         private helper: HelperService
     ) { }
+
+    loadGoogleApi() {
+        gapi.load('auth2',() => this.initGoogleSignIn());
+    }
+
+    initGoogleSignIn() {
+        this.auth2 = gapi.auth2.init({
+            client_id: Config.GOOGLE_CLIENT_ID,
+            scope: 'profile'
+        });
+        this.auth2.isSignedIn.listen((loggedIn:boolean) => {
+            if(!loggedIn) {
+                this.message.startProcess('user_logout',{});
+            }
+        });
+        this.auth2.currentUser.listen((googleUser:any) => {
+
+            this.user.email = googleUser.getBasicProfile().getEmail();
+            this.user.identity_provider = 'google';
+            this.user.login_token = googleUser.getAuthResponse().id_token;
+            this.user.login_token_expires = googleUser.getAuthResponse().expires_at;
+
+            this.message.startProcess('user_login_google',{
+                token: this.user.login_token,
+                user: this.user
+            });
+        });
+    }
+
+    public getGoogleAuth() {
+        return this.auth2;
+    }
 
     getItemSubscription(): ReplaySubject<any> {
         return this.itemSubscription;
@@ -51,7 +70,6 @@ export class UserService {
 
     logout() {
         localStorage.removeItem('user');
-        this._router.navigate(['/']);
     }
 
     /**

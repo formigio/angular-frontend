@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from '../core/index';
-import { User, UserService } from '../user/index';
+import { User, UserStruct, UserService } from '../user/index';
 
 /**
  * This class represents the lazy loaded LoginComponent.
@@ -20,25 +20,7 @@ export class LoginComponent implements OnInit {
   provider: string = '';
   confirmForm: boolean = false;
 
-  user: User = {
-    email: '',
-    password: '',
-    identity_provider: '',
-    confirm_code: '',
-    login_token: '',
-    credentials: {
-      accessKey:'',
-      secretKey:'',
-      sessionToken:'',
-      expireTime: ''
-    },
-    worker: {
-      id:'',
-      name:'',
-      username:'',
-      identity:'',
-    }
-  };
+  user: User = UserStruct;
   errorMsg = '';
 
   constructor(

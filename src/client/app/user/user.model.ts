@@ -1,3 +1,28 @@
+export const UserCredentialsStruct = {
+    accessKey: '',
+    secretKey: '',
+    sessionToken: '',
+    expireTime: ''
+};
+
+export const UserWorkerStruct = {
+    id:'',
+    name:'',
+    username:'',
+    identity:''
+};
+
+export const UserStruct = {
+    email: '',
+    password: '',
+    confirm_code: '',
+    identity_provider: '',
+    login_token: '',
+    login_token_expires: '',
+    credentials: UserCredentialsStruct,
+    worker: UserWorkerStruct
+};
+
 export class User {
     constructor(
         public email: string,
@@ -5,6 +30,7 @@ export class User {
         public confirm_code?: string,
         public identity_provider?: string,
         public login_token?: string,
+        public login_token_expires?: string,
         public credentials?: UserCredentials,
         public worker?: UserWorker
     ) { }

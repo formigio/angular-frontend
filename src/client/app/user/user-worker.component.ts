@@ -32,6 +32,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             new ProcessContext,
             ''
         ),
+        user_google_api: new ProcessRoutine(
+            'user_google_api',
+            'The Process Used to Control the Login with Google',
+            new ProcessContext,
+            ''
+        ),
         user_google_token_refresh: new ProcessRoutine(
             'user_google_token_refresh',
             'The Process Used to Control the Login with Google',
@@ -71,6 +77,20 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
+        user_load_for_app_init: new ProcessTask(
+            'start_google_api_on_load',
+            'user_load_for_app_init',
+            'Start Google API',
+            'startGoogleApi',
+            {}
+        ),
+        user_google_api_init: new ProcessTask(
+            'start_google_api',
+            'user_google_api_init',
+            'Start Google API',
+            'startGoogleApi',
+            {}
+        ),
         user_update_init: new ProcessTask(
             'update_user_record',
             'user_update_init',
@@ -85,9 +105,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'storeUser',
             {user:'User'}
         ),
-        user_load_for_app_init: new ProcessTask(
+        start_google_api_on_load_complete: new ProcessTask(
             'load_user_for_app',
-            'user_load_for_app_init',
+            'start_google_api_on_load_complete',
             'Load User into the App',
             'loadUserIntoApp',
             {}
@@ -583,7 +603,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             context:{params:{user:user}}
           });
           observer.complete();
-          this.message.startProcess('navigate_to',{navigate_to:'/'});
         }).catch((response:any) => {
           console.log(response);
           observer.error({
@@ -597,9 +616,36 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
+  public startGoogleApi(control_uuid: string, params: any): Observable<any> {
+    // let provider:string = params.identity_provider;
+    let obs = new Observable((observer:any) => {
+      let user:User = this.service.retrieveUser();
+
+      // if(!user.email && user.identity_provider === 'google') {
+
+        let auth2 = this.service.getGoogleAuth();
+        if(typeof auth2 === 'undefined'){
+          this.service.loadGoogleApi();
+        } else {
+          if (auth2.isSignedIn.get() == true) {
+            auth2.signIn();
+          }
+        }
+
+        observer.next({
+          control_uuid: control_uuid,
+          outcome: 'success',
+          message:'Google API Initiated.',
+          context:{params:{}}
+        });
+        observer.complete();
+
+    });
+    return obs;
+  }
+
   public updateUser(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
-    console.log(user);
     let obs = new Observable((observer:any) => {
       if(!user.worker.id) {
         this.service.post(user)
@@ -730,8 +776,20 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   public refreshGoogleUser(control_uuid: string, params: any): Observable<any> {
     let token: string = params.token;
     let user: User = params.user;
+    let provider_expire: string;
 
     AWS.config.region = Config.AWS_REGION; //This is required to derive the endpoint
+
+    let auth2 = this.service.getGoogleAuth();
+    if(typeof auth2 !== 'undefined'){
+      if (auth2.isSignedIn.get() == true) {
+        auth2.signIn();
+      }
+      let googleUser = auth2.currentUser.get();
+      console.log(googleUser.getAuthResponse());
+      token = googleUser.getAuthResponse().id_token;
+      provider_expire = googleUser.getAuthResponse().expires_at;
+    }
 
     let url = 'accounts.google.com';
     let logins:{} = {};
@@ -755,6 +813,8 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             });
           }
 
+          user.login_token = token;
+          user.login_token_expires = provider_expire;
           user.credentials.accessKey = AWS.config.credentials.accessKeyId;
           user.credentials.secretKey = AWS.config.credentials.secretAccessKey;
           user.credentials.sessionToken = AWS.config.credentials.sessionToken;
@@ -1050,7 +1110,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
 
       // If the token is about to expire we start the refresh token process.
       if(future > expire) {
-        if(user.identity_provider === 'Google') {
+        if(user.identity_provider === 'google') {
           this.message.startProcess('user_google_token_refresh',{user:user,token:user.login_token,navigate_to:'/login'});
         }
       }
@@ -1114,6 +1174,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     let obs = new Observable((observer:any) => {
       this.service.logout();
       this.service.publishUser(user);
+      this.message.startProcess('navigate_to',{navigate_to:'/'});
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',

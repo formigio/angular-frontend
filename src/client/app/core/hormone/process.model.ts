@@ -143,11 +143,12 @@ export class WorkerMessage {
   public processSignal(worker:WorkerComponent): boolean {
     let signal = this.signal;
     let control_uuid = this.control_uuid;
-
+        // console.log('Processing Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
       // Verify the Worker has a Task
       if(!worker.tasks.hasOwnProperty(signal)) {
           return false;
       }
+    //   console.log('Claim Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
 
       // Get the processRoutine from local storage
       let processRoutine = JSON.parse(localStorage.getItem('process_' + control_uuid));
@@ -171,6 +172,7 @@ export class WorkerMessage {
           },
           () => {
               // this.message.addProcessMessage('required params checked.');
+            //   console.log('Working Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
               let workerMethod: Observable<any> = (<any>worker)[processTask.method](
                   processRoutine.control_uuid, processRoutine.context.params);
               let workerResponse: WorkerResponse;
@@ -179,6 +181,7 @@ export class WorkerMessage {
               workerMethod.subscribe(
                   response => workerResponse = response,
                   error => {
+                    //   console.log('Error: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
                       workerMessage.signal = processTask.identifier + '_error';
                       let errorMessage:string = '';
                       if(typeof error.message === 'string') {
@@ -192,6 +195,7 @@ export class WorkerMessage {
                       worker.message.processSignal(workerMessage);
                   },
                   () => {
+                    //   console.log('Complete: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
                       if(workerResponse.outcome === 'end') {
                         localStorage.removeItem('process_' + control_uuid);
                       } else {
