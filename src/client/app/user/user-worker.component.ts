@@ -619,15 +619,12 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   public startGoogleApi(control_uuid: string, params: any): Observable<any> {
     // let provider:string = params.identity_provider;
     let obs = new Observable((observer:any) => {
-      let user:User = this.service.retrieveUser();
-
-      // if(!user.email && user.identity_provider === 'google') {
 
         let auth2 = this.service.getGoogleAuth();
-        if(typeof auth2 === 'undefined'){
+        if(typeof auth2 === 'undefined') {
           this.service.loadGoogleApi();
         } else {
-          if (auth2.isSignedIn.get() == true) {
+          if (auth2.isSignedIn.get() === true) {
             auth2.signIn();
           }
         }
@@ -781,8 +778,8 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     AWS.config.region = Config.AWS_REGION; //This is required to derive the endpoint
 
     let auth2 = this.service.getGoogleAuth();
-    if(typeof auth2 !== 'undefined'){
-      if (auth2.isSignedIn.get() == true) {
+    if(typeof auth2 !== 'undefined') {
+      if (auth2.isSignedIn.get() === true) {
         auth2.signIn();
       }
       let googleUser = auth2.currentUser.get();
