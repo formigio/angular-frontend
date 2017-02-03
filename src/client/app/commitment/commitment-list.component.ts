@@ -23,6 +23,9 @@ export class CommitmentListComponent implements OnInit {
   showFuture: boolean = false;
   showCompleted: boolean = false;
 
+  startDate: Date;
+  displayDate: string;
+
   /**
    *
    * @param
@@ -45,6 +48,11 @@ export class CommitmentListComponent implements OnInit {
         this.processCommitments();
       }
     );
+    this.startDate = new Date();
+    this.startDate.setHours(0);
+    this.startDate.setMinutes(0);
+    this.startDate.setSeconds(0);
+    this.displayDate = this.startDate.toString();
     this.refreshCommitments();
   }
 
@@ -71,8 +79,34 @@ export class CommitmentListComponent implements OnInit {
   }
 
   refreshCommitments() {
+    let start = this.startDate.toISOString();
+    let endDate = new Date(this.startDate.getTime());
+    endDate.setHours(endDate.getHours() + 24);
+    let end = endDate.toISOString();
+
     this.loading = true;
-    this.message.startProcess('load_commitments',{});
+    this.message.startProcess('load_commitments',{start:start,end:end});
+  }
+
+  incrementDate() {
+    this.startDate.setHours(this.startDate.getHours() + 24);
+    this.displayDate = this.startDate.toString();
+    this.refreshCommitments();
+  }
+
+  decrementDate() {
+    this.startDate.setHours(this.startDate.getHours() - 24);
+    this.displayDate = this.startDate.toString();
+    this.refreshCommitments();
+  }
+
+  today() {
+    this.startDate = new Date();
+    this.startDate.setHours(0);
+    this.startDate.setMinutes(0);
+    this.startDate.setSeconds(0);
+    this.displayDate = this.startDate.toString();
+    this.refreshCommitments();
   }
 
   toggleFuture() {

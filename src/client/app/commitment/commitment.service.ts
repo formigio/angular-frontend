@@ -105,14 +105,14 @@ export class CommitmentService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(): Promise<any> {
+  list(start:string,end:string): Promise<any> {
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/commitments',{headers:{'x-identity-id':user.worker.identity}});
+    return api.get('/commitments',{params:{start:start,end:end},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**

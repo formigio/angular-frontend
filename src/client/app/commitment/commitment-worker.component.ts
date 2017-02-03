@@ -218,10 +218,12 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public loadCommitments(control_uuid: string, params: any): Observable<any> {
+    let start: string = params.start;
+    let end: string = params.end;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.list().then(
+      this.service.list(start,end).then(
         response => {
           let commitments = <Commitment[]>response.data;
           this.service.publishCommitments(commitments);

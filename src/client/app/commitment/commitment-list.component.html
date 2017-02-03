@@ -1,5 +1,13 @@
 <div class="row">
   <div class="col-lg-12">
+    <button class="btn btn-default" (click)="decrementDate()" type="button"> &lt; </button>
+    <button class="btn btn-default" (click)="today()" type="button"> Today </button>
+    <button class="btn btn-default" (click)="incrementDate()" type="button"> &gt; </button>
+    {{displayDate}}
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-12">
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let commitment of activeCommitments" [class.list-group-item-warning]="commitment.changed">
         <commitment-item [commitment]="commitment"></commitment-item>
