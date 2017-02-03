@@ -783,7 +783,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         auth2.signIn();
       }
       let googleUser = auth2.currentUser.get();
-      console.log(googleUser.getAuthResponse());
       token = googleUser.getAuthResponse().id_token;
       provider_expire = googleUser.getAuthResponse().expires_at;
     }
@@ -1102,7 +1101,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       // Check Expired for Expired Tokens
       let current = new Date();
       let future = new Date();
-      future.setTime(future.getTime() + (60000*45)); // Get a date in the future 45 mins
+      future.setTime(future.getTime() + (60000*15)); // Get a date in the future 15 mins
       let expire = new Date(user.credentials.expireTime);
 
       // If the token is about to expire we start the refresh token process.

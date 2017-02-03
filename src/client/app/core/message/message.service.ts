@@ -45,7 +45,8 @@ export class MessageService {
     }
 
     public processSignal(message: WorkerMessage) {
-        console.log('Signal: ' + message.signal + ' ID: ' + message.control_uuid);
+        let date = new Date();
+        console.log('Signal: ' + message.signal + ' ID: ' + message.control_uuid + ' at: ' + date.toString());
         this.workerQueue.next(message);
     }
 

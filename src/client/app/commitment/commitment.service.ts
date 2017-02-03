@@ -18,6 +18,8 @@ export class CommitmentService {
 
   user: User;
 
+  startDate: Date;
+
   private commitments: Commitment[] = [];
 
   /**
@@ -25,7 +27,9 @@ export class CommitmentService {
    * @param {Http} http - The injected Http.
    * @constructor
    */
-  constructor(private http: Http, private helper: HelperService) { }
+  constructor(private http: Http, private helper: HelperService) {
+    this.today();
+  }
 
   getListSubscription(): ReplaySubject<any> {
     return this.listSubscription;
@@ -86,6 +90,31 @@ export class CommitmentService {
     return this.user;
   }
 
+  incrementDate() {
+    this.startDate.setHours(this.startDate.getHours() + 24);
+  }
+
+  decrementDate() {
+    this.startDate.setHours(this.startDate.getHours() - 24);
+  }
+
+  today() {
+    this.startDate = new Date();
+    this.startDate.setHours(0);
+    this.startDate.setMinutes(0);
+    this.startDate.setSeconds(0);
+  }
+
+  getStartDate():Date {
+    return this.startDate;
+  }
+
+  getEndDate():Date {
+    let endDate = new Date(this.startDate.getTime());
+    endDate.setHours(endDate.getHours() + 24);
+    return endDate;
+  }
+
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
@@ -105,7 +134,9 @@ export class CommitmentService {
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  list(start:string,end:string): Promise<any> {
+  list(): Promise<any> {
+    let start = this.startDate.toISOString();
+    let end = this.getEndDate().toISOString();
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
