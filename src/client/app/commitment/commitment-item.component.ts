@@ -16,6 +16,7 @@ import { MessageService } from '../core/index';
 export class CommitmentItemComponent implements OnInit {
 
   @Input() commitment:Commitment;
+  @Input() showDelete:boolean;
 
   minutes:{} = [
     {value:5,label:'5 Minutes'},
@@ -30,11 +31,18 @@ export class CommitmentItemComponent implements OnInit {
     {value:480,label:'8 Hours'}
   ];
 
+  starts:Object[] = [];
+  startdates:Object[] = [];
   starttimes:Object[] = [];
 
   showForm:boolean = false;
 
   showMenu:boolean = false;
+
+  showCustom:boolean = false;
+
+  promisedStartDate:string;
+  promisedStartTime:string;
 
   /**
    *
@@ -52,28 +60,99 @@ export class CommitmentItemComponent implements OnInit {
     //
   }
 
+  ///
+  /// Commitment Edit Form
+  ///
+
   populateStartTimes() {
-    this.starttimes = [];
+    this.starts = [];
+
     let now = new Date();
-    this.starttimes.push({value:now.toISOString(),label:'Immediately'});
+    this.starts.push({value:now.toISOString(),label:'Immediately'});
+    this.promisedStartDate = now.toISOString();
+    this.promisedStartTime = now.toISOString();
+
     let later = new Date();
     later.setMinutes(later.getMinutes() + 15);
-    this.starttimes.push({value:later.toISOString(),label:'In 15 Mins ('+later+')'});
+    this.starts.push({value:later.toISOString(),label:'In 15 Mins ('+later.toLocaleTimeString()+')'});
+
     later = new Date();
     later.setMinutes(later.getMinutes() + 30);
-    this.starttimes.push({value:later.toISOString(),label:'In 30 Mins ('+later+')'});
+    this.starts.push({value:later.toISOString(),label:'In 30 Mins ('+later.toLocaleTimeString()+')'});
+
     later = new Date();
     later.setHours(later.getHours() + 1);
-    this.starttimes.push({value:later.toISOString(),label:'In an Hour ('+later+')'});
+    this.starts.push({value:later.toISOString(),label:'In an Hour ('+later.toLocaleTimeString()+')'});
+
     let tomorrow = new Date();
     tomorrow.setDate(later.getDate() + 1);
     tomorrow.setHours(8);
-    this.starttimes.push({value:tomorrow.toISOString(),label:'Early Tomorrow ('+tomorrow+')'});
+    this.starts.push({value:tomorrow.toISOString(),label:'Early Tomorrow ('+tomorrow.toLocaleString()+')'});
+
     tomorrow = new Date();
     tomorrow.setDate(later.getDate() + 1);
     tomorrow.setHours(13);
-    this.starttimes.push({value:tomorrow.toISOString(),label:'Mid Tomorrow ('+tomorrow+')'});
+    this.starts.push({value:tomorrow.toISOString(),label:'Mid Tomorrow ('+tomorrow.toLocaleString()+')'});
   }
+
+  commitmentDates() {
+    this.startdates = [];
+    let list = Array.from(Array(30).keys());
+    let date = new Date();
+    this.startdates.push({
+      value:date.toISOString(),
+      label:date.toLocaleDateString('us-EN',{ weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
+    });
+    list.forEach(() => {
+      date.setDate(date.getDate() + 1);
+      this.startdates.push({
+        value:date.toISOString(),
+        label:date.toLocaleDateString('us-EN',{ weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
+      });
+    });
+  }
+
+  commitmentTimes() {
+    this.starttimes = [];
+    let list = Array.from(Array(48).keys());
+    let date = new Date();
+    date.setMinutes(0);
+    date.setSeconds(0);
+    this.starttimes.push({value:date.toISOString(),label:date.toLocaleTimeString()});
+    list.forEach(() => {
+      date.setMinutes(date.getMinutes() + (30));
+      this.starttimes.push({value:date.toISOString(),label:date.toLocaleTimeString()});
+    });
+  }
+
+  setCustomDate(value:string) {
+    this.promisedStartDate = value;
+    this.updateCustom();
+  }
+
+  setCustomTime(value:string) {
+    this.promisedStartTime = value;
+    this.updateCustom();
+  }
+
+  updateCustom() {
+    let date = new Date(this.promisedStartDate);
+    let timedate = new Date(this.promisedStartTime);
+    date.setHours(timedate.getHours());
+    date.setMinutes(timedate.getMinutes());
+    this.commitment.promised_start = date.toISOString();
+  }
+
+  setCustomStart() {
+    this.showCustom = true;
+  }
+
+  setPromisedStart(date:string) {
+    this.commitment.promised_start = date;
+  }
+
+  /// Commitment Edit Form
+
 
   navigateToGoal() {
     this.message.startProcess('navigate_to',{navigate_to:'/goal/' + this.commitment.goal.id});
@@ -117,6 +196,8 @@ export class CommitmentItemComponent implements OnInit {
 
   editCommitment() {
     this.populateStartTimes();
+    this.commitmentDates();
+    this.commitmentTimes();
     this.showForm = true;
   }
 

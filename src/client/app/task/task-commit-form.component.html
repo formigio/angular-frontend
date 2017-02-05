@@ -1,14 +1,27 @@
-<button *ngIf="!showForm" (click)="openForm()" class="btn btn-xs btn-primary" type="button"><span>Claim &amp; Commit</span></button>
+<button *ngIf="!showForm" (click)="openForm()" class="btn btn-xs btn-primary" type="button"><span><span class="glyphicon glyphicon-calendar"></span> Commit</span></button>
+<button *ngIf="!showForm" (click)="quickCommit()" class="btn btn-xs btn-primary" title="Start Immediately for 15 Mins" type="button"><span class="glyphicon glyphicon-flash"></span></button>
 <div class="row">
     <div class="col-xs-10">
         <form *ngIf="showForm" class="form" (submit)="submit()">
             <div class="form-group well">
               <h3>Commit to the Task</h3>
               <label>When you promise to start?</label>
-              <select [(ngModel)]="commitment.promised_start" name="commitment.promised_start" type="text" class="form-control" placeholder="Promised Start">
-                <option value="">Select Promised Start</option>
-                <option *ngFor="let time of starttimes" value="{{time.value}}">{{time.label}}</option>
-              </select>
+              <div *ngIf="!showCustom">
+                  <button type="button" class="btn btn-default" [class.btn-primary]="time.value===commitment.promised_start" *ngFor="let time of starts" (click)="setPromisedStart(time.value)">{{time.label}}</button>
+                  <button type="button" class="btn btn-default" (click)="setCustomStart()">Choose Date &amp; Time</button>
+              </div>
+              <div class="form-group" *ngIf="showCustom">
+                  <label>Start Date</label>
+                  <select [ngModel]="promisedStartDate" (ngModelChange)="setCustomDate($event)" name="promised_start_date" type="text" class="form-control">
+                      <option value="">Select Start Date</option>
+                      <option *ngFor="let time of startdates" value="{{time.value}}">{{time.label}}</option>
+                  </select>
+                  <label>Start Time</label>
+                  <select [ngModel]="promisedStartTime" (ngModelChange)="setCustomTime($event)" name="promised_start_time" type="text" class="form-control">
+                      <option value="">Select Start Time</option>
+                      <option *ngFor="let time of starttimes" value="{{time.value}}">{{time.label}}</option>
+                  </select>
+              </div>
               <label>For how long are you going to work?</label>
               <select [(ngModel)]="commitment.promised_minutes" name="commitment.promised_minutes" type="text" class="form-control" placeholder="Promised Minutes">
                 <option value="">Select Promised Time</option>

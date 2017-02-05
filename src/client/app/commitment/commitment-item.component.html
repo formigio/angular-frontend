@@ -37,20 +37,38 @@
     </div>
 
     <span>{{commitment.task.title}}</span>
-    <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteCommitment()"><span class="glyphicon glyphicon-remove-sign"></span></button>
-    <button type="button" class="btn btn-xs btn-link" (click)="editCommitment()"><span class="glyphicon glyphicon-edit"></span></button>
-    <p class="small">To Start: {{commitment.promised_start | date:'short'}} for {{commitment.promised_minutes}} mins</p>
-    <button class="btn btn-default btn-xs" (click)="navigateToGoal()"> &lt; {{commitment.goal.title}}</button>
-    <button class="btn btn-default btn-xs" (click)="navigateToTeam()"> &lt; {{commitment.team.title}}</button>
+    <button *ngIf="showDelete" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteCommitment()"><span class="glyphicon glyphicon-remove-sign"></span></button>
+    <!--<button type="button" class="btn btn-xs btn-link" (click)="editCommitment()"><span class="glyphicon glyphicon-edit"></span></button>-->
+    <div>
+        <button class="btn btn-link btn-xs" (click)="navigateToTeam()">{{commitment.team.title}}</button>
+        <span class="small">/</span>
+        <button class="btn btn-link btn-xs" (click)="navigateToGoal()">{{commitment.goal.title}}</button>
+    </div>
+    <div>
+        <button type="button" class="btn btn-default btn-xs" (click)="editCommitment()">{{commitment.promised_start | date:'short'}}</button> for
+        <button type="button" class="btn btn-default btn-xs" (click)="editCommitment()">{{commitment.promised_minutes}} mins</button>
+    </div>
 
     <form *ngIf="showForm" class="form" (submit)="submit()">
         <div class="form-group well">
             <h3>Edit Commitment</h3>
             <label>When you promise to start?</label>
-            <select [(ngModel)]="commitment.promised_start" name="commitment.promised_start" type="text" class="form-control" placeholder="Promised Start">
-            <option value="">Select Promised Start</option>
-            <option *ngFor="let time of starttimes" value="{{time.value}}">{{time.label}}</option>
-            </select>
+            <div *ngIf="!showCustom">
+                <button type="button" class="btn btn-default" [class.btn-primary]="time.value===commitment.promised_start" *ngFor="let time of starts" (click)="setPromisedStart(time.value)">{{time.label}}</button>
+                <button type="button" class="btn btn-default" (click)="setCustomStart()">Choose Date &amp; Time</button>
+            </div>
+            <div class="form-group" *ngIf="showCustom">
+                <label>Start Date</label>
+                <select [ngModel]="promisedStartDate" (ngModelChange)="setCustomDate($event)" name="promised_start_date" type="text" class="form-control">
+                    <option value="">Select Start Date</option>
+                    <option *ngFor="let time of startdates" value="{{time.value}}">{{time.label}}</option>
+                </select>
+                <label>Start Time</label>
+                <select [ngModel]="promisedStartTime" (ngModelChange)="setCustomTime($event)" name="promised_start_time" type="text" class="form-control">
+                    <option value="">Select Start Time</option>
+                    <option *ngFor="let time of starttimes" value="{{time.value}}">{{time.label}}</option>
+                </select>
+            </div>
             <label>For how long are you going to work?</label>
             <select [(ngModel)]="commitment.promised_minutes" name="commitment.promised_minutes" type="text" class="form-control" placeholder="Promised Minutes">
             <option value="">Select Promised Time</option>

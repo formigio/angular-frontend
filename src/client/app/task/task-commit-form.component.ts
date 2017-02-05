@@ -33,9 +33,16 @@ export class TaskCommitFormComponent implements OnInit {
     {value:480,label:'8 Hours'}
   ];
 
+  starts:Object[] = [];
+  startdates:Object[] = [];
   starttimes:Object[] = [];
 
+  promisedStartDate:string;
+  promisedStartTime:string;
+
   showForm:boolean = false;
+
+  showCustom:boolean = false;
 
   /**
    *
@@ -50,18 +57,103 @@ export class TaskCommitFormComponent implements OnInit {
    */
   ngOnInit() {
     this.populateStartTimes();
+    this.commitmentDates();
+    this.commitmentTimes();
   }
 
   populateStartTimes() {
+    this.starts = [];
+
     let now = new Date();
-    this.starttimes.push({value:now.toISOString(),label:'Immediately'});
+    this.starts.push({value:now.toISOString(),label:'Immediately'});
+    this.promisedStartDate = now.toISOString();
+    this.promisedStartTime = now.toISOString();
+
     let later = new Date();
+    later.setMinutes(later.getMinutes() + 15);
+    this.starts.push({value:later.toISOString(),label:'In 15 Mins ('+later.toLocaleTimeString()+')'});
+
+    later = new Date();
+    later.setMinutes(later.getMinutes() + 30);
+    this.starts.push({value:later.toISOString(),label:'In 30 Mins ('+later.toLocaleTimeString()+')'});
+
+    later = new Date();
     later.setHours(later.getHours() + 1);
-    this.starttimes.push({value:later.toISOString(),label:'Later ('+later+')'});
+    this.starts.push({value:later.toISOString(),label:'In an Hour ('+later.toLocaleTimeString()+')'});
+
     let tomorrow = new Date();
     tomorrow.setDate(later.getDate() + 1);
-    this.starttimes.push({value:tomorrow.toISOString(),label:'Tomorrow ('+tomorrow+')'});
+    tomorrow.setHours(8);
+    this.starts.push({
+      value:tomorrow.toISOString(),
+      label:'Early Tomorrow ('+tomorrow.toLocaleString('us-EN',{weekday:'short',hour:'numeric',minute:'numeric'})+')'
+    });
+
+    tomorrow = new Date();
+    tomorrow.setDate(later.getDate() + 1);
+    tomorrow.setHours(13);
+    this.starts.push({
+      value:tomorrow.toISOString(),
+      label:'Mid Tomorrow ('+tomorrow.toLocaleString('us-EN',{weekday:'short',hour:'numeric',minute:'numeric'})+')'
+    });
   }
+
+  commitmentDates() {
+    this.startdates = [];
+    let list = Array.from(Array(30).keys());
+    let date = new Date();
+    this.startdates.push({
+      value:date.toISOString(),
+      label:date.toLocaleDateString('us-EN',{ weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
+    });
+    list.forEach(() => {
+      date.setDate(date.getDate() + 1);
+      this.startdates.push({
+        value:date.toISOString(),
+        label:date.toLocaleDateString('us-EN',{ weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
+      });
+    });
+  }
+
+  commitmentTimes() {
+    this.starttimes = [];
+    let list = Array.from(Array(48).keys());
+    let date = new Date();
+    date.setMinutes(0);
+    date.setSeconds(0);
+    this.starttimes.push({value:date.toISOString(),label:date.toLocaleTimeString()});
+    list.forEach(() => {
+      date.setMinutes(date.getMinutes() + (30));
+      this.starttimes.push({value:date.toISOString(),label:date.toLocaleTimeString()});
+    });
+  }
+
+  setCustomDate(value:string) {
+    this.promisedStartDate = value;
+    this.updateCustom();
+  }
+
+  setCustomTime(value:string) {
+    this.promisedStartTime = value;
+    this.updateCustom();
+  }
+
+  updateCustom() {
+    let date = new Date(this.promisedStartDate);
+    let timedate = new Date(this.promisedStartTime);
+    date.setHours(timedate.getHours());
+    date.setMinutes(timedate.getMinutes());
+    this.commitment.promised_start = date.toISOString();
+  }
+
+  setCustomStart() {
+    this.showCustom = true;
+  }
+
+  setPromisedStart(date:string) {
+    this.commitment.promised_start = date;
+  }
+
 
   /**
    * Puts the accomplished Goal Object to the Goal List Service
@@ -87,6 +179,14 @@ export class TaskCommitFormComponent implements OnInit {
    */
   closeForm() {
     this.showForm = false;
+  }
+
+  quickCommit() {
+    let now = new Date();
+    this.task.changed = true;
+    this.commitment.promised_minutes = '15';
+    this.commitment.promised_start = now.toISOString();
+    this.message.startProcess('commitment_create',{task:this.task,commitment:this.commitment});
   }
 
 }
