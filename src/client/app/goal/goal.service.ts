@@ -20,7 +20,7 @@ export class GoalService {
 
   user: User;
   goal: Goal;
-  goals: Goal[];
+  goals: Goal[] = [];
   instance: string;
 
   /**
@@ -39,11 +39,8 @@ export class GoalService {
     return this.listSubscription;
   }
 
-  publishGoal(uuid:string) {
-    this.itemSubscription.next(this.retrieveGoal(uuid));
-    // this.get(uuid).then(
-    //   response => this.itemSubscription.next(response.data)
-    // );
+  publishGoal(goal:Goal) {
+    this.itemSubscription.next(goal);
   }
 
   publishGoals(goals:Goal[]) {
@@ -55,6 +52,12 @@ export class GoalService {
 
   storeGoals() {
     this.goals.forEach(goal => localStorage.setItem('goal::' + goal.id, JSON.stringify(goal)));
+  }
+
+  storeGoal(goal:Goal) {
+    this.goal = goal;
+    localStorage.setItem('goal::' + goal.id, JSON.stringify(goal));
+    this.publishGoal(goal);
   }
 
   retrieveGoal(id:string): Goal {
@@ -75,16 +78,21 @@ export class GoalService {
   }
 
   updateGoal(goalToUpdate:Goal) {
-    let checked:Goal[] = [];
-    this.goals.forEach((goal) => {
-      if(goalToUpdate.id === goal.id) {
-        goal = goalToUpdate;
-      }
-      checked.push(goal);
-      if(checked.length===this.goals.length) {
-        this.publishGoals(checked);
-      }
-    });
+    if(this.goal.id) {
+      this.storeGoal(goalToUpdate);
+    }
+    if(this.goals.length) {
+      let checked:Goal[] = [];
+      this.goals.forEach((goal) => {
+        if(goalToUpdate.id === goal.id) {
+          goal = goalToUpdate;
+        }
+        checked.push(goal);
+        if(checked.length===this.goals.length) {
+          this.publishGoals(checked);
+        }
+      });
+    }
   }
 
   addGoal(goal:Goal) {

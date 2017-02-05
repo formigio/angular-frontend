@@ -19,6 +19,8 @@ export class GoalViewComponent implements OnInit {
   errorMessage: string;
   currentResponse: {};
   goal: Goal = GoalStruct;
+  fullDescription: string = '';
+  showForm: boolean = false;
 
   /**
    * Creates an instance of the GoalViewComponent with the injected
@@ -42,11 +44,31 @@ export class GoalViewComponent implements OnInit {
    */
   ngOnInit() {
     this.service.getItemSubscription().subscribe(
-      goal => this.goal = <Goal>goal
+      goal => {
+        this.goal = <Goal>goal;
+        this.setDescription();
+      }
     );
     this.route.params.subscribe(params => {
       this.message.startProcess('goal_view',params);
     });
+  }
+
+  setDescription() {
+    if(this.goal.description === null || this.goal.description === '') {
+      this.fullDescription = '';
+    } else {
+      let parts = this.goal.description.split('\n');
+      this.fullDescription = parts.join('<br>');
+    }
+  }
+
+  edit() {
+    this.showForm = true;
+  }
+
+  cancel() {
+    this.showForm = false;
   }
 
   /**
@@ -57,6 +79,13 @@ export class GoalViewComponent implements OnInit {
     this.message.startProcess('goal_delete',{goal:goal.id});
     return false;
   }
+
+  persistGoal() {
+    this.showForm = false;
+    this.goal.changed = true;
+    this.message.startProcess('goal_save',{goal:this.goal});
+  }
+
 
   // /**
   //  * Puts the accomplished Goal Object to the Goal List Service

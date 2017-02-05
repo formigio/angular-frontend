@@ -165,14 +165,37 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.publishGoal(uuid);
-      observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message:'Goal loaded successfully.',
-            context:{params:{goal_loaded:uuid}}
-      });
-      observer.complete();
+      let goal = this.service.retrieveGoal(uuid);
+      if(goal.id) {
+        this.service.storeGoal(goal);
+        observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Goal Retrieved.',
+              context:{params:{goal_loaded:uuid}}
+        });
+        observer.complete();
+      } else {
+        this.service.get(uuid).then(
+          response => {
+            this.service.storeGoal(response);
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message:'Goal Loaded.',
+              context:{params:{}}
+            });
+            observer.complete();
+          }
+        ).catch(
+          error => observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'Goal Load Failed.',
+              context:{params:{}}
+          })
+        );
+      }
     });
     return obs;
   }

@@ -65,14 +65,15 @@ export class GoalItemComponent implements OnInit {
   }
 
   setDescription() {
-    if(!this.goal.description) {
+    if(this.goal.description === null || this.goal.description === '') {
       this.fullDescription = '';
-    }
-    let parts = this.goal.description.split('\n');
-    if(this.showFullDescription) {
-      this.fullDescription = parts.join('<br>');
     } else {
-      this.fullDescription = parts.shift();
+      let parts = this.goal.description.split('\n');
+      if(this.showFullDescription) {
+        this.fullDescription = parts.join('<br>');
+      } else {
+        this.fullDescription = parts.shift();
+      }
     }
   }
 

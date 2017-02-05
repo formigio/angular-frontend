@@ -1,22 +1,27 @@
 <div class="row">
-  <div class="col-xs-12 text-center" *ngIf="goal">
-      <!--<button *ngIf="editable===true" type="button" (click)="accomplishGoal(goal)" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
-          <span *ngIf="goal.accomplished==='true'">Complete</span>
-          <span *ngIf="goal.accomplished!=='true'">In Progress</span>
-      </button>
-      <button *ngIf="editable===false" type="button" [class.btn-success]="goal.accomplished==='true'" name="accomplished" class="btn btn-xs pull-left">
-          <span *ngIf="goal.accomplished==='true'">Complete</span>
-          <span *ngIf="goal.accomplished!=='true'">In Progress</span>
-      </button>-->
-      <!--<button *ngIf="editable===true" type="button" (click)="deleteGoal(goal)" class="btn btn-xs btn-danger pull-right">
-          <span>Delete</span>
-      </button>-->
-  </div>
   <div class="col-xs-12" *ngIf="goal">
-      <button *ngIf="editable===true" type="button" name="back" class="btn btn-xs btn-default" (click)="navigateToTeam()">
-          <span>&lt; Back to Team</span>
-      </button>
-      <small>Goal ID: {{goal.id}}</small>
-      <h2><span [innerHtml]="goal.title"></span> </h2>
+      <div *ngIf="!showForm">
+        <button type="button" name="back" class="btn btn-xs btn-default" (click)="navigateToTeam()">
+            <span>&lt; Back to Team</span>
+        </button>
+        <button type="button" class="btn btn-xs btn-default pull-right" (click)="edit()">
+            Edit Goal
+        </button>
+        <small>Goal ID: {{goal.id}} <span *ngIf="goal.changed" class="label label-info">Saving...</span></small>
+        <h2><span [innerHtml]="goal.title"></span></h2>
+        <div *ngIf="fullDescription" class="well" [innerHtml]="fullDescription"></div>
+      </div>
+      <div *ngIf="showForm">
+        <form class="form" (submit)="persistGoal()">
+            <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteGoal(goal)">Delete Goal</button>
+            <h4>Goal Edit</h4>
+            <label for="title">Goal Title</label>
+            <input [(ngModel)]="goal.title" name="title" type="text" class="form-control">
+            <label for="title">Description</label>
+            <textarea [(ngModel)]="goal.description" name="description" class="form-control"></textarea>
+            <button type="submit" class="btn btn-primary btn-xs">Save</button>
+            <button type="button" class="btn btn-default btn-xs" (click)="cancel()">Cancel</button>
+        </form>
+      </div>
   </div>
 </div>
