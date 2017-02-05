@@ -1,16 +1,27 @@
-<div *ngIf="goal.title">
+<div>
     <div *ngIf="state==='view'">
-        <span [innerHtml]="goal.title" (click)="navigateTo(goal)"></span>
-        <button type="button" (click)="edit()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
         <button class="btn btn-xs btn-default pull-right" type="button" (click)="navigateTo(goal)">
             <span class="glyphicon glyphicon-list"></span>
         </button>
-        <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteGoal(goal)">
-            <span class="glyphicon glyphicon-remove-sign"></span>
+        <button class="btn btn-xs btn-default pull-right" type="button" (click)="edit()">
+            <span class="glyphicon glyphicon-edit"></span>
         </button>
+        <strong (click)="navigateTo(goal)">{{goal.title}}</strong>
+        <small *ngIf="!showFullDescription" (click)="toggleFullDescription()" [innerHtml]="fullDescription"></small>
+        <div class="well well-sm" *ngIf="showFullDescription">
+            <button type="button" class="btn btn-xs btn-link pull-right" (click)="toggleFullDescription()">
+                <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <span [innerHtml]="fullDescription"></span>
+        </div>
     </div>
-    <form class="form-inline" (submit)="persistGoal()" *ngIf="state==='edit'">
+    <form class="form" (submit)="persistGoal()" *ngIf="state==='edit'">
+        <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteGoal(goal)">Delete Goal</button>
+        <h4>Goal Edit</h4>
+        <label for="title">Goal Title</label>
         <input [(ngModel)]="goal.title" name="title" type="text" class="form-control">
+        <label for="title">Description</label>
+        <textarea [(ngModel)]="goal.description" name="description" class="form-control"></textarea>
         <button type="submit" class="btn btn-primary btn-xs">Save</button>
         <button type="button" class="btn btn-default btn-xs" (click)="cancel()">Cancel</button>
     </form>

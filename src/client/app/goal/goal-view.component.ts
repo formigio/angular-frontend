@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GoalService, Goal } from './index';
+import { GoalService, Goal, GoalStruct } from './index';
 import { MessageService, HelperService } from '../core/index';
 
 /**
@@ -18,12 +18,7 @@ export class GoalViewComponent implements OnInit {
 
   errorMessage: string;
   currentResponse: {};
-  goal: Goal = {
-    id: '',
-    title: '',
-    team_id: '',
-    changed: false
-  };
+  goal: Goal = GoalStruct;
 
   /**
    * Creates an instance of the GoalViewComponent with the injected

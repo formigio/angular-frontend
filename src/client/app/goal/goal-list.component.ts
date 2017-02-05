@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService, HelperService } from '../core/index';
-import { GoalService, Goal, GoalItemComponent } from './index';
+import { GoalService, Goal, GoalItemComponent, GoalStruct } from './index';
 
 /**
  * This class represents the lazy loaded HomeComponent.
@@ -21,12 +21,7 @@ export class GoalListComponent implements OnInit {
   newAccomplished: string = 'false';
   errorMessage: string;
   goals: Goal[] = [];
-  goal: Goal = {
-    id: '',
-    title: '',
-    team_id: '',
-    changed: false
-  };
+  goal: Goal = GoalStruct;
   team: string = '';
   loading:boolean = true;
 
@@ -89,6 +84,7 @@ export class GoalListComponent implements OnInit {
     this.goals.push(newGoal);
     this.helper.sortBy(this.goals,'title');
     this.goal.title = '';
+    this.goal.description = '';
     return false;
   }
 

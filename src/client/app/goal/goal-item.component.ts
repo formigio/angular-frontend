@@ -18,6 +18,8 @@ export class GoalItemComponent implements OnInit {
   @Input() goal:Goal;
 
   state: string = 'view';
+  showFullDescription: boolean = false;
+  fullDescription: string = '';
 
   /**
    *
@@ -36,6 +38,7 @@ export class GoalItemComponent implements OnInit {
     if(!this.goal.id) {
       this.message.startProcess('create_goal',{goal:this.goal,navigate_to:'/goal/' + this.goal.id});
     }
+    this.setDescription();
   }
 
   edit() {
@@ -50,6 +53,27 @@ export class GoalItemComponent implements OnInit {
     this.state='view';
     this.goal.changed = true;
     this.message.startProcess('goal_save',{goal:this.goal});
+  }
+
+  toggleFullDescription() {
+    if(this.showFullDescription === false) {
+      this.showFullDescription = true;
+    } else {
+      this.showFullDescription = false;
+    }
+    this.setDescription();
+  }
+
+  setDescription() {
+    if(!this.goal.description) {
+      this.fullDescription = '';
+    }
+    let parts = this.goal.description.split('\n');
+    if(this.showFullDescription) {
+      this.fullDescription = parts.join('<br>');
+    } else {
+      this.fullDescription = parts.shift();
+    }
   }
 
   /**

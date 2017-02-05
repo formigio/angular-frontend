@@ -137,8 +137,7 @@ export class GoalService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(goal:Goal): Promise<any> {
-    goal.title = this.htmlEntities(goal.title);
-    let body = {title:goal.title,team_id:goal.team_id};
+    let body = {title:goal.title,description:goal.description,team_id:goal.team_id};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
@@ -167,8 +166,7 @@ export class GoalService {
    * @return {string[]} The Observable for the HTTP request.
    */
   put(goal:Goal): Promise<any> {
-    goal.title = this.htmlEntities(goal.title);
-    let body = {title:goal.title};
+    let body = {title:goal.title,description:goal.description};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
@@ -176,25 +174,6 @@ export class GoalService {
       sessionToken: user.credentials.sessionToken
     });
     return api.put('/goals/{id}',{path:{id:goal.id},headers:{'x-identity-id':user.worker.identity}},body);
-  }
-
-  /**
-    * Handle HTTP error
-    */
-  // private handleError (error: any) {
-  //   // In a real world app, we might use a remote logging infrastructure
-  //   // We'd also dig deeper into the error to get a better message
-  //   // let errMsg = (error.message) ? error.message :
-  //   //   error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-  //   console.error(error); // log to console instead
-  //   return Observable.throw(error);
-  // }
-
-  /**
-    * Handle Convert HTML entities
-    */
-  private htmlEntities(str:string): string {
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
 }
