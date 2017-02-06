@@ -3,6 +3,7 @@ export const GoalStruct = {
   title: '',
   description: '',
   team_id: '',
+  accomplished: false,
   changed: false
 };
 
@@ -12,6 +13,7 @@ export class Goal {
     public id: string,
     public title: string,
     public description: string,
-    public team_id: string
+    public team_id: string,
+    public accomplished: boolean
   ) {}
 }

@@ -5,7 +5,7 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HelperService } from '../core/index';
 // import { Config } from '../shared/index';
 import { User } from '../user/index';
-import { Goal } from './index';
+import { Goal, GoalStruct } from './index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -19,7 +19,7 @@ export class GoalService {
   public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
   user: User;
-  goal: Goal;
+  goal: Goal = GoalStruct;
   goals: Goal[] = [];
   instance: string;
 
@@ -174,7 +174,7 @@ export class GoalService {
    * @return {string[]} The Observable for the HTTP request.
    */
   put(goal:Goal): Promise<any> {
-    let body = {title:goal.title,description:goal.description};
+    let body = {title:goal.title,description:goal.description,accomplished:goal.accomplished};
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,

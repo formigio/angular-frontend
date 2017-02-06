@@ -6,6 +6,13 @@
         <button class="btn btn-xs btn-default pull-right" type="button" (click)="edit()">
             <span class="glyphicon glyphicon-edit"></span>
         </button>
+        <button class="btn btn-xs" type="button" (click)="navigateTo(goal)"
+            [class.btn-default]="!goal.accomplished"
+            [class.btn-success]="goal.accomplished">
+            <span class="glyphicon"
+                [class.glyphicon-ok]="goal.accomplished"
+                [class.glyphicon-unchecked]="!goal.accomplished"></span>
+        </button>
         <strong (click)="navigateTo(goal)">{{goal.title}}</strong>
         <small *ngIf="!showFullDescription" (click)="toggleFullDescription()" [innerHtml]="fullDescription"></small>
         <div class="well well-sm" *ngIf="showFullDescription">

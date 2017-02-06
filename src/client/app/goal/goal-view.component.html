@@ -8,7 +8,15 @@
             Edit Goal
         </button>
         <small>Goal ID: {{goal.id}} <span *ngIf="goal.changed" class="label label-info">Saving...</span></small>
-        <h2><span [innerHtml]="goal.title"></span></h2>
+        <h2>
+            <button class="btn" type="button" (click)="accomplish()"
+                [class.btn-default]="!goal.accomplished"
+                [class.btn-success]="goal.accomplished">
+                <span class="glyphicon"
+                    [class.glyphicon-ok]="goal.accomplished"
+                    [class.glyphicon-unchecked]="!goal.accomplished"></span>
+            </button>
+            <span [innerHtml]="goal.title"></span></h2>
         <div *ngIf="fullDescription" class="well" [innerHtml]="fullDescription"></div>
       </div>
       <div *ngIf="showForm">

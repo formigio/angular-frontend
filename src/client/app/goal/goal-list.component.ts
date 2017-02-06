@@ -21,9 +21,12 @@ export class GoalListComponent implements OnInit {
   newAccomplished: string = 'false';
   errorMessage: string;
   goals: Goal[] = [];
+  activeGoals: Goal[] = [];
+  accomplishCount: number;
   goal: Goal = GoalStruct;
   team: string = '';
   loading:boolean = true;
+  showAccomplished:boolean = false;
 
   /**
    * Creates an instance of the HomeComponent with the injected
@@ -49,14 +52,7 @@ export class GoalListComponent implements OnInit {
       goals => {
         this.loading = false;
         this.goals = <Goal[]>goals;
-        let newgoals:Goal[] = [];
-        let allgoals:Goal[] = this.goals;
-        allgoals.forEach((goal) => {
-          if(goal.title) {
-            newgoals.push(goal);
-          }
-        });
-        this.goals = newgoals;
+        this.processGoals();
       }
     );
     this.route.params.subscribe(params => {
@@ -65,10 +61,38 @@ export class GoalListComponent implements OnInit {
     });
   }
 
+  processGoals() {
+    this.accomplishCount = 0;
+    this.activeGoals = [];
+    let newgoals:Goal[] = [];
+    let allgoals:Goal[] = this.goals;
+    allgoals.forEach((goal) => {
+      if(goal.title) {
+        newgoals.push(goal);
+      }
+      if(!goal.accomplished || this.showAccomplished === true) {
+        this.activeGoals.push(goal);
+      }
+      if(goal.accomplished) {
+        this.accomplishCount++;
+      }
+    });
+    this.goals = newgoals;
+  }
+
   refreshGoals() {
     this.loading = true;
     this.goals = [];
     this.message.startProcess('load_goal_list',{team:this.team});
+  }
+
+  toggleAccomplished() {
+    if(this.showAccomplished) {
+      this.showAccomplished = false;
+    } else {
+      this.showAccomplished = true;
+    }
+    this.processGoals();
   }
 
   /**
@@ -76,12 +100,12 @@ export class GoalListComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   addGoal(): boolean {
-    // let uuid = Math.random().toString().split('.').pop();
     this.goal.id = '';
     this.goal.changed = true;
     this.goal.team_id = this.team;
     let newGoal: Goal = JSON.parse(JSON.stringify(this.goal));
     this.goals.push(newGoal);
+    this.activeGoals.push(newGoal);
     this.helper.sortBy(this.goals,'title');
     this.goal.title = '';
     this.goal.description = '';
