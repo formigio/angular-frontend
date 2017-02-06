@@ -82,7 +82,7 @@ export class GoalListComponent implements OnInit {
 
   refreshGoals() {
     this.loading = true;
-    this.goals = [];
+    this.activeGoals = [];
     this.message.startProcess('load_goal_list',{team:this.team});
   }
 
