@@ -1186,7 +1186,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'There has been a problem with Your Formigio ID, please contact support.',
+          message:'We can\'t identify who you are, exactly. So, we might need to get you logged in or registered.',
           context:{params:{}}
         });
       } else {
