@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService, HelperService } from '../../core/index';
-import { User, UserService } from '../../user/index';
+import { User, UserService, UserStruct } from '../../user/index';
 
 /**
  * This class represents the navigation bar component.
@@ -15,7 +15,7 @@ import { User, UserService } from '../../user/index';
 export class NavbarComponent implements OnInit {
 
   open:boolean = false;
-  public user:User;
+  public user:User = UserStruct;
 
   constructor(
     public message:MessageService,
@@ -29,7 +29,6 @@ export class NavbarComponent implements OnInit {
     this.userService.getItemSubscription().subscribe(
       user => this.user = user
     );
-    this.message.startProcess('user_load_for_app',{});
   }
 
   toggle() {

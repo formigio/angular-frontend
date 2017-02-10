@@ -140,6 +140,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'loginCognitoUser',
             {user:'User'}
         ),
+        confirm_cognito_user_complete: new ProcessTask(
+            'login_cognito_user',
+            'confirm_cognito_user_complete',
+            'Login User',
+            'loginCognitoUser',
+            {user:'User'}
+        ),
         user_login_google_init: new ProcessTask(
             'login_google_user',
             'user_login_google_init',
@@ -200,6 +207,15 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'login_cognito_user_complete',
           'Store Authenticated User',
           'storeUser',
+          {
+            user:'User'
+          }
+        ),
+        store_congito_user_complete: new ProcessTask(
+          'fetch_user_worker',
+          'store_congito_user_complete',
+          'Store Authenticated User',
+          'fetchUserWorker',
           {
             user:'User'
           }
@@ -505,6 +521,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           }
         );
       }
+
+      // Start User Process
+      this.message.startProcess('user_load_for_app',{});
   }
 
   // public getHash(control_uuid: string, params: any): Observable<any> {
@@ -797,7 +816,8 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             });
             return;
           } else {
-          let cognitoUser = result.user;
+            this.message.addStickyMessage('Please check your email and enter the confirmation code below.','success');
+            let cognitoUser = result.user;
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
@@ -1207,11 +1227,8 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public logoutUser(control_uuid: string, params: any): Observable<any> {
-    let user: User;
     let obs = new Observable((observer:any) => {
       this.service.logout();
-      this.service.publishUser(user);
-      this.message.startProcess('navigate_to',{navigate_to:'/'});
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService } from '../core/index';
+import { MessageService, HelperService } from '../core/index';
 import { User, UserStruct, UserService } from '../user/index';
 
 /**
@@ -25,13 +25,17 @@ export class LoginComponent implements OnInit {
 
   constructor(
     public service:UserService,
-    public message:MessageService
-  ) { }
+    public message:MessageService,
+    public helper:HelperService
+  ) {
+    this.service = this.helper.getServiceInstance(this.service,'UserService');
+
+  }
 
   ngOnInit() {
-    if(this.loggedin()) {
-      this.user = this.service.retrieveUser();
-    }
+    this.service.getItemSubscription().subscribe(
+      user => this.user = user
+    );
   }
 
   login() {
@@ -49,7 +53,6 @@ export class LoginComponent implements OnInit {
 
   confirm() {
     this.message.startProcess('user_confirm',{user:this.user});
-    console.log(this.user);
   }
 
   toggleState() {
@@ -58,6 +61,7 @@ export class LoginComponent implements OnInit {
     } else {
       this.state = 'new';
     }
+    this.confirmForm = false;
   }
 
   loggedin(): boolean {

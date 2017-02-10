@@ -14,7 +14,7 @@ export class UserService {
     errorMsg: string = '';
     successMsg: string = '';
     response: User;
-    user: User = UserStruct;
+    user: User = JSON.parse(JSON.stringify(UserStruct));
 
     public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
@@ -70,7 +70,9 @@ export class UserService {
     }
 
     logout() {
-        localStorage.removeItem('user');
+        let user:User = UserStruct;
+        console.log(user);
+        this.storeUser(user);
     }
 
     /**

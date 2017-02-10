@@ -1,53 +1,66 @@
 <div class="container">
   <div class="row" *ngIf="loggedin()===false">
     <div class="col-md-12">
+      <h2>Login / Sign Up</h2>
+      <button type="button" class="btn btn-xs btn-default" *ngIf="provider!==''" (click)="setProvider('')">
+        <span>&lt; Back to Providers</span>
+      </button>
+
       <div class="panel panel-default">
         <div class="panel-heading">
 
             <form class="form-inline" *ngIf="provider===''">
-              <button type="button" class="btn" (click)="setProvider('google')">
+              <h4>Formigio Supports Google and Email/Password Identities</h4>
+              <button type="button" class="btn btn-default" (click)="setProvider('google')">
                 <span>Use Google</span>
               </button>
-              <button type="button" class="btn" (click)="setProvider('cognito')">
-                <span>Use User/Password</span>
+              <button type="button" class="btn btn-default" (click)="setProvider('cognito')">
+                <span>Use Email/Password</span>
               </button>
             </form>
 
             <form class="form-inline" *ngIf="provider==='google'">
+              <h4>Use Google Login Button to Connect Google Account</h4>
               <google-button></google-button>
             </form>
 
             <form class="form-inline" *ngIf="provider==='cognito'">
-              <button type="button" class="btn" [class.btn-success]="state==='registered'"
-                [class.btn-default]="state==='new'" (click)="toggleState()">
-                <span>Sign In</span>
-              </button>
-              <button type="button" class="btn" [class.btn-success]="state==='new'"
-                [class.btn-default]="state==='registered'" (click)="toggleState()">
-                <span>Sign Up</span>
-              </button>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn" [class.btn-success]="state==='registered'"
+                  [class.btn-default]="state==='new'" (click)="toggleState()">
+                  <span>Sign In</span>
+                </button>
+                <button type="button" class="btn" [class.btn-success]="state==='new'"
+                  [class.btn-default]="state==='registered'" (click)="toggleState()">
+                  <span>Sign Up</span>
+                </button>
+              </div>
             </form>
 
         </div>
         <div class="panel-body" *ngIf="provider==='cognito'">
             <div class="well well-lg">
               <form (submit)="login()" class="form-inline" *ngIf="state==='registered'">
+                <h4>Enter Email and Password to Login</h4>
                 <div class="form-group">
                   <input [(ngModel)]="user.email" type="email" name="email" class="form-control" placeholder="Email">
                   <input [(ngModel)]="user.password" type="password" name="password" class="form-control" placeholder="Password">
-                  <button type="submit" class="btn btn-primary">Login</button>
+                  <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
               </form>
 
               <form (submit)="register()" class="form-inline" *ngIf="state==='new'">
+                <h4>Enter Email and Password - Sign Up - Step 1</h4>
                 <div class="form-group">
                   <input [(ngModel)]="user.email" type="email" name="email" class="form-control" placeholder="Email">
                   <input [(ngModel)]="user.password" type="password" name="password" class="form-control" placeholder="Password">
-                  <button type="submit" class="btn btn-primary">Register</button>
+                  <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
+                <p>Upon submission, an email will be sent to the email you provide. You will need to input the Confirmation Code received in the next step.</p>
               </form>
 
               <form (submit)="confirm()" class="form-inline" *ngIf="confirmForm===true">
+                <h4>Enter Confirmation Code - Sign Up - Step 2</h4>
                 <div class="form-group">
                   <input [(ngModel)]="user.confirm_code" type="text" name="confirm_code" class="form-control" placeholder="Confirmation Code">
                   <button type="submit" class="btn btn-primary">Submit</button>
@@ -60,10 +73,10 @@
   </div>
   <div class="row" *ngIf="loggedin()===true">
     <div class="col-md-12">
-      <p>Welcome {{user.email}}</p>
       <button type="button" (click)="logout()" class="btn btn-xs btn-danger pull-right">
         <span>Logout</span>
       </button>
+      <h4 *ngIf="user.worker.id">Welcome {{user.worker.name}}, we're glad to see you!</h4>
     </div>
   </div>
 </div>
