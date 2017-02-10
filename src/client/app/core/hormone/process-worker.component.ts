@@ -281,6 +281,13 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
           'End Process',
           'endProcess',
           {}
+      ),
+      redirect_to_register_complete: new ProcessTask(
+          'end_process',
+          'redirect_to_register_complete',
+          'End Process',
+          'endProcess',
+          {}
       )
   };
 
@@ -315,9 +322,9 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
       }
 
       // Run Timed Events
-      setInterval(() => {
-        this.message.startProcess('process_every_minute',{});
-      }, 60000);
+    //   setInterval(() => {
+    //     this.message.startProcess('process_every_minute',{});
+    //   }, 60000);
   }
 
   public endProcess(control_uuid: string, params: any): Observable<any> {

@@ -105,6 +105,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'storeUser',
             {user:'User'}
         ),
+        store_user_record_after_update_complete: new ProcessTask(
+            'redirect_after_user_update',
+            'store_user_record_after_update_complete',
+            'Notify User They are Good To go, and Navigate them',
+            'notifyNewUser',
+            {user:'User'}
+        ),
         start_google_api_on_load_complete: new ProcessTask(
             'load_user_for_app',
             'start_google_api_on_load_complete',
@@ -450,6 +457,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Forced Logout after Google Token Refresh Fails',
             'logoutUser',
             {}
+        ),
+        fetch_user_worker_error: new ProcessTask(
+            'redirect_to_register',
+            'fetch_user_worker_error',
+            'Direct the user to Registration, since there is no worker',
+            'registerUser',
+            {}
         )
         // ,
         // fetch_teams_complete: new ProcessTask(
@@ -586,16 +600,44 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   //   return obs;
   // }
 
+  public notifyNewUser(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.message.addStickyMessage('Welcome to Formigio, yur all set. ;)','success');
+      this.message.startProcess('navigate_to',{navigate_to:'/teams'});
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message:'Ready? Begin.',
+        context:{params:{user:user}}
+      });
+      observer.complete();
+    });
+    return obs;
+  }
+
+  public registerUser(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.message.addStickyMessage('Please Register to Continue.','warning');
+      this.message.startProcess('navigate_to',{navigate_to:'/register'});
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message:'Registration Maybe Required.',
+        context:{params:{user:user}}
+      });
+      observer.complete();
+    });
+    return obs;
+  }
+
   public fetchUserWorker(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.get()
         .then((response:any) => {
-          if(response.data.length>0) {
-            user.worker = response.data.pop();
-          } else {
-            user.worker.id = '';
-          }
+          user.worker = response.data;
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
@@ -1121,11 +1163,10 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       }
 
       if(!user.worker.id) {
-        this.message.startProcess('navigate_to',{navigate_to:'/register'});
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'Looks like you might be new.',
+          message:'There has been a problem with Your Formigio ID, please contact support.',
           context:{params:{}}
         });
       } else {

@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-xs-12">
-        <div>
+        <div *ngIf="state==='view'">
+            <button *ngIf="editable===true" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
             <div style="display:inline-block" class="dropdown" [class.open]="showMenu">
                 <button id="taskActionMenu_{{task.id}}" *ngIf="editable===true" (click)="toggleMenu()"
                     [class.btn-success]="task.work_status=='completed'"
@@ -37,12 +38,9 @@
                     </li>
                 </ul>
             </div>
-            <div style="display:inline-block;" *ngIf="state==='view'">
-                <span>{{task.title}}</span>
-                <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
-                <task-commit-form *ngIf="!task.commitment_worker_id" [task]="task"></task-commit-form>
-            </div>
-            <button *ngIf="editable===true" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+            <span>{{task.title}}</span>
+            <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+            <task-commit-form *ngIf="!task.commitment_worker_id" [task]="task"></task-commit-form>
             <task-commit-info *ngIf="task.commitment_worker_id" [task]="task"></task-commit-info>
         </div>
         <form class="form" (submit)="persistTask()" *ngIf="state==='edit'">

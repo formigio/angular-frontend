@@ -1,4 +1,5 @@
 <div *ngIf="commitment">
+    <button *ngIf="showDelete" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteCommitment()"><span class="glyphicon glyphicon-remove-sign"></span></button>
     <div style="display:inline-block" class="dropdown" [class.open]="showMenu">
         <button id="taskActionMenu_{{commitment.task.id}}" (click)="toggleMenu()"
             [class.btn-success]="commitment.task.work_status=='completed'"
@@ -37,7 +38,6 @@
     </div>
 
     <strong>{{commitment.task.title}}</strong>
-    <button *ngIf="showDelete" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteCommitment()"><span class="glyphicon glyphicon-remove-sign"></span></button>
     <div>
         <button class="btn btn-link btn-xs" (click)="navigateToTeam()">{{commitment.team.title}}</button>
         <span class="small">/</span>

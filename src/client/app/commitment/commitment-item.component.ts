@@ -84,6 +84,16 @@ export class CommitmentItemComponent implements OnInit {
     later.setHours(later.getHours() + 1);
     this.starts.push({value:later.toISOString(),label:'In an Hour ('+later.toLocaleTimeString()+')'});
 
+    later = new Date();
+    later.setHours(14);
+    later.setMinutes(0);
+    this.starts.push({value:later.toISOString(),label:'This Afternoon ('+later.toLocaleTimeString()+')'});
+
+    later = new Date();
+    later.setHours(17);
+    later.setMinutes(0);
+    this.starts.push({value:later.toISOString(),label:'This Evening ('+later.toLocaleTimeString()+')'});
+
     let tomorrow = new Date();
     tomorrow.setDate(later.getDate() + 1);
     tomorrow.setHours(8);

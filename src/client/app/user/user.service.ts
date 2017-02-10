@@ -43,16 +43,17 @@ export class UserService {
             }
         });
         this.auth2.currentUser.listen((googleUser:any) => {
+            if(this.auth2.isSignedIn.get()) {
+                this.user.email = googleUser.getBasicProfile().getEmail();
+                this.user.identity_provider = 'google';
+                this.user.login_token = googleUser.getAuthResponse().id_token;
+                this.user.login_token_expires = googleUser.getAuthResponse().expires_at;
 
-            this.user.email = googleUser.getBasicProfile().getEmail();
-            this.user.identity_provider = 'google';
-            this.user.login_token = googleUser.getAuthResponse().id_token;
-            this.user.login_token_expires = googleUser.getAuthResponse().expires_at;
-
-            this.message.startProcess('user_login_google',{
-                token: this.user.login_token,
-                user: this.user
-            });
+                this.message.startProcess('user_login_google',{
+                    token: this.user.login_token,
+                    user: this.user
+                });
+            }
         });
     }
 
@@ -83,7 +84,7 @@ export class UserService {
             secretKey: user.credentials.secretKey,
             sessionToken: user.credentials.sessionToken
         });
-        return api.get('/workers',{params:{identity:user.worker.identity},headers:{'x-identity-id':user.worker.identity}});
+        return api.get('/workers/{identity}',{path:{identity:user.worker.identity},headers:{'x-identity-id':user.worker.identity}});
     }
 
     /**
