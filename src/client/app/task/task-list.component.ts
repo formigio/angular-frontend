@@ -92,7 +92,7 @@ export class TaskListComponent implements OnInit {
   }
 
   watchInput(e:any):any {
-    if(e.keyCode == 13 && !e.shiftKey) {
+    if(e.keyCode === 13 && !e.shiftKey) {
       this.addTask();
       return false;
     }
