@@ -53,3 +53,17 @@ export class UserWorker {
         public identity: string
     ) { }
 }
+
+export class UserModel {
+    state() {
+        // Unrecognized = No User Record in Local Storage
+        // - Redirect to Login/Register Flow
+        // Logged Out = User Record in Local Storage has No credentials
+        // - Attempt Auth Flow
+        // Authorized = User Record in Local Storage has credentials
+    }
+
+    loginflow() {
+        //
+    }
+}
