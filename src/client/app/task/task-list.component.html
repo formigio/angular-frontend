@@ -13,8 +13,9 @@
           <button class="btn btn-xs btn-default" type="button">
               <span class="glyphicon glyphicon-plus"></span>
           </button>
-          <textarea [(ngModel)]="task.title" name="newTaskTitle" class="form-control"
-              placeholder="Enter Tasks, Will create a task for each new line" ></textarea>
+          <textarea [(ngModel)]="task.title" name="task.title"
+            class="form-control" (keydown)="watchInput($event)"
+            placeholder="Enter Tasks, Shift+Enter for new line"></textarea>
           <button type="submit" class="btn btn-primary">Add</button>
           <button *ngIf="tasks.length>0" type="button" class="btn btn-secondary" (click)="refreshTasks()">
             <span class="glyphicon glyphicon-refresh" [class.spinner]="loading"></span></button>

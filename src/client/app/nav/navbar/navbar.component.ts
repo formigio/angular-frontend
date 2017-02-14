@@ -46,5 +46,6 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.message.startProcess('user_logout',{});
     this.close();
+    this.message.startProcess('navigate_to',{navigate_to:'/'});
   }
 }

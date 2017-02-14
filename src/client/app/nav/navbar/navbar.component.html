@@ -19,9 +19,9 @@
           [class.hidden-xs]="open===false"
           [class.collapse]="open===false"
           [class.navbar-collapse]="open===false">
-          <ul class="nav navbar-nav">
-            <li><a [routerLink]="['/teams']" (click)="close()" >Teams</a></li>
-            <li><a [routerLink]="['/commitments']" (click)="close()" >Commitments</a></li>
+          <ul class="nav navbar-nav" >
+            <li><a [routerLink]="['/teams']" (click)="close()" *ngIf="user.email">Teams</a></li>
+            <li><a [routerLink]="['/commitments']" (click)="close()" *ngIf="user.email">Commitments</a></li>
             <li><a [routerLink]="['/login']" (click)="close()" *ngIf="!user.email">Login</a></li>
             <li><a (click)="logout()" *ngIf="user.email">Logout ({{user.email}})</a></li>
           </ul>
