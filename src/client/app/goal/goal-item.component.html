@@ -13,8 +13,8 @@
                 [class.glyphicon-ok]="goal.accomplished"
                 [class.glyphicon-unchecked]="!goal.accomplished"></span>
         </button>
-        <strong (click)="navigateTo(goal)">{{goal.title}}</strong>
-        <small *ngIf="!showFullDescription" (click)="toggleFullDescription()" [innerHtml]="fullDescription"></small>
+        <strong (click)="navigateTo(goal)" class="clickable">{{goal.title}}</strong>
+        <small *ngIf="!showFullDescription" class="clickable" (click)="toggleFullDescription()" [innerHtml]="fullDescription"></small>
         <div class="well well-sm" *ngIf="showFullDescription">
             <button type="button" class="btn btn-xs btn-link pull-right" (click)="toggleFullDescription()">
                 <span class="glyphicon glyphicon-remove"></span>

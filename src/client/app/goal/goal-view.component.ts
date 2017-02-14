@@ -97,4 +97,9 @@ export class GoalViewComponent implements OnInit {
     return false;
   }
 
+  navigateToTeams(): boolean {
+    this.message.startProcess('navigate_to',{navigate_to:'/teams/'});
+    return false;
+  }
+
 }

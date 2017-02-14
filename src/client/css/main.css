@@ -83,5 +83,13 @@ input[type="color"] {
 }
 
 .dropdown-menu>li>button {
-    margin: 3px 20px;
+  margin: 3px 20px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable span:hover, span.clickable:hover, strong.clickable:hover {
+  color: #555;
 }

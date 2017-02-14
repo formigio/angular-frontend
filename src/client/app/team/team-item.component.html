@@ -1,7 +1,7 @@
 <div class="row" *ngIf="team.title">
     <div class="col-xs-12">
         <div *ngIf="state==='view'">
-            <span [innerHTML]="team.title" (click)="navigateTo(team)"></span>
+            <span (click)="navigateTo(team)" class="clickable">{{team.title}}</span>
             <button type="button" (click)="edit()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
             <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTeam(team)"><span class="glyphicon glyphicon-remove-sign"></span></button>
         </div>

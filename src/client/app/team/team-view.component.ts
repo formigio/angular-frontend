@@ -49,4 +49,9 @@ export class TeamViewComponent implements OnInit {
     });
   }
 
+  navigate(route:string) {
+    this.message.startProcess('navigate_to',{navigate_to:route});
+    return false;
+  }
+
 }

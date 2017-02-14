@@ -1,13 +1,11 @@
 <div class="row">
   <div class="col-xs-12" *ngIf="goal">
-      <div *ngIf="!showForm">
-        <button type="button" name="back" class="btn btn-xs btn-default" (click)="navigateToTeam()">
-            <span>&lt; Back to Team</span>
-        </button>
-        <button type="button" class="btn btn-xs btn-default pull-right" (click)="edit()">
-            Edit Goal
-        </button>
-        <small>Goal ID: {{goal.id}} <span *ngIf="goal.changed" class="label label-info">Saving...</span></small>
+    <ol class="breadcrumb">
+      <li><a href="#" (click)="navigateToTeams()">Teams</a></li>
+      <li><a href="#" (click)="navigateToTeam()">Team</a></li>
+      <li class="active">Goal: {{goal.id}} <span *ngIf="goal.changed" class="label label-info">Saving...</span></li>
+    </ol>
+    <div *ngIf="!showForm">
         <h2>
             <button class="btn" type="button" (click)="accomplish()"
                 [class.btn-default]="!goal.accomplished"
@@ -18,8 +16,8 @@
             </button>
             <span [innerHtml]="goal.title"></span></h2>
         <div *ngIf="fullDescription" class="well" [innerHtml]="fullDescription"></div>
-      </div>
-      <div *ngIf="showForm">
+    </div>
+    <div *ngIf="showForm">
         <form class="form" (submit)="persistGoal()">
             <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteGoal(goal)">Delete Goal</button>
             <h4>Goal Edit</h4>
@@ -30,6 +28,6 @@
             <button type="submit" class="btn btn-primary btn-xs">Save</button>
             <button type="button" class="btn btn-default btn-xs" (click)="cancel()">Cancel</button>
         </form>
-      </div>
+    </div>
   </div>
 </div>
