@@ -69,7 +69,10 @@ export class CommitmentListComponent implements OnInit {
         this.dailyCommittedMinutes += Number(commitment.promised_minutes);
       }
 
-      if(commitment.task.work_status === 'completed' && this.showCompleted === false) {
+      // Check if the Commitment Date is the same as the start date, if not remove from the list
+      if(this.service.getStartDate().toLocaleDateString() !== promised.toLocaleDateString()) {
+        return;
+      } else if(commitment.task.work_status === 'completed' && this.showCompleted === false) {
         this.completedCommitments.push(commitment);
       } else if(promised > future && this.showFuture === false && this.service.getStartDate() < now) {
         this.futureCommitments.push(commitment);
