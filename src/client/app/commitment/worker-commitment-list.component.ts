@@ -95,6 +95,11 @@ export class WorkerCommitmentListComponent implements OnInit {
     let timestring = '';
     if(hours>0) timestring += hours + ' hrs ';
     if(mins>0) timestring += mins + ' mins';
+    if(mins===0 && hours===0) {
+      timestring = 'no';
+    } else {
+      timestring += 'of';
+    }
     return timestring;
   }
 
