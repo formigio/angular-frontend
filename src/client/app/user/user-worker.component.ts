@@ -73,10 +73,23 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'The Process Used to Control the User Updates',
             new ProcessContext,
             ''
+        ),
+        user_test_username: new ProcessRoutine(
+            'user_test_username',
+            'The Process Used to Control the Testing of Usernames',
+            new ProcessContext,
+            ''
         )
     };
 
     public tasks: {} = {
+        user_test_username_init: new ProcessTask(
+            'test_username',
+            'user_test_username_init',
+            'Test Username',
+            'testUsername',
+            {}
+        ),
         user_load_for_app_init: new ProcessTask(
             'start_google_api_on_load',
             'user_load_for_app_init',
@@ -418,9 +431,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'getUser',
           {}
         ),
-        load_commitments_init: new ProcessTask(
+        commitment_load_commitments_init: new ProcessTask(
           'get_user_for_load_commitments',
-          'load_commitments_init',
+          'commitment_load_commitments_init',
           'Get User for Process Context',
           'getUser',
           {}
@@ -463,6 +476,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         commitment_save_init: new ProcessTask(
           'get_user_for_commitment_save',
           'commitment_save_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
+        ),
+        commitment_load_worker_commitments_init: new ProcessTask(
+          'get_user_for_load_worker_commitments',
+          'commitment_load_worker_commitments_init',
           'Get User for Process Context',
           'getUser',
           {}
@@ -647,6 +667,35 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         context:{params:{user:user}}
       });
       observer.complete();
+    });
+    return obs;
+  }
+
+  public testUsername(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let validUsername: boolean = false;
+    let obs = new Observable((observer:any) => {
+      // Return Complete if Username Doesn't Exist
+      this.service.count(user.worker.username)
+        .then((response:any) => {
+          validUsername = !Boolean(response.data.worker_count);
+          this.service.publishUsername(validUsername);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Testing Username',
+            context:{params:{user:user}}
+          });
+          observer.complete();
+        }).catch((response:any) => {
+          console.log(response);
+          observer.error({
+           control_uuid: control_uuid,
+           outcome: 'error',
+           message:'System Error.',
+           context:{params:{}}
+          });
+        });
     });
     return obs;
   }

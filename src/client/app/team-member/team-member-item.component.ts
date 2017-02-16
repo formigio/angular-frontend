@@ -36,4 +36,9 @@ export class TeamMemberItemComponent {
     this.message.startProcess('teammember_delete',{teammember:teammember});
     return false;
   }
+
+  navigateToCommitments() {
+    this.message.startProcess('navigate_to',{navigate_to:'/commitments/' + this.member.id});
+  }
+
 }

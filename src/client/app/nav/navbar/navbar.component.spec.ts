@@ -50,7 +50,7 @@ export function main() {
             let links = linkDes
                 .map(de => de.injector.get(RouterLinkStubDirective) as RouterLinkStubDirective);
 
-            expect(links.length).toBe(3, 'should have 3 links');
+            expect(links.length).toBe(1, 'should have 1 login link');
           });
         }));
 

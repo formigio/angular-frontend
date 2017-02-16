@@ -4,12 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 
-import { CommitmentItemComponent, CommitmentListComponent } from './index';
+import {
+    CommitmentItemComponent,
+    CommitmentListComponent,
+    WorkerCommitmentItemComponent,
+    WorkerCommitmentListComponent
+} from './index';
 
 @NgModule({
     imports: [CommonModule, FormsModule, SharedModule, CoreModule],
-    declarations: [CommitmentItemComponent, CommitmentListComponent],
-    exports: [CommitmentListComponent],
+    declarations: [
+        CommitmentItemComponent,
+        CommitmentListComponent,
+        WorkerCommitmentItemComponent,
+        WorkerCommitmentListComponent
+    ],
+    exports: [CommitmentListComponent, WorkerCommitmentListComponent],
     providers: []
 })
 export class CommitmentModule {}

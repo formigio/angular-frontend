@@ -1,0 +1,34 @@
+<div *ngIf="commitment">
+    <button *ngIf="showDelete" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteCommitment()"><span class="glyphicon glyphicon-remove-sign"></span></button>
+    <div style="display:inline-block" class="dropdown">
+        <button id="taskActionMenu_{{commitment.task.id}}"
+            [class.btn-success]="commitment.task.work_status=='completed'"
+            [class.btn-primary]="commitment.task.work_status=='started'"
+            [class.btn-danger]="commitment.task.work_status=='blocked'"
+            [class.btn-warning]="commitment.task.work_status=='paused'"
+            [class.btn-default]="commitment.task.work_status!='completed'"
+            name="complete" class="btn btn-xs dropdown-toggle"
+            data-toggle="dropdown" type="button">
+            <span
+                [class.glyphicon-minus]="commitment.task.work_status=='notstarted' && !commitment.task.commitment_promised_start"
+                [class.glyphicon-calendar]="commitment.task.work_status=='notstarted' && commitment.task.commitment_promised_start"
+                [class.glyphicon-cog.spinner]="commitment.task.work_status=='started'"
+                [class.spinner]="commitment.task.work_status=='started'"
+                [class.glyphicon-pause]="commitment.task.work_status=='paused'"
+                [class.glyphicon-warning-sign]="commitment.task.work_status=='blocked'"
+                [class.glyphicon-ok]="commitment.task.work_status=='completed'"
+                class="glyphicon"></span>
+        </button>
+    </div>
+
+    <strong>{{commitment.task.title}}</strong>
+
+    <div>
+        <button class="btn btn-link btn-xs" (click)="navigateToTeam()">{{commitment.team.title}}</button>
+        <span class="small">/</span>
+        <button class="btn btn-link btn-xs" (click)="navigateToGoal()">{{commitment.goal.title}}</button>
+    </div>
+
+    <p class="small">{{commitment.worker.name}} has committed to spend {{getCommittedTime()}} on this task starting {{commitment.promised_start | date}}</p>
+
+</div>

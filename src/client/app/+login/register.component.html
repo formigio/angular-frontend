@@ -1,7 +1,5 @@
-<div class="container">
   <div class="row">
     <div class="col-md-12">
-
       <div class="panel panel-default">
         <div class="panel-heading">
             <p><b>Welcome to Formigio.</b></p>
@@ -12,15 +10,23 @@
               <form (submit)="save()">
                 <div class="form-group">
                   <p>We just need your name and a username so your teammates can recognize you.</p>
+                  <input (keypress)="clearTested()" (blur)="testUsername()" [(ngModel)]="user.worker.username" type="username" name="username" class="form-control" placeholder="Nickname/Username">
+                  <div class="alert alert-info"
+                    *ngIf="user.worker.username === '' && !validUsername && !usernameTested"
+                    [class.alert-info]="!user.worker.username && !validUsername && !usernameTested">
+                    Username must be unique to all Formigio's users.</div>
+                  <div class="alert alert-danger"
+                    *ngIf="user.worker.username !== '' && !validUsername && usernameTested">
+                    Unfortunately, {{user.worker.username}} is already taken.</div>
+                  <div class="alert alert-success"
+                    *ngIf="user.worker.username !== '' && validUsername && usernameTested">
+                    Username {{user.worker.username}} is good to go.</div>
                   <input [(ngModel)]="user.worker.name" type="name" name="name" class="form-control" placeholder="Full Name">
-                  <input [(ngModel)]="user.worker.username" type="username" name="username" class="form-control" placeholder="Nickname/Username">
-                  <button type="submit" class="btn btn-primary">Save</button>
                 </div>
+                <button *ngIf="validUsername && user.worker.name !== ''" type="submit" class="btn btn-primary">Save</button>
               </form>
             </div>
         </div>
       </div>
-
     </div>
   </div>
-</div>

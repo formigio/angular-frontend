@@ -1,6 +1,7 @@
 import { Task, TaskStruct } from '../task/index';
 import { Goal, GoalStruct } from '../goal/index';
 import { Team, TeamStruct } from '../team/index';
+import { UserWorker, UserWorkerStruct } from '../user/index';
 
 export const CommitmentStruct = {
     id: '',
@@ -11,7 +12,8 @@ export const CommitmentStruct = {
     changed: false,
     task: TaskStruct,
     goal: GoalStruct,
-    team: TeamStruct
+    team: TeamStruct,
+    worker: UserWorkerStruct
   };
 
 export class Commitment {
@@ -24,6 +26,7 @@ export class Commitment {
     public promised_minutes: string,
     public task: Task,
     public goal: Goal,
-    public team: Team
+    public team: Team,
+    public worker: UserWorker
   ) {}
 }

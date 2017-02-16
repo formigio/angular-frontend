@@ -3,4 +3,5 @@
  */
 
 export * from './commitments-page.component';
+export * from './worker-commitments-page.component';
 export * from './commitment-pages.routes';

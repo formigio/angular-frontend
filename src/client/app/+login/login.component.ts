@@ -29,7 +29,6 @@ export class LoginComponent implements OnInit {
     public helper:HelperService
   ) {
     this.service = this.helper.getServiceInstance(this.service,'UserService');
-
   }
 
   ngOnInit() {

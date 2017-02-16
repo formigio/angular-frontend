@@ -6,3 +6,5 @@ export * from './commitment.service';
 export * from './commitment-worker.component';
 export * from './commitment-list.component';
 export * from './commitment-item.component';
+export * from './worker-commitment-list.component';
+export * from './worker-commitment-item.component';

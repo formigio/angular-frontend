@@ -35,8 +35,14 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
             new ProcessContext,
             ''
         ),
-        load_commitments: new ProcessRoutine(
-            'commitment_save',
+        commitment_load_commitments: new ProcessRoutine(
+            'commitment_load_commitments',
+            'The Process Used to Control the Load Commitments',
+            new ProcessContext,
+            ''
+        ),
+        commitment_load_worker_commitments: new ProcessRoutine(
+            'commitment_load_worker_commitments',
             'The Process Used to Control the Load Commitments',
             new ProcessContext,
             ''
@@ -50,6 +56,13 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
+        get_user_for_load_worker_commitments_complete: new ProcessTask(
+            'load_worker_commitments',
+            'get_user_for_load_worker_commitments_complete',
+            'Fetch Worker Commitments',
+            'loadWorkerCommitments',
+            {user:'User',workerId:'string'}
+        ),
         get_user_for_load_commitments_complete: new ProcessTask(
             'load_commitments',
             'get_user_for_load_commitment_list_complete',
@@ -198,7 +211,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Commitment Remove.',
+            message:'Commitment Removed.',
             context:{params:{commitment:commitment}}
           });
           observer.complete();
@@ -228,7 +241,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Commitment Fetched.',
+            message:'Commitments Fetched.',
             context:{params:{commitments:commitments}}
           });
           observer.complete();
@@ -238,7 +251,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured fetching Commitment.'
+            message:'An error has occured fetching Commitments.'
           });
         }
       );
@@ -247,4 +260,34 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
+  public loadWorkerCommitments(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let workerId: string = params.workerId;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.listCommitmentByWorker(workerId).then(
+        response => {
+          let data = response.data;
+          this.service.publishCommitments(data);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Commitments Fetched.',
+            context:{params:{commitments:data.commitments}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'An error has occured fetching Commitments.'
+          });
+        }
+      );
+    });
+
+    return obs;
+  }
 }

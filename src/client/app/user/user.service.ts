@@ -17,6 +17,7 @@ export class UserService {
     user: User = JSON.parse(JSON.stringify(UserStruct));
 
     public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
+    public usernameSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
     public auth2: any;
     public googleUser: any;
@@ -65,8 +66,16 @@ export class UserService {
         return this.itemSubscription;
     }
 
+    getUsernameSubscription(): ReplaySubject<any> {
+        return this.usernameSubscription;
+    }
+
     publishUser(user:User) {
         this.itemSubscription.next(user);
+    }
+
+    publishUsername(usernameValid:boolean) {
+        this.usernameSubscription.next(usernameValid);
     }
 
     logout() {
@@ -87,6 +96,21 @@ export class UserService {
             sessionToken: user.credentials.sessionToken
         });
         return api.get('/workers/{identity}',{path:{identity:user.worker.identity},headers:{'x-identity-id':user.worker.identity}});
+    }
+
+
+    /**
+     * Returns an Observable for the HTTP GET request for the JSON resource.
+     * @return {string[]} The Observable for the HTTP request.
+     */
+    count(username:string): Promise<any> {
+        let user = this.retrieveUser();
+        let api = this.helper.apiFactory.newClient({
+            accessKey: user.credentials.accessKey,
+            secretKey: user.credentials.secretKey,
+            sessionToken: user.credentials.sessionToken
+        });
+        return api.get('/workers/count',{params:{username:username},headers:{'x-identity-id':user.worker.identity}});
     }
 
     /**

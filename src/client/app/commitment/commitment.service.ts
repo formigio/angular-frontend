@@ -39,10 +39,11 @@ export class CommitmentService {
     return this.itemSubscription;
   }
 
-  publishCommitments(commitments:Commitment[]) {
+  publishCommitments(commitmentData:any) {
+    let commitments: Commitment[] = commitmentData.commitments;
     this.helper.sortBy(commitments,'promised_start');
     this.commitments = commitments;
-    this.listSubscription.next(commitments);
+    this.listSubscription.next(commitmentData);
   }
 
   sortCommitments() {
@@ -66,13 +67,16 @@ export class CommitmentService {
 
   publishCommitment(commitmentToPublish:Commitment) {
     let checked:Commitment[] = [];
+    let publishObj:any = {};
+    publishObj.commitments = checked;
     this.commitments.forEach((commitment) => {
       if(commitmentToPublish.id === commitment.id) {
         commitment = commitmentToPublish;
       }
       checked.push(commitment);
       if(checked.length===this.commitments.length) {
-        this.publishCommitments(checked);
+        publishObj.commitments = checked;
+        this.publishCommitments(publishObj);
       }
     });
   }
@@ -127,6 +131,27 @@ export class CommitmentService {
       sessionToken: user.credentials.sessionToken
     });
     return api.get('/commitments/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
+  }
+
+
+  /**
+   * Returns an Observable for the HTTP GET request for the JSON resource.
+   * @return {string[]} The Observable for the HTTP request.
+   */
+  listCommitmentByWorker(worker_id:string): Promise<any> {
+    let start = this.startDate.toISOString();
+    let end = this.getEndDate().toISOString();
+    let user = this.getUser();
+    let api = this.helper.apiFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.get('/commitments/{worker_id}',{
+      path:{worker_id:worker_id},
+      params:{start:start,end:end},
+      headers:{'x-identity-id':user.worker.identity}
+    });
   }
 
 

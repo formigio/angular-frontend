@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MessageService, HelperService } from '../core/index';
 import { CommitmentService, Commitment } from './index';
 
@@ -7,14 +8,16 @@ import { CommitmentService, Commitment } from './index';
  */
 @Component({
   moduleId: module.id,
-  selector: 'commitment-list',
+  selector: 'worker-commitment-list',
   directives: [ ],
-  templateUrl: 'commitment-list.component.html',
+  templateUrl: 'worker-commitment-list.component.html',
   providers: [ CommitmentService ]
 })
 
-export class CommitmentListComponent implements OnInit {
+export class WorkerCommitmentListComponent implements OnInit {
 
+  workerId: string = '';
+  workerName: string = '';
   allCommitments: Commitment[] = [];
   completedCommitments: Commitment[] = [];
   activeCommitments: Commitment[] = [];
@@ -31,6 +34,7 @@ export class CommitmentListComponent implements OnInit {
    */
   constructor(
     protected message: MessageService,
+    protected route: ActivatedRoute,
     protected helper: HelperService,
     protected service: CommitmentService
   ) {
@@ -44,11 +48,14 @@ export class CommitmentListComponent implements OnInit {
     this.service.getListSubscription().subscribe(
       commitments => {
         this.allCommitments = commitments.commitments;
+        this.workerName = commitments.worker.name;
         this.processCommitments();
       }
     );
-
-    this.refreshCommitments();
+    this.route.params.subscribe(params => {
+      this.workerId = (<any>params).workerId;
+      this.refreshCommitments();
+    });
   }
 
   processCommitments() {
@@ -102,7 +109,7 @@ export class CommitmentListComponent implements OnInit {
 
   refreshCommitments() {
     this.loading = true;
-    this.message.startProcess('commitment_load_commitments',{});
+    this.message.startProcess('commitment_load_worker_commitments',{workerId:this.workerId});
   }
 
   incrementDate() {
@@ -127,14 +134,6 @@ export class CommitmentListComponent implements OnInit {
       this.showFuture = true;
     }
     this.processCommitments();
-  }
-
-  toggleDelete() {
-    if(this.showDelete) {
-      this.showDelete = false;
-    } else {
-      this.showDelete = true;
-    }
   }
 
   toggleCompleted() {
