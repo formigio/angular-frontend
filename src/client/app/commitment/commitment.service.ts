@@ -60,30 +60,27 @@ export class CommitmentService {
       }
       checked.push(commitment);
       if(checked.length===this.commitments.length) {
-        this.publishCommitments(newList);
+        this.publishCommitments({commitments:newList});
       }
     });
   }
 
   publishCommitment(commitmentToPublish:Commitment) {
     let checked:Commitment[] = [];
-    let publishObj:any = {};
-    publishObj.commitments = checked;
     this.commitments.forEach((commitment) => {
       if(commitmentToPublish.id === commitment.id) {
         commitment = commitmentToPublish;
       }
       checked.push(commitment);
       if(checked.length===this.commitments.length) {
-        publishObj.commitments = checked;
-        this.publishCommitments(publishObj);
+        this.publishCommitments({commitments:checked});
       }
     });
   }
 
   addCommitment(commitment:Commitment) {
     this.commitments.push(commitment);
-    this.publishCommitments(this.commitments);
+    this.publishCommitments({commitments:this.commitments});
   }
 
   setUser(user:User) {
