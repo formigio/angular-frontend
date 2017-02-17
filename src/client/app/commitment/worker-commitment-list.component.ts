@@ -94,7 +94,7 @@ export class WorkerCommitmentListComponent implements OnInit {
     let mins = this.dailyCommittedMinutes-(hours*60);
     let timestring = '';
     if(hours>0) timestring += hours + ' hrs ';
-    if(mins>0) timestring += mins + ' mins';
+    if(mins>0) timestring += mins + ' mins ';
     if(mins===0 && hours===0) {
       timestring = 'no';
     } else {
