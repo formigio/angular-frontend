@@ -104,7 +104,8 @@ export class WorkerCommitmentListComponent implements OnInit {
   }
 
   getStartDate():string {
-    return this.service.getStartDate().toLocaleDateString('en-US',{ weekday: 'short', month: 'short', day: 'numeric' });
+    return this.service.getStartDate().toLocaleDateString('en-US',{ month: 'short'})
+      + ' ' + this.service.getStartDate().toLocaleDateString('en-US',{ day: 'numeric'});
   }
 
   isStartDateFuture():boolean {
