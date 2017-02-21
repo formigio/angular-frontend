@@ -40,14 +40,9 @@ export class TaskService {
   }
 
   publishTasks(tasks:Task[]) {
-    this.helper.sortBy(tasks,'title');
+    this.helper.sortBy(tasks,'sequence');
     this.tasks = tasks;
     this.listSubscription.next(tasks);
-  }
-
-  sortTasks() {
-    this.helper.sortBy(this.tasks,'title');
-    this.listSubscription.next(this.tasks);
   }
 
   removeTask(id:string) {
@@ -108,7 +103,11 @@ export class TaskService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(task:Task): Promise<any> {
-    let body = {title:task.title,goal_id:task.goal_id};
+    let body = {
+      title:task.title,
+      goal_id:task.goal_id,
+      sequence:task.sequence
+    };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
@@ -139,7 +138,8 @@ export class TaskService {
   put(task:Task): Promise<any> {
     let body = {
       title:task.title,
-      work_status:task.work_status
+      work_status:task.work_status,
+      sequence:task.sequence
     };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({

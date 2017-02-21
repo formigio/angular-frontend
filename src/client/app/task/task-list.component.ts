@@ -26,7 +26,11 @@ export class TaskListComponent implements OnInit {
 
   goal: string;
 
+  maxSequence: number = 0;
+
   loading: boolean = false;
+
+  editing: boolean = false;
 
   /**
    *
@@ -51,9 +55,13 @@ export class TaskListComponent implements OnInit {
         this.tasks = <Task[]>tasks;
         let newtasks:Task[] = [];
         let alltasks:Task[] = tasks;
+        this.maxSequence = 0;
         alltasks.forEach((task) => {
           if(task.title) {
             newtasks.push(task);
+          }
+          if(Number(task.sequence) > this.maxSequence) {
+            this.maxSequence = Number(task.sequence);
           }
         });
         this.tasks = newtasks;
@@ -81,9 +89,11 @@ export class TaskListComponent implements OnInit {
     let taskLines = this.task.title.split('\n');
     taskLines.forEach((taskTitle) => {
       if(taskTitle) {
+        this.maxSequence++;
         newTask = JSON.parse(JSON.stringify(TaskStruct));
         newTask.goal_id = this.task.goal_id;
         newTask.title = taskTitle;
+        newTask.sequence = String(Number(this.maxSequence));
         newTask.changed = true;
         this.tasks.push(newTask);
       } // If Task Title
@@ -95,6 +105,14 @@ export class TaskListComponent implements OnInit {
     if(e.keyCode === 13 && !e.shiftKey) {
       this.addTask();
       return false;
+    }
+  }
+
+  toggleEditing() {
+    if(this.editing) {
+      this.editing = false;
+    } else {
+      this.editing = true;
     }
   }
 

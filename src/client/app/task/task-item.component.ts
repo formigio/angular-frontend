@@ -17,6 +17,7 @@ export class TaskItemComponent implements OnInit {
 
   @Input() task:Task;
   @Input() editable: boolean;
+  @Input() editing: boolean;
 
   state: string = 'view';
   response: any;
@@ -88,6 +89,16 @@ export class TaskItemComponent implements OnInit {
     task.changed = true;
     this.message.startProcess('task_delete',{task:task});
     return false;
+  }
+
+  sequenceUp() {
+    this.task.sequence = String(Number(this.task.sequence)+1);
+    this.persistTask();
+  }
+
+  sequenceDown() {
+    this.task.sequence = String(Number(this.task.sequence)-1);
+    this.persistTask();
   }
 
 }
