@@ -69,6 +69,7 @@ export class TaskItemComponent implements OnInit {
   // }
 
   setStatus(status:string) {
+    this.showMenu = false;
     this.closeForm();
     this.task.work_status = status;
     this.persistTask();
