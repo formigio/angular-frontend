@@ -50,6 +50,24 @@ export class Task {
 
 }
 
+export const TaskTemplateStruct = {
+      id:'',
+      title:'',
+      sequence: '',
+      team_id: '',
+      documentation: ''
+    };
+
+export class TaskTemplate {
+  constructor(
+    public id: string,
+    public title: string,
+    public sequence: string,
+    public team_id: string,
+    public documentation: string
+  ) {}
+}
+
 // Potential Task State Codes
 /*
 

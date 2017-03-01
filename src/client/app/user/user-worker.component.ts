@@ -487,6 +487,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'getUser',
           {}
         ),
+        goal_save_template_init: new ProcessTask(
+          'get_user_for_save_goal_template',
+          'goal_save_template_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
+        ),
         refresh_google_token_error: new ProcessTask(
             'logout_after_google_token_refresh_failed',
             'refresh_google_token_error',
@@ -500,15 +507,42 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             'Direct the user to Registration, since there is no worker',
             'registerUser',
             {}
+        ),
+        goal_template_delete_init: new ProcessTask(
+          'get_user_for_goal_template_delete',
+          'goal_template_delete_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
+        ),
+        goal_template_view_init: new ProcessTask(
+          'get_user_for_goal_template_view',
+          'goal_template_view_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
+        ),
+        goal_template_load_list_init: new ProcessTask(
+          'get_user_for_goal_template_load_list',
+          'goal_template_load_list_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
+        ),
+        goal_template_create_init: new ProcessTask(
+          'get_user_for_goal_template_create',
+          'goal_template_create_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
+        ),
+        goal_template_save_init: new ProcessTask(
+          'get_user_for_goal_template_save',
+          'goal_template_save_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
         )
-        // ,
-        // fetch_teams_complete: new ProcessTask(
-        //     'store_user_identity',
-        //     'fetch_teams_complete',
-        //     'Store the User Identity',
-        //     'storeUserIdentity',
-        //     {user_identity:'string'}
-        // )
     };
 
   constructor(

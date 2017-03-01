@@ -92,6 +92,11 @@ export class GoalViewComponent implements OnInit {
     this.message.startProcess('goal_save',{goal:this.goal});
   }
 
+  saveTemplate() {
+    this.goal.changed = true;
+    this.message.startProcess('goal_save_template_from_goal',{goal:this.goal.id,goal_data:this.goal});
+  }
+
   navigateToTeam(): boolean {
     this.message.startProcess('navigate_to',{navigate_to:'/team/' + this.goal.team_id});
     return false;

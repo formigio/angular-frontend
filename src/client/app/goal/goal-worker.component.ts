@@ -45,6 +45,12 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'The Process Used to Control the Saving of Goals',
           new ProcessContext,
           ''
+      ),
+      goal_save_template_from_goal: new ProcessRoutine(
+          'goal_save_template_from_goal',
+          'The Process Used to Control the Saving of Goal Templates',
+          new ProcessContext,
+          ''
       )
   };
 

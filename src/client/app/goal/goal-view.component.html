@@ -7,6 +7,7 @@
       <li class="active">Goal: {{goal.id}} <span *ngIf="goal.changed" class="label label-info">Saving...</span></li>
     </ol>
     <div *ngIf="!showForm">
+        <button type="button" class="btn btn-xs btn-default pull-right" (click)="saveTemplate()">Save as Template</button>
         <h2>
             <button class="btn" type="button" (click)="accomplish()"
                 [class.btn-default]="!goal.accomplished"
@@ -15,7 +16,8 @@
                     [class.glyphicon-ok]="goal.accomplished"
                     [class.glyphicon-unchecked]="!goal.accomplished"></span>
             </button>
-            <span [innerHtml]="goal.title"></span></h2>
+            <span [innerHtml]="goal.title"></span>
+        </h2>
         <div *ngIf="fullDescription" class="well" [innerHtml]="fullDescription"></div>
     </div>
     <div *ngIf="showForm">

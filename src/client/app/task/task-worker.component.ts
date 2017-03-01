@@ -71,6 +71,13 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'gatherTasks',
             {goal:'string',user:'User'}
         ),
+        get_user_for_save_goal_template_complete: new ProcessTask(
+            'gather_tasks_for_goal_template',
+            'get_user_for_save_goal_template_complete',
+            'Fetch Tasks for a specific goal',
+            'gatherTasks',
+            {goal:'string',user:'User'}
+        ),
         load_tasks_complete: new ProcessTask(
             'publish_tasks',
             'load_tasks_complete',

@@ -1,6 +1,7 @@
 <div class="row">
   <div class="col-lg-12" *ngIf="team">
     <ol class="breadcrumb">
+      <button class="btn btn-default btn-xs pull-right" (click)="navigate('/team/' + team.id + '/goal-templates')">Templates</button>
       <li><a href="#" (click)="navigate('/teams')">Teams</a></li>
       <li class="active">{{team.id}} - {{team.title}}</li>
     </ol>
