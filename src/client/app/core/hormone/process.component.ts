@@ -8,6 +8,7 @@ import { UserWorkerComponent } from '../../user/index';
 import { TeamMemberWorkerComponent } from '../../team-member/index';
 import { CommitmentWorkerComponent } from '../../commitment/index';
 import { GoalTemplateWorkerComponent } from '../../goal-template/index';
+import { TaskTemplateWorkerComponent } from '../../task-template/index';
 import { ProcessWorkerComponent } from '../index';
 
 /**
@@ -20,7 +21,7 @@ import { ProcessWorkerComponent } from '../index';
   directives: [TeamWorkerComponent, GoalWorkerComponent, TaskWorkerComponent,
     InviteWorkerComponent,RouteWorkerComponent, UserWorkerComponent,
     TeamMemberWorkerComponent, CommitmentWorkerComponent, GoalTemplateWorkerComponent,
-    ProcessWorkerComponent]
+    TaskTemplateWorkerComponent, ProcessWorkerComponent]
 })
 export class ProcessComponent {
 

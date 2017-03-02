@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { MessageService } from '../core/index';
 import { GoalTemplateService, GoalTemplate } from './index';
 
@@ -35,7 +34,8 @@ export class GoalTemplateItemComponent implements OnInit {
    */
   ngOnInit() {
     if(!this.goalTemplate.id) {
-      this.message.startProcess('goal_template_create',{goalTemplate:this.goalTemplate,navigate_to:'/goal_template/' + this.goalTemplate.id});
+      this.message.startProcess('goal_template_create',{
+        goalTemplate:this.goalTemplate,navigate_to:'/goal_template/' + this.goalTemplate.id});
     }
     this.setDocs();
   }
@@ -80,9 +80,9 @@ export class GoalTemplateItemComponent implements OnInit {
    * Deletes a new goal onto the goals array
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
-  deleteGoalTemplate(goalTemplate:GoalTemplate): boolean {
+  deleteGoalTemplate(): boolean {
     this.goalTemplate.changed = true;
-    this.message.startProcess('goal_template_delete',{id:goalTemplate.id});
+    this.message.startProcess('goal_template_delete',{id:this.goalTemplate.id});
     return false;
   }
 

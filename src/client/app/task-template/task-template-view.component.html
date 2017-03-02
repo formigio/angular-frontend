@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-xs-12" *ngIf="taskTemplate">
+    <ol class="breadcrumb">
+      <button type="button" class="btn btn-xs btn-default pull-right" (click)="edit()" *ngIf="!showForm">Edit Task Template</button>
+      <li><a href="#" (click)="navigateToTeams()">Teams</a></li>
+      <li><a href="#" (click)="navigateToTeam()">Team</a></li>
+      <li><a href="#" (click)="navigateToTemplates()">Templates</a></li>
+      <li class="active">Task Template: {{taskTemplate.id}} <span *ngIf="taskTemplate.changed" class="label label-info">Saving...</span></li>
+    </ol>
+    <div *ngIf="!showForm">
+        <h2>
+            <span [innerHtml]="taskTemplate.title"></span>
+        </h2>
+        <div *ngIf="fullDocumentation" class="well" [innerHtml]="fullDocumentation"></div>
+    </div>
+    <div *ngIf="showForm">
+        <form class="form" (submit)="persistTaskTemplate()">
+            <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)">Delete Task Template</button>
+            <h4>Task Template Edit</h4>
+            <label for="title">Template Title</label>
+            <input [(ngModel)]="taskTemplate.title" name="title" type="text" class="form-control">
+            <label for="title">Documentation</label>
+            <textarea [(ngModel)]="taskTemplate.documentation" name="documentation" class="form-control"></textarea>
+            <button type="submit" class="btn btn-primary btn-xs">Save</button>
+            <button type="button" class="btn btn-default btn-xs" (click)="cancel()">Cancel</button>
+        </form>
+    </div>
+  </div>
+</div>

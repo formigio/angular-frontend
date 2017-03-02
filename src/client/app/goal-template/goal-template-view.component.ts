@@ -45,8 +45,6 @@ export class GoalTemplateViewComponent implements OnInit {
   ngOnInit() {
     this.service.getItemSubscription().subscribe(
       goalTemplate => {
-        console.log('Item Subscription');
-        console.log(goalTemplate);
         this.goalTemplate = <GoalTemplate>goalTemplate;
         this.setDocs();
       }

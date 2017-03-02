@@ -82,7 +82,7 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           'get_user_for_goal_template_delete_complete',
           'Delete Goal Template',
           'deleteGoalTemplate',
-          {goalTemplate:'GoalTemplate',user:'User'}
+          {id:'string',user:'User'}
       )
   };
 
@@ -204,7 +204,7 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
     return obs;
   }
 
-  public deleteTemplateGoal(control_uuid: string, params: any): Observable<any> {
+  public deleteGoalTemplate(control_uuid: string, params: any): Observable<any> {
     let id: string = params.id;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {

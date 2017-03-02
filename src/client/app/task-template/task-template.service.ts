@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { HelperService } from '../core/index';
 import { User } from '../user/index';
-import { GoalTemplate, GoalTemplateStruct } from './index';
+import { TaskTemplate, TaskTemplateStruct } from './index';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -11,14 +11,14 @@ import 'rxjs/add/operator/catch';
  * This class provides the NameList service with methods to read names and add names.
  */
 @Injectable()
-export class GoalTemplateService {
+export class TaskTemplateService {
 
   public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
   public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
   user: User;
-  goalTemplate: GoalTemplate = GoalTemplateStruct;
-  goalTemplates: GoalTemplate[] = [];
+  taskTemplate: TaskTemplate = TaskTemplateStruct;
+  taskTemplates: TaskTemplate[] = [];
 
   /**
    * Creates a new NameListService with the injected Http.
@@ -36,47 +36,47 @@ export class GoalTemplateService {
     return this.listSubscription;
   }
 
-  publishGoalTemplate(goalTemplate:GoalTemplate) {
-    this.itemSubscription.next(goalTemplate);
+  publishTaskTemplate(taskTemplate:TaskTemplate) {
+    this.itemSubscription.next(taskTemplate);
   }
 
-  publishGoalTemplates(goalTemplates:GoalTemplate[]) {
-    this.goalTemplates = goalTemplates;
+  publishTaskTemplates(taskTemplates:TaskTemplate[]) {
+    this.taskTemplates = taskTemplates;
     this.sort();
-    this.listSubscription.next(this.goalTemplates);
+    this.listSubscription.next(this.taskTemplates);
   }
 
-  removeGoalTemplate(id:string) {
-    let checked:GoalTemplate[] = [];
-    this.goalTemplates.forEach((goalTemplate) => {
-      if(id === goalTemplate.id) {
-        goalTemplate.title = '';
+  removeTaskTemplate(id:string) {
+    let checked:TaskTemplate[] = [];
+    this.taskTemplates.forEach((taskTemplate) => {
+      if(id === taskTemplate.id) {
+        taskTemplate.title = '';
       }
-      checked.push(goalTemplate);
-      if(checked.length===this.goalTemplates.length) {
-        this.publishGoalTemplates(checked);
+      checked.push(taskTemplate);
+      if(checked.length===this.taskTemplates.length) {
+        this.publishTaskTemplates(checked);
       }
     });
   }
 
-  updateGoalTemplate(goalTemplateToUpdate:GoalTemplate) {
-    this.publishGoalTemplate(goalTemplateToUpdate);
-    let checked:GoalTemplate[] = [];
-    this.goalTemplates.forEach((goalTemplate) => {
-      if(goalTemplateToUpdate.id === goalTemplate.id) {
-        goalTemplate = goalTemplateToUpdate;
+  updateTaskTemplate(taskTemplateToUpdate:TaskTemplate) {
+    this.publishTaskTemplate(taskTemplateToUpdate);
+    let checked:TaskTemplate[] = [];
+    this.taskTemplates.forEach((taskTemplate) => {
+      if(taskTemplateToUpdate.id === taskTemplate.id) {
+        taskTemplate = taskTemplateToUpdate;
       }
-      checked.push(goalTemplate);
-      if(checked.length===this.goalTemplates.length) {
-        this.publishGoalTemplates(checked);
+      checked.push(taskTemplate);
+      if(checked.length===this.taskTemplates.length) {
+        this.publishTaskTemplates(checked);
       }
     });
   }
 
-  addGoalTemplate(goalTemplate:GoalTemplate) {
-    this.publishGoalTemplate(goalTemplate);
-    this.goalTemplates.push(goalTemplate);
-    this.publishGoalTemplates(this.goalTemplates);
+  addTaskTemplate(taskTemplate:TaskTemplate) {
+    this.publishTaskTemplate(taskTemplate);
+    this.taskTemplates.push(taskTemplate);
+    this.publishTaskTemplates(this.taskTemplates);
   }
 
   setUser(user:User) {
@@ -88,21 +88,21 @@ export class GoalTemplateService {
   }
 
   sort() {
-    this.helper.sortBy(this.goalTemplates,'title');
+    this.helper.sortBy(this.taskTemplates,'sequence');
   }
 
   /**
    * Returns an Promise for the HTTP GET request for the JSON resource.
-   * @return {Goal[]} The Promise for the HTTP request.
+   * @return {Task[]} The Promise for the HTTP request.
    */
-  list(team:string = ''): Promise<any> {
+  list(goal:string = ''): Promise<any> {
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/goal_templates',{params:{team_id:team},headers:{'x-identity-id':user.worker.identity}});
+    return api.get('/task_templates',{params:{goal_template_id:goal},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
@@ -116,22 +116,27 @@ export class GoalTemplateService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/goal_templates/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
+    return api.get('/task_templates/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
    * Returns an Observable for the HTTP POST request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  post(goalTemplate:GoalTemplate): Promise<any> {
-    let body = {title:goalTemplate.title,documentation:goalTemplate.documentation,team_id:goalTemplate.team_id};
+  post(taskTemplate:TaskTemplate): Promise<any> {
+    let body = {
+      title: taskTemplate.title,
+      documentation: taskTemplate.documentation,
+      goal_template_id: taskTemplate.goal_template_id,
+      sequence: taskTemplate.sequence
+    };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.post('/goal_templates',{headers:{'x-identity-id':user.worker.identity}},body);
+    return api.post('/task_templates',{headers:{'x-identity-id':user.worker.identity}},body);
   }
 
   /**
@@ -145,22 +150,26 @@ export class GoalTemplateService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.delete('/goal_templates/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
+    return api.delete('/task_templates/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
    */
-  put(goalTemplate:GoalTemplate): Promise<any> {
-    let body = {title:goalTemplate.title,documentation:goalTemplate.documentation};
+  put(taskTemplate:TaskTemplate): Promise<any> {
+    let body = {
+      title: taskTemplate.title,
+      documentation: taskTemplate.documentation,
+      sequence: taskTemplate.sequence
+    };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.put('/goal_templates/{id}',{path:{id:goalTemplate.id},headers:{'x-identity-id':user.worker.identity}},body);
+    return api.put('/task_templates/{id}',{path:{id:taskTemplate.id},headers:{'x-identity-id':user.worker.identity}},body);
   }
 
 }

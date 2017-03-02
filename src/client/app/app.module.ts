@@ -11,7 +11,9 @@ import { HomeModule } from './+home/home.module';
 import { TeamModule } from './team/team.module';
 import { TeamMemberModule } from './team-member/team-member.module';
 import { GoalModule } from './goal/goal.module';
+import { GoalTemplateModule } from './goal-template/goal-template.module';
 import { TaskModule } from './task/task.module';
+import { TaskTemplateModule } from './task-template/task-template.module';
 import { CommitmentModule } from './commitment/commitment.module';
 import { InviteModule } from './invite/invite.module';
 import { TeamPagesModule } from './+teams/team-pages.module';
@@ -29,6 +31,7 @@ import { NavModule } from './nav/nav.module';
   imports: [
     BrowserModule, HttpModule, routing, CoreModule, LoginModule,
     UserModule, TeamModule, TeamMemberModule, GoalModule, TaskModule,
+    GoalTemplateModule, TaskTemplateModule,
     InviteModule, CommitmentModule, TeamPagesModule, GoalPagesModule, InvitePagesModule,
     CommitmentPagesModule,GoalTemplatePagesModule,
     HomeModule, NavModule, SharedModule.forRoot()],

@@ -1,0 +1,31 @@
+<div>
+    <div *ngIf="state==='view'">
+        <button class="btn btn-xs btn-link pull-right" type="button" (click)="edit()">
+            <span class="glyphicon glyphicon-edit"></span>
+        </button>
+        <button type="button" class="btn btn-xs btn-default pull-right" (click)="sequenceDown()"><span class="glyphicon glyphicon-chevron-up"></span></button>
+        <button type="button" class="btn btn-xs btn-default pull-right" (click)="sequenceUp()"><span class="glyphicon glyphicon-chevron-down"></span></button>
+        <strong>{{taskTemplate.sequence}}. {{taskTemplate.title}}</strong>
+        <small *ngIf="!showFullDocumentation" class="clickable" (click)="toggleFullDocumentation()" [innerHtml]="fullDocumentation"></small>
+        <div class="well well-sm" *ngIf="showFullDocumentation">
+            <button type="button" class="btn btn-xs btn-link pull-right" (click)="toggleFullDocumentation()">
+                <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <span [innerHtml]="fullDocumentation"></span>
+        </div>
+    </div>
+    <form class="form" (submit)="persistTaskTemplate()" *ngIf="state==='edit'">
+        <h4>Template Edit</h4>
+        <label for="title">Template Title</label>
+        <input [(ngModel)]="taskTemplate.title" name="title" type="text" class="form-control">
+        <label for="title">Docs</label>
+        <textarea [(ngModel)]="taskTemplate.documentation" name="documentation" class="form-control"></textarea>
+        <label for="title">Sequence</label>
+        <input [(ngModel)]="taskTemplate.sequence" name="sequence" type="text" class="form-control">
+        <div>
+        <button type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTaskTemplate()">Delete Template</button>
+        <button type="submit" class="btn btn-primary btn-xs">Save</button>
+        <button type="button" class="btn btn-default btn-xs" (click)="cancel()">Cancel</button>
+        </div>
+    </form>
+</div>
