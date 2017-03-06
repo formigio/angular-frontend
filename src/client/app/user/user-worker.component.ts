@@ -91,6 +91,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             {}
         ),
         user_load_for_app_init: new ProcessTask(
+            'check_data_service',
+            'user_load_for_app_init',
+            'Do Initial Check for Data Service',
+            'checkDataService',
+            {}
+        ),
+        check_data_service_complete: new ProcessTask(
             'start_google_api_on_load',
             'user_load_for_app_init',
             'Start Google API',
@@ -577,6 +584,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'Get User for Process Context',
           'getUser',
           {}
+        ),
+        goal_template_to_goal_init: new ProcessTask(
+          'get_user_for_goal_template_to_goal',
+          'goal_template_to_goal_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
         )
     };
 
@@ -762,6 +776,30 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
            control_uuid: control_uuid,
            outcome: 'error',
            message:'System Error.',
+           context:{params:{}}
+          });
+        });
+    });
+    return obs;
+  }
+
+  public checkDataService(control_uuid: string, params: any): Observable<any> {
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.status()
+        .then((response:any) => {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'',
+            context:{params:{}}
+          });
+          observer.complete();
+        }).catch((response:any) => {
+          observer.error({
+           control_uuid: control_uuid,
+           outcome: 'error',
+           message:'There is a problem with the Data Service.',
            context:{params:{}}
           });
         });

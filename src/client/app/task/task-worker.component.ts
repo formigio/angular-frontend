@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
 import { User } from '../user/index';
-import { Task, TaskService } from './index';
+import { TaskTemplate } from '../task-template/index';
+import { Goal } from '../goal/index';
+import { Task, TaskService, TaskStruct } from './index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
@@ -112,6 +114,13 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'Publish Task from the Process Context',
             'publishTask',
             {task:'Task'}
+        ),
+        load_team_task_templates_for_create_goal_from_template_complete: new ProcessTask(
+            'create_tasks_from_templates',
+            'load_team_task_templates_for_create_goal_from_template_complete',
+            'Publish Task from the Process Context',
+            'createTasksFromTemplates',
+            {goal:'Goal','taskTemplates':'TaskTemplate'}
         )
     };
 
@@ -177,6 +186,49 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
 
     return obs;
   }
+
+  public createTasksFromTemplates(control_uuid: string, params: any): Observable<any> {
+    let taskTemplates: TaskTemplate[] = params.taskTemplates;
+    let goal: Goal = params.goal;
+    let user: User = params.user;
+    let newTasks: Task[] = [];
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      taskTemplates.forEach((taskTemplate) => {
+        let task = JSON.parse(JSON.stringify(TaskStruct));
+        task.title = taskTemplate.title;
+        task.goal_id = goal.id;
+        task.sequence = taskTemplate.sequence;
+        this.service.post(task).then(
+          response => {
+            let task = <Task>response.data;
+            this.service.addTask(task);
+            newTasks.push(task);
+          }
+        ).catch(
+          error => {
+            observer.error({
+              control_uuid: control_uuid,
+              outcome: 'error',
+              message:'An error has occured fetching the tasks.'
+            });
+          }
+        );
+        if(taskTemplates.length == newTasks.length) {
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Tasks Created.',
+            context:{params:{}}
+          });
+          observer.complete();
+        }
+      });
+    });
+
+    return obs;
+  }
+
 
   public saveTask(control_uuid: string, params: any): Observable<any> {
     let task: Task = params.task;

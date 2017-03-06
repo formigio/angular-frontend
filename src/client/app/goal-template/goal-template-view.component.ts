@@ -101,4 +101,8 @@ export class GoalTemplateViewComponent implements OnInit {
     return false;
   }
 
+  createGoalFromTemplate() {
+    this.message.startProcess('goal_template_to_goal',{goalTemplate:this.goalTemplate});
+  }
+
 }

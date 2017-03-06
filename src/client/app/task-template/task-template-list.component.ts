@@ -18,7 +18,7 @@ export class TaskTemplateListComponent implements OnInit {
 
   taskTemplates: TaskTemplate[] = [];
   taskTemplate: TaskTemplate = TaskTemplateStruct;
-  goal: string = '';
+  goalTemplate: string = '';
   loading: boolean = true;
   maxSequence: number = 0;
 
@@ -41,7 +41,7 @@ export class TaskTemplateListComponent implements OnInit {
       }
     );
     this.route.params.subscribe(params => {
-      this.goal = params['id'];
+      this.goalTemplate = params['id'];
       this.refreshTaskTemplates();
     });
   }
@@ -61,13 +61,13 @@ export class TaskTemplateListComponent implements OnInit {
 
   refreshTaskTemplates() {
     this.loading = true;
-    this.message.startProcess('task_template_load_list',{goal:this.goal});
+    this.message.startProcess('task_template_load_list',{goalTemplate:this.goalTemplate});
   }
 
   addTaskTemplate(): boolean {
     this.taskTemplate.id = '';
     this.taskTemplate.changed = true;
-    this.taskTemplate.goal_template_id = this.goal;
+    this.taskTemplate.goal_template_id = this.goalTemplate;
     let taskLines = this.taskTemplate.title.split('\n');
     taskLines.forEach((taskTitle) => {
       if(taskTitle) {

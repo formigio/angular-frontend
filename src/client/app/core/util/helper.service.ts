@@ -133,6 +133,7 @@ export class HelperService {
             let apiGatewayClient:any = apiGateway.core.apiGatewayClientFactory.newClient(simpleHttpClientConfig, sigV4ClientConfig);
 
             apigClient.get = function (path:any, options:any) {
+                if(options === undefined) { options = {}; }
                 if(options.params === undefined) { options.params = {}; }
                 if(options.path === undefined) { options.path = {}; }
                 if(options.headers === undefined) { options.headers = {}; }

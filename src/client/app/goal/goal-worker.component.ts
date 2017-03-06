@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
 import { User } from '../user/index';
-import { Goal, GoalService } from './index';
+import { GoalTemplate } from '../goal-template/index';
+import { Goal, GoalService, GoalStruct } from './index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
@@ -55,6 +56,13 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
   };
 
   public tasks: {} = {
+      get_user_for_goal_template_to_goal_complete: new ProcessTask(
+          'create_goal_from_template',
+          'get_user_for_goal_template_to_goal_complete',
+          'Create Goal from Template',
+          'createGoalFromTemplate',
+          {goalTemplate:'GoalTemplate',user:'User'}
+      ),
       remove_invites_complete: new ProcessTask(
           'remove_goal',
           'remove_invites_complete',
@@ -249,6 +257,39 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             outcome: 'success',
             message:'Goal Saved Successfully.',
             context:{params:{goal:response.data}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Goal Save Failed.',
+            context:{params:{}}
+        })
+      );
+    });
+    return obs;
+  }
+
+  public createGoalFromTemplate(control_uuid: string, params: any): Observable<any> {
+    let goalTemplate: GoalTemplate = params.goalTemplate;
+    let user: User = params.user;
+    let newGoal: Goal = JSON.parse(JSON.stringify(GoalStruct));
+    let obs = new Observable((observer:any) => {
+      newGoal.team_id = goalTemplate.team_id;
+      newGoal.title = goalTemplate.title;
+      this.service.setUser(user);
+      this.service.post(newGoal).then(
+        response => {
+          let goal = <Goal>response.data;
+          this.service.addGoal(goal);
+          this.message.startProcess('navigate_to',{navigate_to:'goal/' + goal.id})
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message:'Goal Saved Successfully.',
+            context:{params:{goal:response.data,goalTemplate:goalTemplate.id}}
           });
           observer.complete();
         }

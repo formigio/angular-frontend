@@ -60,9 +60,7 @@ export class TaskListComponent implements OnInit {
           if(task.title) {
             newtasks.push(task);
           }
-          if(Number(task.sequence) > this.maxSequence) {
-            this.maxSequence = Number(task.sequence);
-          }
+          this.maxSequence = Math.max(Number(task.sequence), this.maxSequence);
         });
         this.tasks = newtasks;
       }
@@ -79,10 +77,6 @@ export class TaskListComponent implements OnInit {
     this.message.startProcess('load_task_list',{goal:this.goal});
   }
 
-  /**
-   * Pushes a new goal onto the goals array
-   * @return {boolean} false to prevent default form submit behavior to refresh the page.
-   */
   addTask(): void {
     let newTask:Task;
     this.task.goal_id = this.goal;

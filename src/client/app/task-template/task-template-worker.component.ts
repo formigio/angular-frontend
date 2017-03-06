@@ -56,12 +56,19 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
           'loadTaskTemplate',
           {id:'string',user:'User'}
       ),
+      create_goal_from_template_complete: new ProcessTask(
+          'load_team_task_templates_for_create_goal_from_template',
+          'create_goal_from_template_complete',
+          'Load Task Templates',
+          'loadTaskTemplates',
+          {goalTemplate:'string',user:'User'}
+      ),
       get_user_for_task_template_load_list_complete: new ProcessTask(
           'load_team_task_templates',
           'get_user_for_task_template_load_list_complete',
           'Load Task Templates',
           'loadTaskTemplates',
-          {goal:'string',user:'User'}
+          {goalTemplate:'string',user:'User'}
       ),
       get_user_for_task_template_create_complete: new ProcessTask(
           'create_task_template',
@@ -147,11 +154,11 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public loadTaskTemplates(control_uuid: string, params: any): Observable<any> {
-    let goal: string = params.goal;
+    let goalTemplate: string = params.goalTemplate;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.list(goal).then(
+      this.service.list(goalTemplate).then(
         response => {
           let taskTemplates = <TaskTemplate[]>response.data;
           this.service.publishTaskTemplates(taskTemplates);
@@ -159,7 +166,7 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message: 'Task Template loaded successfully.',
-            context:{params:{}}
+            context:{params:{taskTemplates:taskTemplates}}
           });
           observer.complete();
         }
