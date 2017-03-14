@@ -1,0 +1,14 @@
+<div *ngIf="goalTemplates.length>0 || loading" class="row">
+  <div class="col-lg-12">
+    <p>Create a Goal from Existing Template?</p>
+    <span class="small">Select Template to Create a Goal pre-filled with Tasks</span>
+    <div class="list-group">
+      <div class="list-group-item" *ngFor="let goalTemplate of goalTemplates" [class.list-group-item-warning]="goalTemplate.changed===true">
+        <goal-template-search-item [goalTemplate]="goalTemplate"></goal-template-search-item>
+      </div>
+      <div class="list-group-item" *ngIf="loading">
+        <span class="glyphicon glyphicon-cog spinner"></span> Loading...
+      </div>
+    </div>
+  </div>
+</div>

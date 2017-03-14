@@ -51,13 +51,26 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           'The Process Used to Control the Converting Goal Template to Goal',
           new ProcessContext,
           ''
+      ),
+      goal_template_search: new ProcessRoutine(
+          'goal_template_search',
+          'The Process Used to Control the Searching for Goals',
+          new ProcessContext,
+          ''
       )
   };
 
   public tasks: {} = {
+      get_user_for_goal_template_search_complete: new ProcessTask(
+          'search_for_goal_template',
+          'get_user_for_goal_template_search_complete',
+          'Search Goal Template',
+          'searchGoalTemplates',
+          {term:'string',user:'User',team:'Team'}
+      ),
       get_user_for_goal_template_view_complete: new ProcessTask(
           'load_goal_template',
-          'get_user_for_goal_template_view',
+          'get_user_for_goal_template_view_complete',
           'Load Goal Template',
           'loadGoalTemplate',
           {id:'string',user:'User'}
@@ -146,6 +159,36 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
             outcome: 'error',
             message:'Goal Template Load Failed.',
             context:{params:{}}
+        })
+      );
+    });
+    return obs;
+  }
+
+  public searchGoalTemplates(control_uuid: string, params: any): Observable<any> {
+    let term: string = params.term;
+    let team: string = params.team;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.search(team,term).then(
+        response => {
+          let goalTemplates = <GoalTemplate[]>response.data;
+          this.service.publishGoalTemplates(goalTemplates);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message: 'Goal Template loaded successfully.',
+            context:{params:{}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => observer.error({
+          control_uuid: control_uuid,
+          outcome: 'error',
+          message: 'Goals Template Load Failed.',
+          context:{params:{}}
         })
       );
     });

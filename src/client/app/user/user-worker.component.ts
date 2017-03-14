@@ -591,6 +591,13 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'Get User for Process Context',
           'getUser',
           {}
+        ),
+        goal_template_search_init: new ProcessTask(
+          'get_user_for_goal_template_search',
+          'goal_template_search_init',
+          'Get User for Process Context',
+          'getUser',
+          {}
         )
     };
 

@@ -14,7 +14,7 @@
           <button class="btn btn-xs btn-default" type="button">
               <span class="glyphicon glyphicon-plus"></span>
           </button>
-          <input [(ngModel)]="goal.title" name="title" class="form-control" placeholder="Enter Goal Title">
+          <input [(ngModel)]="goal.title" (keyup)="searchTemplates($event)" name="title" class="form-control" placeholder="Enter Goal Title" autocomplete="off">
           <button type="submit" class="btn btn-primary">Add</button>
           <button *ngIf="goals.length>0" type="button" class="btn btn-secondary" (click)="refreshGoals()"><span class="glyphicon glyphicon-refresh"></span></button>
           <button class="btn" (click)="toggleAccomplished()" type="button"

@@ -1,0 +1,12 @@
+<div>
+    <div>
+        <strong (click)="createGoalFromTemplate()" class="clickable">{{goalTemplate.title}}</strong>
+        <small *ngIf="!showFullDocumentation" class="clickable" (click)="toggleFullDocumentation()" [innerHtml]="fullDocumentation"></small>
+        <div class="well well-sm" *ngIf="showFullDocumentation">
+            <button type="button" class="btn btn-xs btn-link pull-right" (click)="toggleFullDocumentation()">
+                <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <span [innerHtml]="fullDocumentation"></span>
+        </div>
+    </div>
+</div>

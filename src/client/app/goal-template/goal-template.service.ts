@@ -91,10 +91,6 @@ export class GoalTemplateService {
     this.helper.sortBy(this.goalTemplates,'title');
   }
 
-  /**
-   * Returns an Promise for the HTTP GET request for the JSON resource.
-   * @return {Goal[]} The Promise for the HTTP request.
-   */
   list(team:string = ''): Promise<any> {
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
@@ -105,10 +101,16 @@ export class GoalTemplateService {
     return api.get('/goal_templates',{params:{team_id:team},headers:{'x-identity-id':user.worker.identity}});
   }
 
-  /**
-   * Returns an Observable for the HTTP GET request for the JSON resource.
-   * @return {string[]} The Observable for the HTTP request.
-   */
+  search(team:string = '',term:string = ''): Promise<any> {
+    let user = this.getUser();
+    let api = this.helper.apiFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.get('/goal_templates',{params:{team_id:team,title:term,like:true},headers:{'x-identity-id':user.worker.identity}});
+  }
+
   get(id:string): Promise<any> {
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
