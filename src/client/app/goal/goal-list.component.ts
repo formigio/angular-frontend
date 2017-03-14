@@ -113,9 +113,9 @@ export class GoalListComponent implements OnInit {
   }
 
   searchTemplates(e:any) {
-    this.debounce(()=>{
+    this.debounce(() => {
       console.log('Search Term: ' + e.target.value);
-      if(e.target.value){
+      if(e.target.value) {
         this.message.startProcess('goal_template_search',{team:this.team,term:e.target.value});
       }
     },750)();

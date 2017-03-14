@@ -285,7 +285,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         response => {
           let goal = <Goal>response.data;
           this.service.addGoal(goal);
-          this.message.startProcess('navigate_to',{navigate_to:'goal/' + goal.id})
+          this.message.startProcess('navigate_to',{navigate_to:'goal/' + goal.id});
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',

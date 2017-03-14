@@ -215,7 +215,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             });
           }
         );
-        if(taskTemplates.length == newTasks.length) {
+        if(taskTemplates.length === newTasks.length) {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',

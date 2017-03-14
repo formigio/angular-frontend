@@ -791,7 +791,6 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public checkDataService(control_uuid: string, params: any): Observable<any> {
-    let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.status()
         .then((response:any) => {
