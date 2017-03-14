@@ -8,6 +8,7 @@ export const TaskStruct = {
       commitment_worker_id:'',
       commitment_worker_name:'',
       commitment_promised_start:'',
+      template_id: '',
       changed: false
     };
 
@@ -22,7 +23,8 @@ export class Task {
     public system_status: string,
     public commitment_worker_id: string,
     public commitment_promised_start: string,
-    public commitment_worker_name: string
+    public commitment_worker_name: string,
+    public template_id: string
   ) {}
 
   // getWorkStatus() {

@@ -106,7 +106,8 @@ export class TaskService {
     let body = {
       title:task.title,
       goal_id:task.goal_id,
-      sequence:task.sequence
+      sequence:task.sequence,
+      template_id:task.template_id
     };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({

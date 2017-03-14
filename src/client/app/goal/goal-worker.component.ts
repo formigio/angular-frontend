@@ -279,6 +279,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     let obs = new Observable((observer:any) => {
       newGoal.team_id = goalTemplate.team_id;
       newGoal.title = goalTemplate.title;
+      newGoal.template_id = goalTemplate.id;
       this.service.setUser(user);
       this.service.post(newGoal).then(
         response => {

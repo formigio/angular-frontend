@@ -145,7 +145,12 @@ export class GoalService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(goal:Goal): Promise<any> {
-    let body = {title:goal.title,description:goal.description,team_id:goal.team_id};
+    let body = {
+      title:goal.title,
+      description:goal.description,
+      team_id:goal.team_id,
+      template_id:goal.template_id
+    };
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,

@@ -4,7 +4,8 @@ export const GoalStruct = {
   description: '',
   team_id: '',
   accomplished: false,
-  changed: false
+  changed: false,
+  template_id: ''
 };
 
 export class Goal {
@@ -14,6 +15,7 @@ export class Goal {
     public title: string,
     public description: string,
     public team_id: string,
-    public accomplished: boolean
+    public accomplished: boolean,
+    public template_id: string
   ) {}
 }

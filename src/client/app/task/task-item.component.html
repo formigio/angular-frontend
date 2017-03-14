@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-xs-12">
         <div *ngIf="state==='view'">
+            <span *ngIf="task.template_id" class="label label-default pull-right">Template: {{task.template_id}}</span>
             <button *ngIf="editable===true && editing===true" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
             <button *ngIf="editable===true && editing===true" type="button" class="btn btn-xs btn-default pull-right" (click)="sequenceDown()"><span class="glyphicon glyphicon-chevron-up"></span></button>
             <button *ngIf="editable===true && editing===true" type="button" class="btn btn-xs btn-default pull-right" (click)="sequenceUp()"><span class="glyphicon glyphicon-chevron-down"></span></button>

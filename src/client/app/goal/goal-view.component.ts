@@ -102,6 +102,11 @@ export class GoalViewComponent implements OnInit {
     return false;
   }
 
+  navigateToTemplate(): boolean {
+    this.message.startProcess('navigate_to',{navigate_to:'/goal-template/' + this.goal.template_id});
+    return false;
+  }
+
   navigateToTeams(): boolean {
     this.message.startProcess('navigate_to',{navigate_to:'/teams/'});
     return false;

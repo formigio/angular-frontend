@@ -199,6 +199,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         task.title = taskTemplate.title;
         task.goal_id = goal.id;
         task.sequence = taskTemplate.sequence;
+        task.template_id = taskTemplate.id;
         this.service.post(task).then(
           response => {
             let task = <Task>response.data;

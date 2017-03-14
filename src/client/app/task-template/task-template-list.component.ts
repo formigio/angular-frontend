@@ -97,14 +97,4 @@ export class TaskTemplateListComponent implements OnInit {
     }
   }
 
-  navigateToTeam(): boolean {
-    this.message.startProcess('navigate_to',{navigate_to:'/goal/' + this.goal});
-    return false;
-  }
-
-  navigateToTeams(): boolean {
-    this.message.startProcess('navigate_to',{navigate_to:'/teams/'});
-    return false;
-  }
-
 }
