@@ -79,6 +79,11 @@ export class GoalTemplateService {
     this.publishGoalTemplates(this.goalTemplates);
   }
 
+  clearTemplates() {
+    this.goalTemplates = [];
+    this.publishGoalTemplates(this.goalTemplates);
+  }
+
   setUser(user:User) {
     this.user = user;
   }
@@ -103,12 +108,17 @@ export class GoalTemplateService {
 
   search(team:string = '',term:string = ''): Promise<any> {
     let user = this.getUser();
+    let params = {};
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/goal_templates',{params:{team_id:team,title:term,like:true},headers:{'x-identity-id':user.worker.identity}});
+    params = {team_id:team,title:term};
+    if(term) {
+      (<any>params)['like'] = true;
+    }
+    return api.get('/goal_templates',{params:params,headers:{'x-identity-id':user.worker.identity}});
   }
 
   get(id:string): Promise<any> {

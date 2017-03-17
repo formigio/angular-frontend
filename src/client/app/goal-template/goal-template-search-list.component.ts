@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService, HelperService } from '../core/index';
 import { GoalTemplateService, GoalTemplate, GoalTemplateSearchItemComponent, GoalTemplateStruct } from './index';
 
@@ -23,7 +24,9 @@ export class GoalTemplateSearchListComponent implements OnInit {
   constructor(
     public service: GoalTemplateService,
     public helper: HelperService,
-    public message: MessageService
+    public message: MessageService,
+    public router: Router,
+    public route: ActivatedRoute
   ) {
     this.service = this.helper.getServiceInstance(this.service,'GoalTemplateService');
   }
@@ -35,6 +38,7 @@ export class GoalTemplateSearchListComponent implements OnInit {
         this.goalTemplates = <GoalTemplate[]>goals;
       }
     );
+    this.service.clearTemplates();
   }
 
 }
