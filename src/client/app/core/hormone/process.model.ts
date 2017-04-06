@@ -11,8 +11,22 @@ export class ProcessRoutine {
         public identifier: string,
         public description: string,
         public context: ProcessContext,
-        public control_uuid: string
+        public control_uuid: string,
+        public debug: boolean = false
     ) {}
+
+    public localDebug() {
+        if(this.debug)
+            localStorage.setItem('process_' + this.control_uuid, JSON.stringify(this));
+    }
+
+    public log(message: string) {
+        console.log(message);
+    }
+
+    public cleanup() {
+        localStorage.removeItem('process_' + this.control_uuid);
+    }
 }
 
 export class ProcessTask {
@@ -52,25 +66,22 @@ export class ProcessTask {
         return obs;
     }
 
-    public updateProcessAfterWork(control_uuid: string, context: ProcessContext): Observable<any> {
-        let processRoutine = JSON.parse(localStorage.getItem('process_' + control_uuid));
+    public updateProcessAfterWork(control_uuid: string, context: ProcessContext, routine: ProcessRoutine): Observable<any> {
+        let processRoutine = routine;
+        let contextParams:any = JSON.parse(JSON.stringify(processRoutine.context.params));
         let params = Object.keys(context.params);
         let paramsProcessed: string[] = [];
         let obs = new Observable((observer:any) => {
             if(params.length === 0) {
-                localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
+                processRoutine.localDebug();
                 observer.complete();
             }
             params.forEach((param) => {
-                if(processRoutine.context.params.hasOwnProperty(param)) {
-                    processRoutine.context.params[param] = (<any>context.params)[param];
-                    paramsProcessed.push(param);
-                } else if(param) {
-                    processRoutine.context.params[param] = (<any>context.params)[param];
-                    paramsProcessed.push(param);
-                }
+                contextParams[param] = (<any>context.params)[param];
+                paramsProcessed.push(param);
                 if(params.length === paramsProcessed.length) {
-                    localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
+                    processRoutine.context.params = contextParams;
+                    processRoutine.localDebug();
                     observer.complete();
                 }
 
@@ -118,49 +129,45 @@ export class ProcessMessage {
         // We can then push next/error/complete to the subject, and the subscriber can react.
 
         if(!worker.routines.hasOwnProperty(identifier)) {
-            // this.message.setFlash('Error - Initiating Process: ' + identifier + ' No Routine Found.','warning');
             return false;
         }
 
         let processRoutine: ProcessRoutine = (<any>worker.routines)[identifier];
-        // this.message.addProcessMessage('Initiating Process: ' + processRoutine.description);
         processRoutine.control_uuid = control_uuid;
         processRoutine.context = context;
-        localStorage.setItem('process_' + control_uuid, JSON.stringify(processRoutine));
+        processRoutine.localDebug();
 
-        worker.message.processSignal(new WorkerMessage(identifier + '_init', control_uuid));
+        worker.message.processSignal(new WorkerMessage(identifier + '_init', control_uuid, processRoutine));
 
         return true;
+        //
     }
 }
 
 export class WorkerMessage {
     constructor(
         public signal: string,
-        public control_uuid: string
+        public control_uuid: string,
+        public routine: ProcessRoutine
     ) {}
 
   public processSignal(worker:WorkerComponent): boolean {
     let signal = this.signal;
     let control_uuid = this.control_uuid;
-        // console.log('Processing Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
+    let processRoutine = this.routine;
+    // console.log('Processing Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
       // Verify the Worker has a Task
       if(!worker.tasks.hasOwnProperty(signal)) {
           return false;
       }
     //   console.log('Claim Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
 
-      // Get the processRoutine from local storage
-      let processRoutine = JSON.parse(localStorage.getItem('process_' + control_uuid));
       if(processRoutine === null) {
           return false;
       }
 
       // Initiate ProcessTask
       let processTask: ProcessTask = (<any>worker.tasks)[signal];
-
-      // this.message.addProcessMessage('Initiating Task: ' + processTask.description + ' Process: '
-          // + processRoutine.identifier + ' Context: ' + JSON.stringify(processRoutine.context));
 
       // Verify Required Process Params are in place
       let paramProcessor: Observable<any> = processTask.processRoutineHasRequiredParams(processRoutine);
@@ -171,12 +178,11 @@ export class WorkerMessage {
               worker.message.setFlash('Error - Missing Param for Process: ' + error ,'warning');
           },
           () => {
-              // this.message.addProcessMessage('required params checked.');
             //   console.log('Working Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
               let workerMethod: Observable<any> = (<any>worker)[processTask.method](
                   processRoutine.control_uuid, processRoutine.context.params);
               let workerResponse: WorkerResponse;
-              let workerMessage: WorkerMessage = new WorkerMessage('',control_uuid);
+              let workerMessage: WorkerMessage = new WorkerMessage('',control_uuid,processRoutine);
 
               workerMethod.subscribe(
                   response => workerResponse = response,
@@ -197,13 +203,13 @@ export class WorkerMessage {
                   () => {
                     //   console.log('Complete: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
                       if(workerResponse.outcome === 'end') {
-                        localStorage.removeItem('process_' + control_uuid);
+                        processRoutine.cleanup();
                       } else {
                         workerMessage.signal = processTask.identifier + '_complete';
                         if(workerResponse.message) {
                             worker.message.setFlash(workerResponse.message,'success');
                         }
-                        processTask.updateProcessAfterWork(control_uuid, workerResponse.context).subscribe(
+                        processTask.updateProcessAfterWork(control_uuid, workerResponse.context, processRoutine).subscribe(
                             null,
                             null,
                             () => worker.message.processSignal(workerMessage)

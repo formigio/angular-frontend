@@ -46,12 +46,10 @@ export class MessageService {
 
     public processSignal(message: WorkerMessage) {
         let date = new Date();
-        console.log('Signal: ' + message.signal + ' ID: ' + message.control_uuid + ' at: ' + date.toString());
         this.workerQueue.next(message);
     }
 
     public startProcess(routine: string, params: {}) {
-        console.log('Process: ' + routine);
         this.processQueue.next(new ProcessMessage(routine,params));
     }
 
