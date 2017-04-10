@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { WorkerMessage, ProcessMessage } from '../index';
+import { WorkerMessage, ProcessMessage, ProcessTaskRegistration, ProcessTask } from '../index';
 
 export class Message {
   constructor(
@@ -24,6 +24,7 @@ export class MessageService {
     public stickyMessage: ReplaySubject<any> = new ReplaySubject(1);
     public workerQueue: ReplaySubject<any> = new ReplaySubject(1);
     public processQueue: ReplaySubject<any> = new ReplaySubject(1);
+    public registrarQueue: ReplaySubject<any> = new ReplaySubject(1);
 
     public setFlash(message:string, alert:string = 'info') {
         let flashMessage = new Message(true,message,alert);
@@ -71,6 +72,14 @@ export class MessageService {
 
     public getProcessQueue(): ReplaySubject<any> {
         return this.processQueue;
+    }
+
+    public getRegistrarQueue(): ReplaySubject<any> {
+        return this.registrarQueue;
+    }
+
+    public registerProcessTasks(tasks: any) {
+        this.registrarQueue.next(new ProcessTaskRegistration(tasks));
     }
 
 }

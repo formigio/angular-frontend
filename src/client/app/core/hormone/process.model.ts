@@ -11,6 +11,7 @@ export class ProcessRoutine {
         public identifier: string,
         public description: string,
         public context: ProcessContext,
+        public tasks: ProcessTask[],
         public control_uuid: string,
         public debug: boolean = false
     ) {}
@@ -29,10 +30,17 @@ export class ProcessRoutine {
     }
 }
 
+export class ProcessTaskRegistration {
+    constructor(
+        public tasks: {}
+    ) {}
+}
+
 export class ProcessTask {
     constructor(
         public identifier: string,
         public trigger: string,
+        public routine: string,
         public description: string,
         public method: string,
         public params: {} = {}
@@ -135,6 +143,7 @@ export class ProcessMessage {
         let processRoutine: ProcessRoutine = (<any>worker.routines)[identifier];
         processRoutine.control_uuid = control_uuid;
         processRoutine.context = context;
+
         processRoutine.localDebug();
 
         worker.message.processSignal(new WorkerMessage(identifier + '_init', control_uuid, processRoutine));

@@ -18,280 +18,12 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
       'process_every_minute',
       'The Process Used to Control the Automated Tasks',
       new ProcessContext,
+      [],
       ''
     )
   };
 
-  public tasks: {} = {
-      start_google_api_on_load_complete: new ProcessTask(
-          'end_process',
-          'start_google_api_on_load_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      start_google_api_complete: new ProcessTask(
-          'end_process',
-          'start_google_api_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      load_user_for_app_error: new ProcessTask(
-          'end_process',
-          'load_user_for_app_error',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      store_user_worker_complete: new ProcessTask(
-          'end_process',
-          'store_user_worker_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      user_logout_complete: new ProcessTask(
-          'end_process',
-          'user_logout_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      fetch_teams_complete: new ProcessTask(
-          'end_process',
-          'fetch_teams_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      load_commitments_complete: new ProcessTask(
-          'end_process',
-          'load_commitments_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      create_team_complete: new ProcessTask(
-          'end_process',
-          'create_team_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      save_team_complete: new ProcessTask(
-          'end_process',
-          'save_team_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      delete_team_complete: new ProcessTask(
-          'end_process',
-          'delete_team_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      delete_team_error: new ProcessTask(
-          'end_process',
-          'delete_team_error',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      publish_invites_complete: new ProcessTask(
-          'end_process',
-          'publish_invites_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      create_invite_complete: new ProcessTask(
-          'end_process',
-          'create_invite_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      fetch_team_members_complete: new ProcessTask(
-          'end_process',
-          'fetch_team_members_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      load_team_goals_complete: new ProcessTask(
-          'end_process',
-          'load_team_goals_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      load_team_complete: new ProcessTask(
-          'end_process',
-          'load_team_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      create_goal_task_complete: new ProcessTask(
-          'end_process',
-          'create_goal_task_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      delete_goal_task_complete: new ProcessTask(
-          'end_process',
-          'delete_goal_task_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      put_goal_task_complete: new ProcessTask(
-          'end_process',
-          'put_goal_task_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      delete_invite_complete: new ProcessTask(
-          'end_process',
-          'delete_invite_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      navigate_complete: new ProcessTask(
-          'end_process',
-          'navigate_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      load_goal_complete: new ProcessTask(
-          'end_process',
-          'load_goal_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      publish_tasks_complete: new ProcessTask(
-          'end_process',
-          'publish_tasks_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      delete_goal_task_error: new ProcessTask(
-          'end_process',
-          'delete_goal_task_error',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      create_task_complete: new ProcessTask(
-          'end_process',
-          'create_task_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      save_task_complete: new ProcessTask(
-          'end_process',
-          'save_task_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      delete_task_complete: new ProcessTask(
-          'end_process',
-          'delete_task_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      delete_task_error: new ProcessTask(
-          'end_process',
-          'delete_task_error',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      publish_task_complete: new ProcessTask(
-          'end_process',
-          'publish_task_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      load_commitments_after_task_save_complete: new ProcessTask(
-          'end_process',
-          'load_commitments_after_task_save_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      delete_commitment_complete: new ProcessTask(
-          'end_process',
-          'delete_commitment_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      get_user_for_fetch_teams_error: new ProcessTask(
-          'end_process',
-          'get_user_for_fetch_teams_error',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      store_refreshed_user_complete: new ProcessTask(
-          'end_process',
-          'store_refreshed_user_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      get_user_for_keeping_active_user_complete: new ProcessTask(
-          'end_process',
-          'get_user_for_keeping_active_user_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      save_commitment_error: new ProcessTask(
-          'end_process',
-          'save_commitment_error',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      save_commitment_complete: new ProcessTask(
-          'end_process',
-          'save_commitment_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      check_user_for_keeping_active_user_error: new ProcessTask(
-          'end_process',
-          'check_user_for_keeping_active_user_complete',
-          'End Process',
-          'endProcess',
-          {}
-      ),
-      redirect_to_register_complete: new ProcessTask(
-          'end_process',
-          'redirect_to_register_complete',
-          'End Process',
-          'endProcess',
-          {}
-      )
-  };
-
-
+  public tasks: {} = {};
 
   constructor(
     public message: MessageService,
@@ -302,24 +34,39 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
-      // Subscribe to Process Queue
-      // Process Tasks based on messages received
-      if(Object.keys(this.tasks).length > 0) {
-        this.message.getWorkerQueue().subscribe(
-          message => {
-            // Process Signals
-            message.processSignal(this);
-          }
-        );
+    // Subscribe to Worker Registrations
+    this.message.getRegistrarQueue().subscribe(
+      message => {
+        if(Object.keys(message.tasks).length) {
+          Object.values(message.tasks).forEach((task:ProcessTask) => {
+            if(this.routines.hasOwnProperty(task.routine)) {
+              let processRoutine = (<any>this.routines)[task.routine];
+              processRoutine.tasks.push(task);
+            }
+          });
+        }
       }
-      if(Object.keys(this.routines).length > 0) {
-        this.message.getProcessQueue().subscribe(
-          message => {
-            // Process Inits
-            message.initProcess(this);
-          }
-        );
-      }
+    );
+    this.message.registerProcessTasks(this.tasks);
+
+    // Subscribe to Process Queue
+    // Process Tasks based on messages received
+    if(Object.keys(this.tasks).length > 0) {
+      this.message.getWorkerQueue().subscribe(
+        message => {
+          // Process Signals
+          message.processSignal(this);
+        }
+      );
+    }
+    if(Object.keys(this.routines).length > 0) {
+      this.message.getProcessQueue().subscribe(
+        message => {
+          // Process Inits
+          message.initProcess(this);
+        }
+      );
+    }
 
       // Run Timed Events
     //   setInterval(() => {

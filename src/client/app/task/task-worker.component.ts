@@ -22,24 +22,28 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             'task_delete',
             'The Process Used to Control the Deletion of Tasks',
             new ProcessContext,
+            [],
             ''
         ),
         load_task_list: new ProcessRoutine(
             'load_task_list',
             'The Process Used to Control the Loading of Tasks',
             new ProcessContext,
+            [],
             ''
         ),
         task_create: new ProcessRoutine(
             'task_create',
             'The Process Used to Control the Creating a Task',
             new ProcessContext,
+            [],
             ''
         ),
         task_save: new ProcessRoutine(
             'task_save',
             'The Process Used to Control the Save a Task',
             new ProcessContext,
+            [],
             ''
         )
     };
@@ -48,27 +52,15 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_delete_task_complete: new ProcessTask(
             'delete_task',
             'get_user_for_delete_task_complete',
+            'task_delete',
             'Delete Task',
             'deleteTask',
             {user:'User',task:'Task'}
         ),
-        // goal_delete_init: new ProcessTask(
-        //     'gather_goal_tasks',
-        //     'goal_delete_init',
-        //     'Gather Goal Tasks',
-        //     'gatherTasks',
-        //     {goal:'string'}
-        // ),
-        // gather_goal_tasks_complete: new ProcessTask(
-        //     'remove_tasks',
-        //     'gather_goal_tasks_complete',
-        //     'Remove Tasks for a specific goal',
-        //     'removeTasks',
-        //     {goal:'string', task_count:'string'}
-        // ),
         get_user_for_load_task_list_complete: new ProcessTask(
             'load_tasks',
             'get_user_for_load_task_list_complete',
+            'load_task_list',
             'Fetch Tasks for a specific goal',
             'gatherTasks',
             {goal:'string',user:'User'}
@@ -76,6 +68,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_save_goal_template_complete: new ProcessTask(
             'gather_tasks_for_goal_template',
             'get_user_for_save_goal_template_complete',
+            'goal_save_template_from_goal',
             'Fetch Tasks for a specific goal',
             'gatherTasks',
             {goal:'string',user:'User'}
@@ -83,6 +76,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         load_tasks_complete: new ProcessTask(
             'publish_tasks',
             'load_tasks_complete',
+            'load_task_list',
             'Publish Tasks for a specific goal',
             'publishTasks',
             {tasks:'array'}
@@ -90,6 +84,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_task_create_complete: new ProcessTask(
             'create_task',
             'get_user_for_task_create_complete',
+            'task_create',
             'Create Task for a specific goal',
             'createTask',
             {task:'Task',user:'User'}
@@ -97,6 +92,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_task_save_complete: new ProcessTask(
             'save_task',
             'get_user_for_task_save_complete',
+            'task_save',
             'Save Task for a specific goal',
             'saveTask',
             {task:'Task',user:'User'}
@@ -104,6 +100,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_commitment_task_save_complete: new ProcessTask(
             'save_task_from_commitment',
             'get_user_for_commitment_task_save_complete',
+            'commitment_task_save',
             'Save Task for a specific goal',
             'saveTask',
             {task:'Task',user:'User'}
@@ -111,6 +108,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         create_commitment_complete: new ProcessTask(
             'publish_task',
             'create_commitment_complete',
+            'commitment_create',
             'Publish Task from the Process Context',
             'publishTask',
             {task:'Task'}
@@ -118,6 +116,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         load_team_task_templates_for_create_goal_from_template_complete: new ProcessTask(
             'create_tasks_from_templates',
             'load_team_task_templates_for_create_goal_from_template_complete',
+            'goal_template_to_goal',
             'Publish Task from the Process Context',
             'createTasksFromTemplates',
             {goal:'Goal','taskTemplates':'TaskTemplate'}
@@ -136,24 +135,39 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
-      // Subscribe to Process Queue
-      // Process Tasks based on messages received
-      if(Object.keys(this.tasks).length > 0) {
-        this.message.getWorkerQueue().subscribe(
-          message => {
-            // Process Signals
-            message.processSignal(this);
-          }
-        );
+    // Subscribe to Worker Registrations
+    this.message.getRegistrarQueue().subscribe(
+      message => {
+        if(Object.keys(message.tasks).length) {
+          Object.values(message.tasks).forEach((task:ProcessTask) => {
+            if(this.routines.hasOwnProperty(task.routine)) {
+              let processRoutine = (<any>this.routines)[task.routine];
+              processRoutine.tasks.push(task);
+            }
+          });
+        }
       }
-      if(Object.keys(this.routines).length > 0) {
-        this.message.getProcessQueue().subscribe(
-          message => {
-            // Process Inits
-            message.initProcess(this);
-          }
-        );
-      }
+    );
+    this.message.registerProcessTasks(this.tasks);
+
+    // Subscribe to Process Queue
+    // Process Tasks based on messages received
+    if(Object.keys(this.tasks).length > 0) {
+      this.message.getWorkerQueue().subscribe(
+        message => {
+          // Process Signals
+          message.processSignal(this);
+        }
+      );
+    }
+    if(Object.keys(this.routines).length > 0) {
+      this.message.getProcessQueue().subscribe(
+        message => {
+          // Process Inits
+          message.initProcess(this);
+        }
+      );
+    }
   }
 
   public createTask(control_uuid: string, params: any): Observable<any> {

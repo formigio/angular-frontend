@@ -20,42 +20,49 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           'goal_template_delete',
           'The Process Used to Control the Deletion of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       goal_template_view: new ProcessRoutine(
           'goal_template_view',
           'The Process Used to Control the Viewing of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       goal_template_load_list: new ProcessRoutine(
           'goal_template_load_list',
           'The Process Used to Control the Viewing of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       goal_template_create: new ProcessRoutine(
           'goal_template_create',
           'The Process Used to Control the Creating of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       goal_template_save: new ProcessRoutine(
           'goal_template_save',
           'The Process Used to Control the Saving of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       goal_template_to_goal: new ProcessRoutine(
           'goal_template_to_goal',
           'The Process Used to Control the Converting Goal Template to Goal',
           new ProcessContext,
+          [],
           ''
       ),
       goal_template_search: new ProcessRoutine(
           'goal_template_search',
           'The Process Used to Control the Searching for Goals',
           new ProcessContext,
+          [],
           ''
       )
   };
@@ -64,6 +71,7 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_template_search_complete: new ProcessTask(
           'search_for_goal_template',
           'get_user_for_goal_template_search_complete',
+          'goal_template_search',
           'Search Goal Template',
           'searchGoalTemplates',
           {term:'string',user:'User',team:'Team'}
@@ -71,6 +79,7 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_template_view_complete: new ProcessTask(
           'load_goal_template',
           'get_user_for_goal_template_view_complete',
+          'goal_template_view',
           'Load Goal Template',
           'loadGoalTemplate',
           {id:'string',user:'User'}
@@ -78,6 +87,7 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_template_load_list_complete: new ProcessTask(
           'load_team_goal_templates',
           'get_user_for_goal_template_load_list_complete',
+          'goal_template_load_list',
           'Load Goal Templates',
           'loadGoalTemplates',
           {team:'string',user:'User'}
@@ -85,6 +95,7 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_template_create_complete: new ProcessTask(
           'create_goal_template',
           'get_user_for_goal_template_create_complete',
+          'goal_template_create',
           'Create Goal Tempalte',
           'createGoalTemplate',
           {goalTemplate:'GoalTemplate',user:'User'}
@@ -92,6 +103,7 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_template_save_complete: new ProcessTask(
           'save_goal_template',
           'get_user_for_goal_template_save_complete',
+          'goal_template_save',
           'Save Goal Template',
           'saveGoalTemplate',
           {goalTemplate:'GoalTemplate',user:'User'}
@@ -99,6 +111,7 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_template_delete_complete: new ProcessTask(
           'delete_goal_template',
           'get_user_for_goal_template_delete_complete',
+          'goal_template_delete',
           'Delete Goal Template',
           'deleteGoalTemplate',
           {id:'string',user:'User'}
@@ -117,24 +130,39 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
-      // Subscribe to Process Queue
-      // Process Tasks based on messages received
-      if(Object.keys(this.tasks).length > 0) {
-        this.message.getWorkerQueue().subscribe(
-          message => {
-            // Process Signals
-            message.processSignal(this);
-          }
-        );
+    // Subscribe to Worker Registrations
+    this.message.getRegistrarQueue().subscribe(
+      message => {
+        if(Object.keys(message.tasks).length) {
+          Object.values(message.tasks).forEach((task:ProcessTask) => {
+            if(this.routines.hasOwnProperty(task.routine)) {
+              let processRoutine = (<any>this.routines)[task.routine];
+              processRoutine.tasks.push(task);
+            }
+          });
+        }
       }
-      if(Object.keys(this.routines).length > 0) {
-        this.message.getProcessQueue().subscribe(
-          message => {
-            // Process Inits
-            message.initProcess(this);
-          }
-        );
-      }
+    );
+    this.message.registerProcessTasks(this.tasks);
+
+    // Subscribe to Process Queue
+    // Process Tasks based on messages received
+    if(Object.keys(this.tasks).length > 0) {
+      this.message.getWorkerQueue().subscribe(
+        message => {
+          // Process Signals
+          message.processSignal(this);
+        }
+      );
+    }
+    if(Object.keys(this.routines).length > 0) {
+      this.message.getProcessQueue().subscribe(
+        message => {
+          // Process Inits
+          message.initProcess(this);
+        }
+      );
+    }
   }
 
   public loadGoalTemplate(control_uuid: string, params: any): Observable<any> {

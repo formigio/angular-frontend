@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessTask, WorkerComponent } from '../../core/index';
+import { MessageService, ProcessRoutine, ProcessTask, WorkerComponent, ProcessContext } from '../../core/index';
 
 /**
  * This class represents the lazy loaded RouteWorkerComponent.
@@ -18,7 +18,8 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
     navigate_to: new ProcessRoutine(
       'navigate_to',
       'Navigate to a Route',
-      {params:{}},
+      new ProcessContext,
+      [],
       ''
     )
   };
@@ -27,6 +28,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
       navigate_to_init: new ProcessTask(
           'navigate',
           'navigate_to',
+          'navigate_to',
           'Navigate to a Route',
           'navigateTo',
           {navigate_to:'string'}
@@ -34,6 +36,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
       remove_goal_complete: new ProcessTask(
           'navigate',
           'remove_goal_complete',
+          'goal_delete',
           'Navigate to Goals after Goal Delete',
           'navigateTo',
           {navigate_to:'string'}
@@ -41,6 +44,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
       store_user_complete: new ProcessTask(
           'navigate',
           'store_user_complete',
+          'user_login',
           'Navigate to Home after Login',
           'navigateTo',
           {navigate_to:'string'}
@@ -48,25 +52,11 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
       register_user_complete: new ProcessTask(
           'navigate',
           'register_user_complete',
+          'user_register',
           'Navigate to Login after Register',
           'navigateTo',
           {navigate_to:'string'}
-      ),
-      test_user_auth_error: new ProcessTask(
-          'navigate',
-          'test_user_auth_error',
-          'Navigate after Auth Test Fails',
-          'navigateTo',
-          {navigate_to:'string'}
       )
-      // ,
-      // link_invite_error: new ProcessTask(
-      //     'navigate',
-      //     'test_user_auth_error',
-      //     'Navigate after Auth Test Fails',
-      //     'navigateTo',
-      //     {navigate_to:'string'}
-      // )
   };
 
   constructor(
@@ -78,25 +68,39 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
-      // Subscribe to Process Queue
-      // Process Tasks based on messages received
-      if(Object.keys(this.tasks).length > 0) {
-        this.message.getWorkerQueue().subscribe(
-          message => {
-            // Process Signals
-            message.processSignal(this);
-          }
-        );
+    // Subscribe to Worker Registrations
+    this.message.getRegistrarQueue().subscribe(
+      message => {
+        if(Object.keys(message.tasks).length) {
+          Object.values(message.tasks).forEach((task:ProcessTask) => {
+            if(this.routines.hasOwnProperty(task.routine)) {
+              let processRoutine = (<any>this.routines)[task.routine];
+              processRoutine.tasks.push(task);
+            }
+          });
+        }
       }
-      if(Object.keys(this.routines).length > 0) {
-        this.message.getProcessQueue().subscribe(
-          message => {
-            // Process Inits
-            message.initProcess(this);
-          }
-        );
-      }
+    );
+    this.message.registerProcessTasks(this.tasks);
 
+    // Subscribe to Process Queue
+    // Process Tasks based on messages received
+    if(Object.keys(this.tasks).length > 0) {
+      this.message.getWorkerQueue().subscribe(
+        message => {
+          // Process Signals
+          message.processSignal(this);
+        }
+      );
+    }
+    if(Object.keys(this.routines).length > 0) {
+      this.message.getProcessQueue().subscribe(
+        message => {
+          // Process Inits
+          message.initProcess(this);
+        }
+      );
+    }
   }
 
   public navigateTo(control_uuid: string, params: any): Observable<any> {

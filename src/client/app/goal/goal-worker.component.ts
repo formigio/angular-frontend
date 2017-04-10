@@ -21,36 +21,42 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           'goal_delete',
           'The Process Used to Control the Deletion of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       goal_view: new ProcessRoutine(
           'goal_view',
           'The Process Used to Control the Viewing of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       load_goal_list: new ProcessRoutine(
           'load_goal_list',
           'The Process Used to Control the Viewing of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       create_goal: new ProcessRoutine(
           'create_goal',
           'The Process Used to Control the Creating of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       goal_save: new ProcessRoutine(
           'goal_save',
           'The Process Used to Control the Saving of Goals',
           new ProcessContext,
+          [],
           ''
       ),
       goal_save_template_from_goal: new ProcessRoutine(
           'goal_save_template_from_goal',
           'The Process Used to Control the Saving of Goal Templates',
           new ProcessContext,
+          [],
           ''
       )
   };
@@ -59,6 +65,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_template_to_goal_complete: new ProcessTask(
           'create_goal_from_template',
           'get_user_for_goal_template_to_goal_complete',
+          'goal_template_to_goal',
           'Create Goal from Template',
           'createGoalFromTemplate',
           {goalTemplate:'GoalTemplate',user:'User'}
@@ -66,6 +73,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       remove_invites_complete: new ProcessTask(
           'remove_goal',
           'remove_invites_complete',
+          'goal_delete',
           'Delete Goal',
           'removeGoal',
           {goal:'string', invite_count:'string', task_count:'string'}
@@ -73,6 +81,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_view_goal_complete: new ProcessTask(
           'load_goal',
           'get_user_for_view_goal_complete',
+          'goal_view',
           'Load Goal',
           'loadGoal',
           {goal_uuid:'string',user:'User'}
@@ -80,6 +89,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_load_goals_complete: new ProcessTask(
           'load_team_goals',
           'get_user_for_load_goals_complete',
+          'load_goal_list',
           'Load Goals',
           'loadGoals',
           {team:'string',user:'User'}
@@ -87,6 +97,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_create_goal_complete: new ProcessTask(
           'create_goal_task',
           'get_user_for_create_goal_complete',
+          'create_goal',
           'Create Goal',
           'createGoal',
           {goal:'Goal',user:'User'}
@@ -94,6 +105,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_save_complete: new ProcessTask(
           'put_goal_task',
           'get_user_for_goal_save_complete',
+          'goal_save',
           'Save Goal',
           'saveGoal',
           {goal:'Goal',user:'User'}
@@ -101,6 +113,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_goal_delete_complete: new ProcessTask(
           'delete_goal_task',
           'get_user_for_goal_delete_complete',
+          'goal_delete',
           'Delete Goal',
           'deleteGoal',
           {goal:'Goal',user:'User'}
@@ -119,24 +132,39 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
-      // Subscribe to Process Queue
-      // Process Tasks based on messages received
-      if(Object.keys(this.tasks).length > 0) {
-        this.message.getWorkerQueue().subscribe(
-          message => {
-            // Process Signals
-            message.processSignal(this);
-          }
-        );
+    // Subscribe to Worker Registrations
+    this.message.getRegistrarQueue().subscribe(
+      message => {
+        if(Object.keys(message.tasks).length) {
+          Object.values(message.tasks).forEach((task:ProcessTask) => {
+            if(this.routines.hasOwnProperty(task.routine)) {
+              let processRoutine = (<any>this.routines)[task.routine];
+              processRoutine.tasks.push(task);
+            }
+          });
+        }
       }
-      if(Object.keys(this.routines).length > 0) {
-        this.message.getProcessQueue().subscribe(
-          message => {
-            // Process Inits
-            message.initProcess(this);
-          }
-        );
-      }
+    );
+    this.message.registerProcessTasks(this.tasks);
+
+    // Subscribe to Process Queue
+    // Process Tasks based on messages received
+    if(Object.keys(this.tasks).length > 0) {
+      this.message.getWorkerQueue().subscribe(
+        message => {
+          // Process Signals
+          message.processSignal(this);
+        }
+      );
+    }
+    if(Object.keys(this.routines).length > 0) {
+      this.message.getProcessQueue().subscribe(
+        message => {
+          // Process Inits
+          message.initProcess(this);
+        }
+      );
+    }
   }
 
   // protected removeGoal(control_uuid: string, params: any): Observable<any> {

@@ -20,30 +20,35 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             'invite_delete',
             'The Process Used to Control the Deletion of Invites',
             new ProcessContext,
+            [],
             ''
         ),
         invite_fetch: new ProcessRoutine(
             'invite_fetch',
             'The Process Used to Control the Fetch of Invites',
             new ProcessContext,
+            [],
             ''
         ),
         invite_create: new ProcessRoutine(
           'invite_create',
           'The Process Used to Control the Creation of Invites',
           new ProcessContext,
+          [],
           ''
         ),
         invite_view: new ProcessRoutine(
           'invite_view',
           'The Process Used to Control the View of Invite',
           new ProcessContext,
+          [],
           ''
         ),
         invite_accept: new ProcessRoutine(
           'invite_accept',
           'The Process Used to Control the Acceptance of an Invite',
           new ProcessContext,
+          [],
           ''
         )
     };
@@ -52,6 +57,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_invite_delete_complete: new ProcessTask(
             'delete_invite',
             'get_user_for_invite_delete_complete',
+            'invite_delete',
             'Delete Invite',
             'deleteInvite',
             {user:'User',invite:'Invite'}
@@ -59,6 +65,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         remove_tasks_complete: new ProcessTask(
             'gather_goal_invites',
             'remove_tasks_complete',
+            'goal_delete',
             'Gather Goal Invites',
             'gatherInvites',
             {entity:'string',entity_id:'string',status:'string'}
@@ -66,6 +73,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         gather_goal_invites_complete: new ProcessTask(
             'remove_invites',
             'gather_goal_invites_complete',
+            'goal_delete',
             'Remove Invites for a specific goal',
             'removeInvites',
             {goal:'string', invite_count:'string'}
@@ -73,6 +81,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_invite_fetch_complete: new ProcessTask(
             'gather_invites_for_invite_fetch',
             'get_user_for_invite_fetch_complete',
+            'invite_fetch',
             'Fetch Invites for a specific goal',
             'gatherInvites',
             {entity:'string',entity_id:'string',user:'User'}
@@ -80,6 +89,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         gather_invites_for_invite_fetch_complete: new ProcessTask(
             'publish_invites',
             'gather_invites_for_invite_fetch_complete',
+            'invite_fetch',
             'Publish Invites for a specific goal',
             'publishInvites',
             {invites:'Invite'}
@@ -87,6 +97,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_invite_create_complete: new ProcessTask(
             'create_invite',
             'get_user_for_invite_create_complete',
+            'invite_create',
             'Create Invite',
             'createInvite',
             {invite:'Invite',user:'User'}
@@ -94,6 +105,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_invite_view_complete: new ProcessTask(
             'load_invite',
             'get_user_for_invite_view_complete',
+            'invite_view',
             'Load Invite',
             'loadInvite',
             {hash:'string',user:'User'}
@@ -101,6 +113,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         load_invite_complete: new ProcessTask(
             'link_invite',
             'load_invite_complete',
+            'invite_view',
             'Link Invite',
             'linkInvite',
             {invite:'Invite',user:'User'}
@@ -108,6 +121,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_invite_accept_complete: new ProcessTask(
             'accept_invite',
             'get_user_for_invite_accept_complete',
+            'invite_accept',
             'Load Invite',
             'acceptInvite',
             {invite:'Invite',user:'User'}
@@ -126,24 +140,39 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
-      // Subscribe to Process Queue
-      // Process Tasks based on messages received
-      if(Object.keys(this.tasks).length > 0) {
-        this.message.getWorkerQueue().subscribe(
-          message => {
-            // Process Signals
-            message.processSignal(this);
-          }
-        );
+    // Subscribe to Worker Registrations
+    this.message.getRegistrarQueue().subscribe(
+      message => {
+        if(Object.keys(message.tasks).length) {
+          Object.values(message.tasks).forEach((task:ProcessTask) => {
+            if(this.routines.hasOwnProperty(task.routine)) {
+              let processRoutine = (<any>this.routines)[task.routine];
+              processRoutine.tasks.push(task);
+            }
+          });
+        }
       }
-      if(Object.keys(this.routines).length > 0) {
-        this.message.getProcessQueue().subscribe(
-          message => {
-            // Process Inits
-            message.initProcess(this);
-          }
-        );
-      }
+    );
+    this.message.registerProcessTasks(this.tasks);
+
+    // Subscribe to Process Queue
+    // Process Tasks based on messages received
+    if(Object.keys(this.tasks).length > 0) {
+      this.message.getWorkerQueue().subscribe(
+        message => {
+          // Process Signals
+          message.processSignal(this);
+        }
+      );
+    }
+    if(Object.keys(this.routines).length > 0) {
+      this.message.getProcessQueue().subscribe(
+        message => {
+          // Process Inits
+          message.initProcess(this);
+        }
+      );
+    }
   }
 
   public gatherInvites(control_uuid: string, params: any): Observable<any> {

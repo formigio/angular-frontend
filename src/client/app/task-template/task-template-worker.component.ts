@@ -20,30 +20,35 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
           'task_template_delete',
           'The Process Used to Control the Deletion of Tasks',
           new ProcessContext,
+          [],
           ''
       ),
       task_template_view: new ProcessRoutine(
           'task_template_view',
           'The Process Used to Control the Viewing of Tasks',
           new ProcessContext,
+          [],
           ''
       ),
       task_template_load_list: new ProcessRoutine(
           'task_template_load_list',
           'The Process Used to Control the Viewing of Tasks',
           new ProcessContext,
+          [],
           ''
       ),
       task_template_create: new ProcessRoutine(
           'task_template_create',
           'The Process Used to Control the Creating of Tasks',
           new ProcessContext,
+          [],
           ''
       ),
       task_template_save: new ProcessRoutine(
           'task_template_save',
           'The Process Used to Control the Saving of Tasks',
           new ProcessContext,
+          [],
           ''
       )
   };
@@ -52,6 +57,7 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_task_template_view_complete: new ProcessTask(
           'load_task_template',
           'get_user_for_task_template_view',
+          'task_template_view',
           'Load Task Template',
           'loadTaskTemplate',
           {id:'string',user:'User'}
@@ -59,6 +65,7 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
       create_goal_from_template_complete: new ProcessTask(
           'load_team_task_templates_for_create_goal_from_template',
           'create_goal_from_template_complete',
+          'goal_template_to_goal',
           'Load Task Templates',
           'loadTaskTemplates',
           {goalTemplate:'string',user:'User'}
@@ -66,6 +73,7 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_task_template_load_list_complete: new ProcessTask(
           'load_team_task_templates',
           'get_user_for_task_template_load_list_complete',
+          'task_template_load_list',
           'Load Task Templates',
           'loadTaskTemplates',
           {goalTemplate:'string',user:'User'}
@@ -73,6 +81,7 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_task_template_create_complete: new ProcessTask(
           'create_task_template',
           'get_user_for_task_template_create_complete',
+          'task_template_create',
           'Create Task Tempalte',
           'createTaskTemplate',
           {taskTemplate:'TaskTemplate',user:'User'}
@@ -80,6 +89,7 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_task_template_save_complete: new ProcessTask(
           'save_task_template',
           'get_user_for_task_template_save_complete',
+          'task_template_save',
           'Save Task Template',
           'saveTaskTemplate',
           {taskTemplate:'TaskTemplate',user:'User'}
@@ -87,6 +97,7 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
       get_user_for_task_template_delete_complete: new ProcessTask(
           'delete_task_template',
           'get_user_for_task_template_delete_complete',
+          'task_template_delete',
           'Delete Task Template',
           'deleteTaskTemplate',
           {id:'string',user:'User'}
@@ -105,24 +116,39 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
-      // Subscribe to Process Queue
-      // Process Tasks based on messages received
-      if(Object.keys(this.tasks).length > 0) {
-        this.message.getWorkerQueue().subscribe(
-          message => {
-            // Process Signals
-            message.processSignal(this);
-          }
-        );
+    // Subscribe to Worker Registrations
+    this.message.getRegistrarQueue().subscribe(
+      message => {
+        if(Object.keys(message.tasks).length) {
+          Object.values(message.tasks).forEach((task:ProcessTask) => {
+            if(this.routines.hasOwnProperty(task.routine)) {
+              let processRoutine = (<any>this.routines)[task.routine];
+              processRoutine.tasks.push(task);
+            }
+          });
+        }
       }
-      if(Object.keys(this.routines).length > 0) {
-        this.message.getProcessQueue().subscribe(
-          message => {
-            // Process Inits
-            message.initProcess(this);
-          }
-        );
-      }
+    );
+    this.message.registerProcessTasks(this.tasks);
+
+    // Subscribe to Process Queue
+    // Process Tasks based on messages received
+    if(Object.keys(this.tasks).length > 0) {
+      this.message.getWorkerQueue().subscribe(
+        message => {
+          // Process Signals
+          message.processSignal(this);
+        }
+      );
+    }
+    if(Object.keys(this.routines).length > 0) {
+      this.message.getProcessQueue().subscribe(
+        message => {
+          // Process Inits
+          message.initProcess(this);
+        }
+      );
+    }
   }
 
   public loadTaskTemplate(control_uuid: string, params: any): Observable<any> {
