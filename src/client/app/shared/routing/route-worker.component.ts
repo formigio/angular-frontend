@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { MessageService, ProcessRoutine, ProcessTask, WorkerComponent, ProcessContext } from '../../core/index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { MessageService, ProcessRoutine, ProcessTask,
+  WorkerComponent, ProcessTaskDef, ProcessTaskStruct, ProcessContext } from '../../core/index';
 
 /**
  * This class represents the lazy loaded RouteWorkerComponent.
@@ -14,6 +15,8 @@ import { MessageService, ProcessRoutine, ProcessTask, WorkerComponent, ProcessCo
 })
 export class RouteWorkerComponent implements OnInit, WorkerComponent {
 
+  public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+
   public routines: {} = {
     navigate_to: new ProcessRoutine(
       'navigate_to',
@@ -25,36 +28,48 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
   };
 
   public tasks: {} = {
-      navigate_to_init: new ProcessTask(
+      navigate_to_init: new ProcessTaskDef(
           'navigate',
           'navigate_to',
           'navigate_to',
           'Navigate to a Route',
           'navigateTo',
+          (context:ProcessContext) => {
+            return true;
+          },
           {navigate_to:'string'}
       ),
-      remove_goal_complete: new ProcessTask(
+      remove_goal_complete: new ProcessTaskDef(
           'navigate',
           'remove_goal_complete',
           'goal_delete',
           'Navigate to Goals after Goal Delete',
           'navigateTo',
+          (context:ProcessContext) => {
+            return context.hasSignal('remove_goal_complete');;
+          },
           {navigate_to:'string'}
       ),
-      store_user_complete: new ProcessTask(
+      store_user_complete: new ProcessTaskDef(
           'navigate',
           'store_user_complete',
           'user_login',
           'Navigate to Home after Login',
           'navigateTo',
+          (context:ProcessContext) => {
+            return context.hasSignal('store_user_complete');;
+          },
           {navigate_to:'string'}
       ),
-      register_user_complete: new ProcessTask(
+      register_user_complete: new ProcessTaskDef(
           'navigate',
           'register_user_complete',
           'user_register',
           'Navigate to Login after Register',
           'navigateTo',
+          (context:ProcessContext) => {
+            return context.hasSignal('register_user_complete');;
+          },
           {navigate_to:'string'}
       )
   };
@@ -64,6 +79,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
     public message: MessageService
   ) {}
 
+
   /**
    * Get the OnInit
    */
@@ -72,7 +88,16 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
     this.message.getRegistrarQueue().subscribe(
       message => {
         if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((task:ProcessTask) => {
+          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
+            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
+            task.identifier = taskdef.identifier;
+            task.trigger = taskdef.trigger;
+            task.routine = taskdef.routine;
+            task.description = taskdef.description;
+            task.method = taskdef.method;
+            task.ready = taskdef.ready;
+            task.params = taskdef.params;
+            task.queue = this.workQueue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -86,15 +111,15 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
     // Subscribe to Process Queue
     // Process Tasks based on messages received
     if(Object.keys(this.tasks).length > 0) {
-      this.message.getWorkerQueue().subscribe(
-        message => {
+      this.workQueue.subscribe(
+        workMessage => {
           // Process Signals
-          message.processSignal(this);
+          workMessage.executeMethod(this);
         }
       );
     }
     if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessQueue().subscribe(
+      this.message.getProcessInitQueue().subscribe(
         message => {
           // Process Inits
           message.initProcess(this);

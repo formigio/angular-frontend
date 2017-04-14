@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable, ReplaySubject } from 'rxjs';
 
 export interface WorkerComponent {
     routines: {};
@@ -28,6 +28,17 @@ export class ProcessRoutine {
     public cleanup() {
         localStorage.removeItem('process_' + this.control_uuid);
     }
+
+    public queueTasks() {
+        this.tasks.forEach((task) => {
+            // Here we can do some state/status checks to see if we need to actual queue the work
+            if(task.ready(this.context) && task.systemStatus === 'pending') {
+                // task.queue hits the specific worker
+                task.queue.next(new WorkerMessage(task, this.control_uuid, this));
+            }
+        });
+    }
+
 }
 
 export class ProcessTaskRegistration {
@@ -36,6 +47,27 @@ export class ProcessTaskRegistration {
     ) {}
 }
 
+export class ProcessTaskDef {
+    constructor(
+        public identifier: string,
+        public trigger: string,
+        public routine: string,
+        public description: string,
+        public method: string,
+        public ready: Function,
+        public params: {} = {}
+    ) {}
+}
+
+export const ProcessTaskStruct = {
+    identifier:'',
+    trigger:'',
+    routine:'',
+    description:'',
+    method:'',
+    params:''
+};
+
 export class ProcessTask {
     constructor(
         public identifier: string,
@@ -43,6 +75,10 @@ export class ProcessTask {
         public routine: string,
         public description: string,
         public method: string,
+        public queue: ReplaySubject<any>,
+        public ready: Function,
+        public systemStatus: string = 'pending',
+        public workStatus: string = 'notstarted',
         public params: {} = {}
     ) {}
 
@@ -102,8 +138,13 @@ export class ProcessTask {
 
 export class ProcessContext {
     constructor(
-        public params: {} = {}
+        public params: {} = {},
+        public signals: string[] = []
     ) {}
+
+    public hasSignal(signalStr: string) {
+        return this.signals.indexOf(signalStr) !== -1;
+    }
 }
 
 export class WorkerResponse {
@@ -146,7 +187,10 @@ export class ProcessMessage {
 
         processRoutine.localDebug();
 
-        worker.message.processSignal(new WorkerMessage(identifier + '_init', control_uuid, processRoutine));
+        // processRoutine.queueTasks();
+        processRoutine.context.signals.push(processRoutine.identifier + '_init');
+        worker.message.continueProcess(processRoutine);
+        //worker.message.processSignal(new WorkerMessage(identifier + '_init', control_uuid, processRoutine));
 
         return true;
         //
@@ -155,81 +199,91 @@ export class ProcessMessage {
 
 export class WorkerMessage {
     constructor(
-        public signal: string,
+        public task: ProcessTask,
         public control_uuid: string,
         public routine: ProcessRoutine
     ) {}
 
-  public processSignal(worker:WorkerComponent): boolean {
-    let signal = this.signal;
+  public executeMethod(worker:WorkerComponent): boolean {
     let control_uuid = this.control_uuid;
     let processRoutine = this.routine;
+    if(processRoutine === null) {
+        return false;
+    }
     // console.log('Processing Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
       // Verify the Worker has a Task
-      if(!worker.tasks.hasOwnProperty(signal)) {
-          return false;
-      }
+    //   if(!worker.tasks.hasOwnProperty(signal)) {
+    //       return false;
+    //   }
     //   console.log('Claim Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
 
-      if(processRoutine === null) {
-          return false;
-      }
 
-      // Initiate ProcessTask
-      let processTask: ProcessTask = (<any>worker.tasks)[signal];
+    // Initiate ProcessTask
+    let processTask: ProcessTask = this.task;
 
+    if(processTask.systemStatus === 'pending' && this.task.workStatus != 'blocked') {
       // Verify Required Process Params are in place
       let paramProcessor: Observable<any> = processTask.processRoutineHasRequiredParams(processRoutine);
       paramProcessor.subscribe(
           null,
           error => {
-              // this.message.addProcessMessage('missing required params: ' + error);
-              worker.message.setFlash('Error - Missing Param for Process: ' + error ,'warning');
+              worker.message.addStickyMessage('Error - Missing Param for Process: ' + error ,'warning');
+              this.task.workStatus = 'blocked';
+              processRoutine.context.signals.push(this.task.identifier + '_error');
+              worker.message.continueProcess(processRoutine);
           },
           () => {
-            //   console.log('Working Signal: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
-              let workerMethod: Observable<any> = (<any>worker)[processTask.method](
-                  processRoutine.control_uuid, processRoutine.context.params);
-              let workerResponse: WorkerResponse;
-              let workerMessage: WorkerMessage = new WorkerMessage('',control_uuid,processRoutine);
-
-              workerMethod.subscribe(
-                  response => workerResponse = response,
-                  error => {
-                    //   console.log('Error: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
-                      workerMessage.signal = processTask.identifier + '_error';
-                      let errorMessage:string = '';
-                      if(typeof error.message === 'string') {
-                        errorMessage = error.message;
-                      } else {
-                        errorMessage = JSON.stringify(error.message);
-                      }
-                      if(errorMessage) {
-                        worker.message.addStickyMessage(errorMessage,'danger');
-                      }
-                      worker.message.processSignal(workerMessage);
-                  },
-                  () => {
-                    //   console.log('Complete: ' + worker.constructor.name + ' > ' + signal + ':' + control_uuid);
-                      if(workerResponse.outcome === 'end') {
-                        processRoutine.cleanup();
-                      } else {
-                        workerMessage.signal = processTask.identifier + '_complete';
-                        if(workerResponse.message) {
-                            worker.message.setFlash(workerResponse.message,'success');
-                        }
-                        processTask.updateProcessAfterWork(control_uuid, workerResponse.context, processRoutine).subscribe(
-                            null,
-                            null,
-                            () => worker.message.processSignal(workerMessage)
-                        );
-                      }
-                  }
-              );
+              this.task.systemStatus = 'ready';
+              processRoutine.context.signals.push(this.task.identifier + '_ready');
+              worker.message.continueProcess(processRoutine);
           }
       );
-
       return true;
+    }
+
+    if(processTask.systemStatus === 'ready') {
+        let workerMethod: Observable<any> = (<any>worker)[processTask.method](
+            processRoutine.control_uuid, processRoutine.context.params);
+        let workerResponse: WorkerResponse;
+
+        workerMethod.subscribe(
+            response => workerResponse = response,
+            error => {
+                let errorMessage:string = '';
+                if(typeof error.message === 'string') {
+                    errorMessage = error.message;
+                } else {
+                    errorMessage = JSON.stringify(error.message);
+                }
+                if(errorMessage) {
+                    worker.message.addStickyMessage(errorMessage,'danger');
+                }
+                this.task.workStatus = 'blocked';
+                processRoutine.context.signals.push(this.task.identifier + '_blocked');
+                worker.message.continueProcess(processRoutine);
+            },
+            () => {
+                if(workerResponse.message) {
+                    worker.message.setFlash(workerResponse.message,'success');
+                }
+                processTask.updateProcessAfterWork(control_uuid, workerResponse.context, processRoutine).subscribe(
+                    null,
+                    null,
+                    () => {
+                        this.task.workStatus = 'completed';
+                        processRoutine.context.signals.push(this.task.identifier + '_complete');
+                        worker.message.continueProcess(processRoutine);
+                    }
+                );
+                // }
+            }
+        );
+
+    }
+
+    worker.message.addStickyMessage('Error - Invalid System Status for Task: ' + processTask.identifier ,'warning');
+
+    return true;
   }
 
 }

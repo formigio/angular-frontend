@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
 import { Team, TeamService } from './index';
 import { User } from '../user/index';
 
@@ -14,6 +15,8 @@ import { User } from '../user/index';
   providers: [ TeamService ]
 })
 export class TeamWorkerComponent implements OnInit, WorkerComponent {
+
+    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
 
     public routines: {} = {
         team_delete: new ProcessRoutine(
@@ -55,44 +58,59 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
-        get_user_for_delete_team_complete: new ProcessTask(
+        get_user_for_delete_team_complete: new ProcessTaskDef(
             'delete_team',
             'get_user_for_delete_team_complete',
             'team_delete',
             'Delete Team',
             'deleteTeam',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_delete_team_complete');
+            },
             {user:'User',team:'Team'}
         ),
-        get_user_for_save_team_complete: new ProcessTask(
+        get_user_for_save_team_complete: new ProcessTaskDef(
             'save_team',
             'get_user_for_save_team_complete',
             'team_save',
             'Save Team',
             'saveTeam',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_save_team_complete');
+            },
             {team:'Team',user:'User'}
         ),
-        get_user_for_create_team_complete: new ProcessTask(
+        get_user_for_create_team_complete: new ProcessTaskDef(
             'create_team',
             'get_user_for_create_team_complete',
             'team_create',
             'Create Team',
             'createTeam',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_create_team_complete');
+            },
             {team:'Team'}
         ),
-        get_user_for_view_team_complete: new ProcessTask(
+        get_user_for_view_team_complete: new ProcessTaskDef(
             'load_team',
             'get_user_for_view_team_complete',
             'team_view',
             'Load Team',
             'loadTeam',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_view_team_complete');
+            },
             {uuid:'string', user:'User'}
         ),
-        get_user_for_fetch_teams_complete: new ProcessTask(
+        get_user_for_fetch_teams_complete: new ProcessTaskDef(
             'fetch_teams',
             'get_user_for_fetch_teams_complete',
             'team_fetch_user_teams',
             'Fetch Teams',
             'fetchUserTeams',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_fetch_teams_complete');
+            },
             {user:'User'}
         )
     };
@@ -113,7 +131,16 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     this.message.getRegistrarQueue().subscribe(
       message => {
         if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((task:ProcessTask) => {
+          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
+            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
+            task.identifier = taskdef.identifier;
+            task.trigger = taskdef.trigger;
+            task.routine = taskdef.routine;
+            task.description = taskdef.description;
+            task.method = taskdef.method;
+            task.ready = taskdef.ready;
+            task.params = taskdef.params;
+            task.queue = this.workQueue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -127,15 +154,15 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     // Subscribe to Process Queue
     // Process Tasks based on messages received
     if(Object.keys(this.tasks).length > 0) {
-      this.message.getWorkerQueue().subscribe(
-        message => {
+      this.workQueue.subscribe(
+        workMessage => {
           // Process Signals
-          message.processSignal(this);
+          workMessage.executeMethod(this);
         }
       );
     }
     if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessQueue().subscribe(
+      this.message.getProcessInitQueue().subscribe(
         message => {
           // Process Inits
           message.initProcess(this);

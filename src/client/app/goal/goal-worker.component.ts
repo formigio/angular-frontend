@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
 import { User } from '../user/index';
 import { GoalTemplate } from '../goal-template/index';
 import { Goal, GoalService, GoalStruct } from './index';
@@ -15,6 +16,8 @@ import { Goal, GoalService, GoalStruct } from './index';
   providers: [ GoalService ]
 })
 export class GoalWorkerComponent implements OnInit, WorkerComponent {
+
+  public workQueue: ReplaySubject<any> = new ReplaySubject(1);
 
   public routines: {} = {
       goal_delete: new ProcessRoutine(
@@ -62,60 +65,81 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
   };
 
   public tasks: {} = {
-      get_user_for_goal_template_to_goal_complete: new ProcessTask(
+      get_user_for_goal_template_to_goal_complete: new ProcessTaskDef(
           'create_goal_from_template',
           'get_user_for_goal_template_to_goal_complete',
           'goal_template_to_goal',
           'Create Goal from Template',
           'createGoalFromTemplate',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_goal_template_to_goal_complete');
+            },
           {goalTemplate:'GoalTemplate',user:'User'}
       ),
-      remove_invites_complete: new ProcessTask(
+      remove_invites_complete: new ProcessTaskDef(
           'remove_goal',
           'remove_invites_complete',
           'goal_delete',
           'Delete Goal',
           'removeGoal',
+            (context:ProcessContext) => {
+              return context.hasSignal('remove_invites_complete');
+            },
           {goal:'string', invite_count:'string', task_count:'string'}
       ),
-      get_user_for_view_goal_complete: new ProcessTask(
+      get_user_for_view_goal_complete: new ProcessTaskDef(
           'load_goal',
           'get_user_for_view_goal_complete',
           'goal_view',
           'Load Goal',
           'loadGoal',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_view_goal_complete');
+            },
           {goal_uuid:'string',user:'User'}
       ),
-      get_user_for_load_goals_complete: new ProcessTask(
+      get_user_for_load_goals_complete: new ProcessTaskDef(
           'load_team_goals',
           'get_user_for_load_goals_complete',
           'load_goal_list',
           'Load Goals',
           'loadGoals',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_load_goals_complete');
+            },
           {team:'string',user:'User'}
       ),
-      get_user_for_create_goal_complete: new ProcessTask(
+      get_user_for_create_goal_complete: new ProcessTaskDef(
           'create_goal_task',
           'get_user_for_create_goal_complete',
           'create_goal',
           'Create Goal',
           'createGoal',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_create_goal_complete');
+            },
           {goal:'Goal',user:'User'}
       ),
-      get_user_for_goal_save_complete: new ProcessTask(
+      get_user_for_goal_save_complete: new ProcessTaskDef(
           'put_goal_task',
           'get_user_for_goal_save_complete',
           'goal_save',
           'Save Goal',
           'saveGoal',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_goal_save_complete');
+            },
           {goal:'Goal',user:'User'}
       ),
-      get_user_for_goal_delete_complete: new ProcessTask(
+      get_user_for_goal_delete_complete: new ProcessTaskDef(
           'delete_goal_task',
           'get_user_for_goal_delete_complete',
           'goal_delete',
           'Delete Goal',
           'deleteGoal',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_goal_delete_complete');
+            },
           {goal:'Goal',user:'User'}
       )
   };
@@ -128,6 +152,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     this.service = this.helper.getServiceInstance(this.service,'GoalService');
   }
 
+
   /**
    * Get the OnInit
    */
@@ -136,7 +161,16 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     this.message.getRegistrarQueue().subscribe(
       message => {
         if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((task:ProcessTask) => {
+          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
+            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
+            task.identifier = taskdef.identifier;
+            task.trigger = taskdef.trigger;
+            task.routine = taskdef.routine;
+            task.description = taskdef.description;
+            task.method = taskdef.method;
+            task.ready = taskdef.ready;
+            task.params = taskdef.params;
+            task.queue = this.workQueue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -150,15 +184,15 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     // Subscribe to Process Queue
     // Process Tasks based on messages received
     if(Object.keys(this.tasks).length > 0) {
-      this.message.getWorkerQueue().subscribe(
-        message => {
+      this.workQueue.subscribe(
+        workMessage => {
           // Process Signals
-          message.processSignal(this);
+          workMessage.executeMethod(this);
         }
       );
     }
     if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessQueue().subscribe(
+      this.message.getProcessInitQueue().subscribe(
         message => {
           // Process Inits
           message.initProcess(this);

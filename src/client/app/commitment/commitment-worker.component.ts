@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
 import { User } from '../user/index';
 import { Task } from '../task/index';
 import { Commitment, CommitmentService } from './index';
@@ -15,6 +16,8 @@ import { Commitment, CommitmentService } from './index';
   providers: [ CommitmentService ]
 })
 export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
+
+    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
 
     public routines: {} = {
         commitment_create: new ProcessRoutine(
@@ -62,52 +65,70 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
-        get_user_for_load_worker_commitments_complete: new ProcessTask(
+        get_user_for_load_worker_commitments_complete: new ProcessTaskDef(
             'load_worker_commitments',
             'get_user_for_load_worker_commitments_complete',
             'commitment_load_worker_commitments',
             'Fetch Worker Commitments',
             'loadWorkerCommitments',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_load_worker_commitments_complete');
+            },
             {user:'User',workerId:'string'}
         ),
-        get_user_for_load_commitments_complete: new ProcessTask(
+        get_user_for_load_commitments_complete: new ProcessTaskDef(
             'load_commitments',
             'get_user_for_load_commitment_list_complete',
             'commitment_load_commitments',
             'Fetch Commitments',
             'loadCommitments',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_load_commitments_complete');
+            },
             {user:'User'}
         ),
-        get_user_for_commitment_create_complete: new ProcessTask(
+        get_user_for_commitment_create_complete: new ProcessTaskDef(
             'create_commitment',
             'get_user_for_commitment_create_complete',
             'commitment_create',
             'Create Commitment',
             'createCommitment',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_commitment_create_complete');
+            },
             {commitment:'Commitment',user:'User'}
         ),
-        get_user_for_commitment_save_complete: new ProcessTask(
+        get_user_for_commitment_save_complete: new ProcessTaskDef(
             'save_commitment',
             'get_user_for_commitment_save_complete',
             'commitment_save',
             'Save Commitment',
             'saveCommitment',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_commitment_save_complete');
+            },
             {commitment:'Commitment',user:'User'}
         ),
-        get_user_for_commitment_delete_complete: new ProcessTask(
+        get_user_for_commitment_delete_complete: new ProcessTaskDef(
             'delete_commitment',
             'get_user_for_commitment_delete_complete',
             'commitment_delete',
             'Delete Commitment',
             'deleteCommitment',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_commitment_delete_complete');
+            },
             {commitment:'Commitment',user:'User'}
         ),
-        save_task_from_commitment_complete: new ProcessTask(
+        save_task_from_commitment_complete: new ProcessTaskDef(
             'load_commitments_after_task_save',
             'save_task_from_commitment_complete',
             'commitment_task_save',
             'Load Commitments',
             'loadCommitments',
+            (context:ProcessContext) => {
+              return context.hasSignal('save_task_from_commitment_complete');
+            },
             {user:'User'}
         )
     };
@@ -128,7 +149,16 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
     this.message.getRegistrarQueue().subscribe(
       message => {
         if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((task:ProcessTask) => {
+          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
+            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
+            task.identifier = taskdef.identifier;
+            task.trigger = taskdef.trigger;
+            task.routine = taskdef.routine;
+            task.description = taskdef.description;
+            task.method = taskdef.method;
+            task.ready = taskdef.ready;
+            task.params = taskdef.params;
+            task.queue = this.workQueue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -142,15 +172,15 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
     // Subscribe to Process Queue
     // Process Tasks based on messages received
     if(Object.keys(this.tasks).length > 0) {
-      this.message.getWorkerQueue().subscribe(
-        message => {
+      this.workQueue.subscribe(
+        workMessage => {
           // Process Signals
-          message.processSignal(this);
+          workMessage.executeMethod(this);
         }
       );
     }
     if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessQueue().subscribe(
+      this.message.getProcessInitQueue().subscribe(
         message => {
           // Process Inits
           message.initProcess(this);
@@ -158,6 +188,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
       );
     }
   }
+
 
   public createCommitment(control_uuid: string, params: any): Observable<any> {
     let commitment: Commitment = params.commitment;

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
 import { User } from '../user/index';
 import { TaskTemplate, TaskTemplateService } from './index';
 
@@ -14,6 +15,8 @@ import { TaskTemplate, TaskTemplateService } from './index';
   providers: [ TaskTemplateService ]
 })
 export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
+
+  public workQueue: ReplaySubject<any> = new ReplaySubject(1);
 
   public routines: {} = {
       task_template_delete: new ProcessRoutine(
@@ -54,52 +57,70 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
   };
 
   public tasks: {} = {
-      get_user_for_task_template_view_complete: new ProcessTask(
+      get_user_for_task_template_view_complete: new ProcessTaskDef(
           'load_task_template',
           'get_user_for_task_template_view',
           'task_template_view',
           'Load Task Template',
           'loadTaskTemplate',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_task_template_view_complete');
+            },
           {id:'string',user:'User'}
       ),
-      create_goal_from_template_complete: new ProcessTask(
+      create_goal_from_template_complete: new ProcessTaskDef(
           'load_team_task_templates_for_create_goal_from_template',
           'create_goal_from_template_complete',
           'goal_template_to_goal',
           'Load Task Templates',
           'loadTaskTemplates',
+            (context:ProcessContext) => {
+              return context.hasSignal('create_goal_from_template_complete');
+            },
           {goalTemplate:'string',user:'User'}
       ),
-      get_user_for_task_template_load_list_complete: new ProcessTask(
+      get_user_for_task_template_load_list_complete: new ProcessTaskDef(
           'load_team_task_templates',
           'get_user_for_task_template_load_list_complete',
           'task_template_load_list',
           'Load Task Templates',
           'loadTaskTemplates',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_task_template_load_list_complete');
+            },
           {goalTemplate:'string',user:'User'}
       ),
-      get_user_for_task_template_create_complete: new ProcessTask(
+      get_user_for_task_template_create_complete: new ProcessTaskDef(
           'create_task_template',
           'get_user_for_task_template_create_complete',
           'task_template_create',
           'Create Task Tempalte',
           'createTaskTemplate',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_task_template_create_complete');
+            },
           {taskTemplate:'TaskTemplate',user:'User'}
       ),
-      get_user_for_task_template_save_complete: new ProcessTask(
+      get_user_for_task_template_save_complete: new ProcessTaskDef(
           'save_task_template',
           'get_user_for_task_template_save_complete',
           'task_template_save',
           'Save Task Template',
           'saveTaskTemplate',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_task_template_save_complete');
+            },
           {taskTemplate:'TaskTemplate',user:'User'}
       ),
-      get_user_for_task_template_delete_complete: new ProcessTask(
+      get_user_for_task_template_delete_complete: new ProcessTaskDef(
           'delete_task_template',
           'get_user_for_task_template_delete_complete',
           'task_template_delete',
           'Delete Task Template',
           'deleteTaskTemplate',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_task_template_delete_complete');
+            },
           {id:'string',user:'User'}
       )
   };
@@ -120,7 +141,16 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
     this.message.getRegistrarQueue().subscribe(
       message => {
         if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((task:ProcessTask) => {
+          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
+            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
+            task.identifier = taskdef.identifier;
+            task.trigger = taskdef.trigger;
+            task.routine = taskdef.routine;
+            task.description = taskdef.description;
+            task.method = taskdef.method;
+            task.ready = taskdef.ready;
+            task.params = taskdef.params;
+            task.queue = this.workQueue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -134,15 +164,15 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
     // Subscribe to Process Queue
     // Process Tasks based on messages received
     if(Object.keys(this.tasks).length > 0) {
-      this.message.getWorkerQueue().subscribe(
-        message => {
+      this.workQueue.subscribe(
+        workMessage => {
           // Process Signals
-          message.processSignal(this);
+          workMessage.executeMethod(this);
         }
       );
     }
     if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessQueue().subscribe(
+      this.message.getProcessInitQueue().subscribe(
         message => {
           // Process Inits
           message.initProcess(this);

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { MessageService, HelperService, ProcessRoutine,
+  ProcessContext, ProcessTask, ProcessTaskDef,
+  ProcessTaskStruct, WorkerComponent } from '../core/index';
 import { Config } from '../shared/index';
 import { User, UserService } from './index';
 
@@ -18,6 +20,8 @@ declare let apigClientFactory: any;
   providers: [ UserService ]
 })
 export class UserWorkerComponent implements OnInit, WorkerComponent {
+
+    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
 
     public routines: {} = {
         user_login: new ProcessRoutine(
@@ -93,552 +97,753 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
-        user_test_username_init: new ProcessTask(
+        user_test_username_init: new ProcessTaskDef(
             'test_username',
             'user_test_username_init',
             'user_test_username',
             'Test Username',
             'testUsername',
+            (context:ProcessContext) => {
+               return context.hasSignal('user_test_username_init');
+            },
             {}
         ),
-        user_load_for_app_init: new ProcessTask(
+        user_load_for_app_init: new ProcessTaskDef(
             'check_data_service',
             'user_load_for_app_init',
             'user_load_for_app',
             'Do Initial Check for Data Service',
             'checkDataService',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_load_for_app_init');
+            },
             {}
         ),
-        check_data_service_complete: new ProcessTask(
+        check_data_service_complete: new ProcessTaskDef(
             'start_google_api_on_load',
             'user_load_for_app_init',
             'user_load_for_app',
             'Start Google API',
             'startGoogleApi',
+            (context:ProcessContext) => {
+              return context.hasSignal('check_data_service_complete');
+            },
             {}
         ),
-        user_google_api_init: new ProcessTask(
+        user_google_api_init: new ProcessTaskDef(
             'start_google_api',
             'user_google_api_init',
             'user_google_api',
             'Start Google API',
             'startGoogleApi',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_google_api_init');
+            },
             {}
         ),
-        user_update_init: new ProcessTask(
+        user_update_init: new ProcessTaskDef(
             'update_user_record',
             'user_update_init',
             'user_update',
             'Update User Record',
             'updateUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_update_init');
+            },
             {user:'User'}
         ),
-        update_user_record_complete: new ProcessTask(
+        update_user_record_complete: new ProcessTaskDef(
             'store_user_record_after_update',
             'update_user_record_complete',
             'user_update',
             'Store User Record',
             'storeUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('update_user_record_complete');
+            },
             {user:'User'}
         ),
-        store_user_record_after_update_complete: new ProcessTask(
+        store_user_record_after_update_complete: new ProcessTaskDef(
             'redirect_after_user_update',
             'store_user_record_after_update_complete',
             'user_update',
             'Notify User They are Good To go, and Navigate them',
             'notifyNewUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('store_user_record_after_update_complete');
+            },
             {user:'User'}
         ),
-        start_google_api_on_load_complete: new ProcessTask(
+        start_google_api_on_load_complete: new ProcessTaskDef(
             'load_user_for_app',
             'start_google_api_on_load_complete',
             'user_load_for_app',
             'Load User into the App',
             'loadUserIntoApp',
+            (context:ProcessContext) => {
+              return context.hasSignal('start_google_api_on_load_complete');
+            },
             {}
         ),
-        user_login_init: new ProcessTask(
+        user_login_init: new ProcessTaskDef(
             'login_cognito_user',
             'user_login_init',
             'user_login',
             'Login User',
             'loginCognitoUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_login_init');
+            },
             {user:'User'}
         ),
-        confirm_cognito_user_complete: new ProcessTask(
+        confirm_cognito_user_complete: new ProcessTaskDef(
             'login_cognito_user',
             'confirm_cognito_user_complete',
             'user_login',
             'Login User',
             'loginCognitoUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('confirm_cognito_user_complete');
+            },
             {user:'User'}
         ),
-        user_login_google_init: new ProcessTask(
+        user_login_google_init: new ProcessTaskDef(
             'login_google_user',
             'user_login_google_init',
             'user_login_google',
             'Login Google User',
             'loginGoogleUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_login_google_init');
+            },
             {token:'string',user:'User'}
         ),
-        user_google_token_refresh_init: new ProcessTask(
+        user_google_token_refresh_init: new ProcessTaskDef(
             'refresh_google_token',
             'user_google_token_refresh_init',
             'user_google_token_refresh',
             'Refresh Google Token',
             'refreshGoogleUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_google_token_refresh_init');
+            },
             {token:'string',user:'User'}
         ),
-        refresh_google_token_complete: new ProcessTask(
+        refresh_google_token_complete: new ProcessTaskDef(
             'store_refreshed_user',
             'refresh_google_token_complete',
             'user_google_token_refresh',
             'Store Refreshed User',
             'storeUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('refresh_google_token_complete');
+            },
             {user:'User',token:'string'}
         ),
-        login_cognito_user_complete: new ProcessTask(
+        login_cognito_user_complete: new ProcessTaskDef(
           'swap_token',
           'login_cognito_user_complete',
           'login_user',
           'Swap the Tokens',
           'swapToken',
+          (context:ProcessContext) => {
+            return context.hasSignal('login_cognito_user_complete');
+          },
           {user:'User'}
         ),
-        store_google_user_complete: new ProcessTask(
+        store_google_user_complete: new ProcessTaskDef(
           'fetch_user_worker',
           'store_google_user_complete',
           'user_login_google',
           'Store Authenticated User',
           'fetchUserWorker',
+          (context:ProcessContext) => {
+            return context.hasSignal('store_google_user_complete');
+          },
           {
             user:'User'
           }
         ),
-        login_google_user_complete: new ProcessTask(
+        login_google_user_complete: new ProcessTaskDef(
           'store_google_user',
           'login_google_user_complete',
           'user_login_google',
           'Store Authenticated User',
           'storeUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('login_google_user_complete');
+          },
           {
             user:'User'
           }
         ),
-        fetch_user_worker_complete: new ProcessTask(
+        fetch_user_worker_complete: new ProcessTaskDef(
           'store_user_worker',
           'fetch_user_worker_complete',
           'user_login',
           'Store User Worker',
           'storeUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('fetch_user_worker_complete');
+          },
           {
             user:'User'
           }
         ),
-        swap_token_complete: new ProcessTask(
+        swap_token_complete: new ProcessTaskDef(
           'store_congito_user',
           'login_cognito_user_complete',
           'user_login',
           'Store Authenticated User',
           'storeUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('swap_token_complete');
+          },
           {
             user:'User'
           }
         ),
-        store_congito_user_complete: new ProcessTask(
+        store_congito_user_complete: new ProcessTaskDef(
           'fetch_user_worker',
           'store_congito_user_complete',
           'user_login',
           'Store Authenticated User',
           'fetchUserWorker',
+          (context:ProcessContext) => {
+            return context.hasSignal('store_congito_user_complete');
+          },
           {
             user:'User'
           }
         ),
-        test_authenticated_complete: new ProcessTask(
+        test_authenticated_complete: new ProcessTaskDef(
           'store_google_user',
           'test_authenticated_complete',
           'user_login_google',
           'Store the Google User for the app',
           'storeUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('test_authenticated_complete');
+          },
           {
             user:'User'
           }
         ),
-        user_register_init: new ProcessTask(
+        user_register_init: new ProcessTaskDef(
             'create_cognito_user',
             'user_register_init',
             'user_register',
             'Login User',
             'createCognitoUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_register_init');
+            },
             {user:'User'}
         ),
-        user_confirm_init: new ProcessTask(
+        user_confirm_init: new ProcessTaskDef(
             'confirm_cognito_user',
             'user_confirm_init',
             'user_confirm',
             'Confirm User',
             'confirmCognitoUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_confirm_init');
+            },
             {user:'User'}
         ),
-        user_logout_init: new ProcessTask(
+        user_logout_init: new ProcessTaskDef(
             'user_logout',
             'user_logout_init',
             'user_logout',
             'Logout User',
             'logoutUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('user_logout_init');
+            },
             {}
         ),
-        team_save_init: new ProcessTask(
+        team_save_init: new ProcessTaskDef(
             'get_user_for_save_team',
             'team_save_init',
             'team_save',
             'Put User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('team_save_init');
+            },
             {}
         ),
-        team_create_init: new ProcessTask(
+        team_create_init: new ProcessTaskDef(
             'get_user_for_create_team',
             'team_create_init',
             'team_create',
             'Put User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('team_create_init');
+            },
             {}
         ),
-        team_view_init: new ProcessTask(
+        team_view_init: new ProcessTaskDef(
             'get_user_for_view_team',
             'team_view_init',
             'team_view',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('team_view_init');
+            },
             {}
         ),
-        team_fetch_user_teams_init: new ProcessTask(
+        team_fetch_user_teams_init: new ProcessTaskDef(
             'get_user_for_fetch_teams',
             'team_fetch_user_teams_init',
             'team_fetch_user_teams',
             'Put User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('team_fetch_user_teams_init');
+            },
             {}
         ),
-        teammember_add_init: new ProcessTask(
+        teammember_add_init: new ProcessTaskDef(
             'validate_user_as_teammember',
             'teammember_add_init',
             'teammember_add',
             'Put User in Process Context',
             'validateUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('teammember_add_init');
+            },
             {user_email:'string'}
         ),
-        goal_view_init: new ProcessTask(
+        goal_view_init: new ProcessTaskDef(
             'get_user_for_view_goal',
             'goal_view_init',
             'goal_view',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('goal_view_init');
+            },
             {}
         ),
-        load_goal_list_init: new ProcessTask(
+        load_goal_list_init: new ProcessTaskDef(
             'get_user_for_load_goals',
             'load_goal_list_init',
             'load_goal_list',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('load_goal_list_init');
+            },
             {}
         ),
-        teammember_fetch_team_members_init: new ProcessTask(
+        teammember_fetch_team_members_init: new ProcessTaskDef(
             'get_user_for_load_teammembers',
             'teammember_fetch_team_members_init',
             'teammember_fetch_team_members',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('teammember_fetch_team_members_init');
+            },
             {}
         ),
-        create_goal_init: new ProcessTask(
+        create_goal_init: new ProcessTaskDef(
             'get_user_for_create_goal',
             'create_goal_init',
             'create_goal',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('create_goal_init');
+            },
             {}
         ),
-        load_task_list_init: new ProcessTask(
+        load_task_list_init: new ProcessTaskDef(
             'get_user_for_load_task_list',
             'load_task_list_init',
             'load_task_list',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('load_task_list_init');
+            },
             {}
         ),
-        invite_fetch_init: new ProcessTask(
+        invite_fetch_init: new ProcessTaskDef(
             'get_user_for_invite_fetch',
             'invite_fetch_init',
             'invite_fetch',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('invite_fetch_init');
+            },
             {}
         ),
-        invite_create_init: new ProcessTask(
+        invite_create_init: new ProcessTaskDef(
             'get_user_for_invite_create',
             'invite_create_init',
             'invite_create',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('invite_create_init');
+            },
             {}
         ),
-        invite_view_init: new ProcessTask(
+        invite_view_init: new ProcessTaskDef(
             'get_user_for_invite_view',
             'invite_view_init',
             'invite_view',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('invite_view_init');
+            },
             {}
         ),
-        goal_save_init: new ProcessTask(
+        goal_save_init: new ProcessTaskDef(
             'get_user_for_goal_save',
             'goal_save_init',
             'goal_save',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('goal_save_init');
+            },
             {}
         ),
-        task_create_init: new ProcessTask(
+        task_create_init: new ProcessTaskDef(
             'get_user_for_task_create',
             'task_create_init',
             'task_create',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('task_create_init');
+            },
             {}
         ),
-        task_save_init: new ProcessTask(
+        task_save_init: new ProcessTaskDef(
             'get_user_for_task_save',
             'task_save_init',
             'task_save',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('task_save_init');
+            },
             {}
         ),
-        team_delete_init: new ProcessTask(
+        team_delete_init: new ProcessTaskDef(
             'get_user_for_delete_team',
             'team_delete_init',
             'team_delete',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('team_delete_init');
+            },
             {}
         ),
-        task_delete_init: new ProcessTask(
+        task_delete_init: new ProcessTaskDef(
             'get_user_for_delete_task',
             'task_delete_init',
             'task_delete',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('task_delete_init');
+            },
             {}
         ),
-        goal_delete_init: new ProcessTask(
+        goal_delete_init: new ProcessTaskDef(
             'get_user_for_goal_delete',
             'goal_delete_init',
             'goal_delete',
             'Get User in Process Context',
             'getUser',
+            (context:ProcessContext) => {
+              return context.hasSignal('goal_delete_init');
+            },
             {}
         ),
-        invite_accept_init: new ProcessTask(
+        invite_accept_init: new ProcessTaskDef(
           'get_user_for_invite_accept',
           'invite_accept_init',
           'invite_accept',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('invite_accept_init');
+          },
           {}
         ),
-        invite_delete_init: new ProcessTask(
+        invite_delete_init: new ProcessTaskDef(
           'get_user_for_invite_delete',
           'invite_delete_init',
           'invite_delete',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('invite_delete_init');
+          },
           {}
         ),
-        commitment_load_commitments_init: new ProcessTask(
+        commitment_load_commitments_init: new ProcessTaskDef(
           'get_user_for_load_commitments',
           'commitment_load_commitments_init',
           'commitment_load_commitments',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('commitment_load_commitments_init');
+          },
           {}
         ),
-        commitment_create_init: new ProcessTask(
+        commitment_create_init: new ProcessTaskDef(
           'get_user_for_commitment_create',
           'commitment_create_init',
           'commitment_create',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('commitment_create_init');
+          },
           {}
         ),
-        commitment_delete_init: new ProcessTask(
+        commitment_delete_init: new ProcessTaskDef(
           'get_user_for_commitment_delete',
           'commitment_delete_init',
           'commitment_delete',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('commitment_delete_init');
+          },
           {}
         ),
-        commitment_task_save_init: new ProcessTask(
+        commitment_task_save_init: new ProcessTaskDef(
           'get_user_for_commitment_task_save',
           'commitment_task_save_init',
           'commitment_task_save',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('commitment_task_save_init');
+          },
           {}
         ),
-        process_every_minute_init: new ProcessTask(
+        process_every_minute_init: new ProcessTaskDef(
           'check_user_for_keeping_active_user',
           'process_every_minute_init',
           'process_every_minute',
           'Get User for Process Context',
           'checkUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('process_every_minute_init');
+          },
           {}
         ),
-        check_user_for_keeping_active_user_complete: new ProcessTask(
+        check_user_for_keeping_active_user_complete: new ProcessTaskDef(
           'get_user_for_keeping_active_user',
           'process_every_minute_init',
           'process_every_minute',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('check_user_for_keeping_active_user_complete');
+          },
           {}
         ),
-        commitment_save_init: new ProcessTask(
+        commitment_save_init: new ProcessTaskDef(
           'get_user_for_commitment_save',
           'commitment_save_init',
           'commitment_save',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('commitment_save_init');
+          },
           {}
         ),
-        commitment_load_worker_commitments_init: new ProcessTask(
+        commitment_load_worker_commitments_init: new ProcessTaskDef(
           'get_user_for_load_worker_commitments',
           'commitment_load_worker_commitments_init',
           'commitment_load_worker_commitments',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('commitment_load_worker_commitments_init');
+          },
           {}
         ),
-        goal_save_template_from_goal_init: new ProcessTask(
+        goal_save_template_from_goal_init: new ProcessTaskDef(
           'get_user_for_save_goal_template',
           'goal_save_template_from_goal_init',
           'goal_save_template_from_goal',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('goal_save_template_from_goal_init');
+          },
           {}
         ),
-        refresh_google_token_error: new ProcessTask(
-            'logout_after_google_token_refresh_failed',
-            'refresh_google_token_error',
-            'user_google_token_refresh',
-            'Forced Logout after Google Token Refresh Fails',
-            'logoutUser',
-            {}
+        refresh_google_token_error: new ProcessTaskDef(
+          'logout_after_google_token_refresh_failed',
+          'refresh_google_token_error',
+          'user_google_token_refresh',
+          'Forced Logout after Google Token Refresh Fails',
+          'logoutUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('refresh_google_token_error');
+          },
+          {}
         ),
-        fetch_user_worker_error: new ProcessTask(
-            'redirect_to_register',
-            'fetch_user_worker_error',
-            'user_login_google',
-            'Direct the user to Registration, since there is no worker',
-            'registerUser',
-            {}
+        fetch_user_worker_error: new ProcessTaskDef(
+          'redirect_to_register',
+          'fetch_user_worker_error',
+          'user_login_google',
+          'Direct the user to Registration, since there is no worker',
+          'registerUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('fetch_user_worker_error');
+          },
+          {}
         ),
-        goal_template_delete_init: new ProcessTask(
+        goal_template_delete_init: new ProcessTaskDef(
           'get_user_for_goal_template_delete',
           'goal_template_delete_init',
           'goal_template_delete',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('goal_template_delete_init');
+          },
           {}
         ),
-        goal_template_view_init: new ProcessTask(
+        goal_template_view_init: new ProcessTaskDef(
           'get_user_for_goal_template_view',
           'goal_template_view_init',
           'goal_template_view',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('goal_template_view_init');
+          },
           {}
         ),
-        goal_template_load_list_init: new ProcessTask(
+        goal_template_load_list_init: new ProcessTaskDef(
           'get_user_for_goal_template_load_list',
           'goal_template_load_list_init',
           'goal_template_load_list',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('goal_template_load_list_init');
+          },
           {}
         ),
-        goal_template_create_init: new ProcessTask(
+        goal_template_create_init: new ProcessTaskDef(
           'get_user_for_goal_template_create',
           'goal_template_create_init',
           'goal_template_create',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('goal_template_create_init');
+          },
           {}
         ),
-        goal_template_save_init: new ProcessTask(
+        goal_template_save_init: new ProcessTaskDef(
           'get_user_for_goal_template_save',
           'goal_template_save_init',
           'goal_template_save',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('goal_template_save_init');
+          },
           {}
         ),
-        task_template_delete_init: new ProcessTask(
+        task_template_delete_init: new ProcessTaskDef(
           'get_user_for_task_template_delete',
           'task_template_delete_init',
           'task_template_delete',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('task_template_delete_init');
+          },
           {}
         ),
-        task_template_view_init: new ProcessTask(
+        task_template_view_init: new ProcessTaskDef(
           'get_user_for_task_template_view',
           'task_template_view_init',
           'task_template_view',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('task_template_view_init');
+          },
           {}
         ),
-        task_template_load_list_init: new ProcessTask(
+        task_template_load_list_init: new ProcessTaskDef(
           'get_user_for_task_template_load_list',
           'task_template_load_list_init',
           'task_template_load_list',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('task_template_load_list_init');
+          },
           {}
         ),
-        task_template_create_init: new ProcessTask(
+        task_template_create_init: new ProcessTaskDef(
           'get_user_for_task_template_create',
           'task_template_create_init',
           'task_template_create',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('task_template_create_init');
+          },
           {}
         ),
-        task_template_save_init: new ProcessTask(
+        task_template_save_init: new ProcessTaskDef(
           'get_user_for_task_template_save',
           'task_template_save_init',
           'task_template_save',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('task_template_save_init');
+          },
           {}
         ),
-        goal_template_to_goal_init: new ProcessTask(
+        goal_template_to_goal_init: new ProcessTaskDef(
           'get_user_for_goal_template_to_goal',
           'goal_template_to_goal_init',
           'goal_template_to_goal',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('goal_template_to_goal_init');
+          },
           {}
         ),
-        goal_template_search_init: new ProcessTask(
+        goal_template_search_init: new ProcessTaskDef(
           'get_user_for_goal_template_search',
           'goal_template_search_init',
           'goal_template_search',
           'Get User for Process Context',
           'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('goal_template_search_init');
+          },
           {}
         )
     };
@@ -659,7 +864,16 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     this.message.getRegistrarQueue().subscribe(
       message => {
         if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((task:ProcessTask) => {
+          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
+            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
+            task.identifier = taskdef.identifier;
+            task.trigger = taskdef.trigger;
+            task.routine = taskdef.routine;
+            task.description = taskdef.description;
+            task.method = taskdef.method;
+            task.ready = taskdef.ready;
+            task.params = taskdef.params;
+            task.queue = this.workQueue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -671,20 +885,20 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     this.message.registerProcessTasks(this.tasks);
 
     // Subscribe to Process Queue
-    if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessQueue().subscribe(
-        message => {
-          // Process Inits
-          message.initProcess(this);
+    // Process Tasks based on messages received
+    if(Object.keys(this.tasks).length > 0) {
+      this.workQueue.subscribe(
+        workMessage => {
+          // Process Signals
+          workMessage.executeMethod(this);
         }
       );
     }
-    // Process Tasks based on messages received
-    if(Object.keys(this.tasks).length > 0) {
-      this.message.getWorkerQueue().subscribe(
+    if(Object.keys(this.routines).length > 0) {
+      this.message.getProcessInitQueue().subscribe(
         message => {
-          // Process Signals
-          message.processSignal(this);
+          // Process Inits
+          message.initProcess(this);
         }
       );
     }

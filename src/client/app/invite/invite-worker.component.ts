@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext, ProcessTask, WorkerComponent } from '../core/index';
+import { Observable, ReplaySubject } from 'rxjs';
+import { MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
 import { User } from '../user/index';
 import { Invite, InviteService } from './index';
 
@@ -14,6 +15,8 @@ import { Invite, InviteService } from './index';
   providers: [ InviteService ]
 })
 export class InviteWorkerComponent implements OnInit, WorkerComponent {
+
+    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
 
     public routines: {} = {
         invite_delete: new ProcessRoutine(
@@ -54,76 +57,103 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
-        get_user_for_invite_delete_complete: new ProcessTask(
+        get_user_for_invite_delete_complete: new ProcessTaskDef(
             'delete_invite',
             'get_user_for_invite_delete_complete',
             'invite_delete',
             'Delete Invite',
             'deleteInvite',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_invite_delete_complete');
+            },
             {user:'User',invite:'Invite'}
         ),
-        remove_tasks_complete: new ProcessTask(
+        remove_tasks_complete: new ProcessTaskDef(
             'gather_goal_invites',
             'remove_tasks_complete',
             'goal_delete',
             'Gather Goal Invites',
             'gatherInvites',
+            (context:ProcessContext) => {
+              return context.hasSignal('remove_tasks_complete');
+            },
             {entity:'string',entity_id:'string',status:'string'}
         ),
-        gather_goal_invites_complete: new ProcessTask(
+        gather_goal_invites_complete: new ProcessTaskDef(
             'remove_invites',
             'gather_goal_invites_complete',
             'goal_delete',
             'Remove Invites for a specific goal',
             'removeInvites',
+            (context:ProcessContext) => {
+              return context.hasSignal('gather_goal_invites_complete');
+            },
             {goal:'string', invite_count:'string'}
         ),
-        get_user_for_invite_fetch_complete: new ProcessTask(
+        get_user_for_invite_fetch_complete: new ProcessTaskDef(
             'gather_invites_for_invite_fetch',
             'get_user_for_invite_fetch_complete',
             'invite_fetch',
             'Fetch Invites for a specific goal',
             'gatherInvites',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_invite_fetch_complete');
+            },
             {entity:'string',entity_id:'string',user:'User'}
         ),
-        gather_invites_for_invite_fetch_complete: new ProcessTask(
+        gather_invites_for_invite_fetch_complete: new ProcessTaskDef(
             'publish_invites',
             'gather_invites_for_invite_fetch_complete',
             'invite_fetch',
             'Publish Invites for a specific goal',
             'publishInvites',
+            (context:ProcessContext) => {
+              return context.hasSignal('gather_invites_for_invite_fetch_complete');
+            },
             {invites:'Invite'}
         ),
-        get_user_for_invite_create_complete: new ProcessTask(
+        get_user_for_invite_create_complete: new ProcessTaskDef(
             'create_invite',
             'get_user_for_invite_create_complete',
             'invite_create',
             'Create Invite',
             'createInvite',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_invite_create_complete');
+            },
             {invite:'Invite',user:'User'}
         ),
-        get_user_for_invite_view_complete: new ProcessTask(
+        get_user_for_invite_view_complete: new ProcessTaskDef(
             'load_invite',
             'get_user_for_invite_view_complete',
             'invite_view',
             'Load Invite',
             'loadInvite',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_invite_view_complete');
+            },
             {hash:'string',user:'User'}
         ),
-        load_invite_complete: new ProcessTask(
+        load_invite_complete: new ProcessTaskDef(
             'link_invite',
             'load_invite_complete',
             'invite_view',
             'Link Invite',
             'linkInvite',
+            (context:ProcessContext) => {
+              return context.hasSignal('load_invite_complete');
+            },
             {invite:'Invite',user:'User'}
         ),
-        get_user_for_invite_accept_complete: new ProcessTask(
+        get_user_for_invite_accept_complete: new ProcessTaskDef(
             'accept_invite',
             'get_user_for_invite_accept_complete',
             'invite_accept',
             'Load Invite',
             'acceptInvite',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_invite_accept_complete');
+            },
             {invite:'Invite',user:'User'}
         )
     };
@@ -144,7 +174,16 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     this.message.getRegistrarQueue().subscribe(
       message => {
         if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((task:ProcessTask) => {
+          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
+            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
+            task.identifier = taskdef.identifier;
+            task.trigger = taskdef.trigger;
+            task.routine = taskdef.routine;
+            task.description = taskdef.description;
+            task.method = taskdef.method;
+            task.ready = taskdef.ready;
+            task.params = taskdef.params;
+            task.queue = this.workQueue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -158,15 +197,15 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     // Subscribe to Process Queue
     // Process Tasks based on messages received
     if(Object.keys(this.tasks).length > 0) {
-      this.message.getWorkerQueue().subscribe(
-        message => {
+      this.workQueue.subscribe(
+        workMessage => {
           // Process Signals
-          message.processSignal(this);
+          workMessage.executeMethod(this);
         }
       );
     }
     if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessQueue().subscribe(
+      this.message.getProcessInitQueue().subscribe(
         message => {
           // Process Inits
           message.initProcess(this);
