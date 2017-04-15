@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine,
-  ProcessContext, ProcessTask, ProcessTaskDef,
-  ProcessTaskStruct, WorkerComponent } from '../index';
+  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
@@ -20,10 +19,7 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
   public routines: {} = {
     process_every_minute: new ProcessRoutine(
       'process_every_minute',
-      'The Process Used to Control the Automated Tasks',
-      new ProcessContext,
-      [],
-      ''
+      'The Process Used to Control the Automated Tasks'
     )
   };
 
@@ -41,18 +37,10 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
   ngOnInit() {
     // Subscribe to Worker Registrations
     this.message.getRegistrarQueue().subscribe(
-      message => {
-        if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
-            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
-            task.identifier = taskdef.identifier;
-            task.trigger = taskdef.trigger;
-            task.routine = taskdef.routine;
-            task.description = taskdef.description;
-            task.method = taskdef.method;
-            task.ready = taskdef.ready;
-            task.params = taskdef.params;
-            task.queue = this.workQueue;
+      taskRegistration => {
+        if(Object.keys(taskRegistration.tasks).length) {
+          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
+            task.queue = taskRegistration.queue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -61,7 +49,7 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
         }
       }
     );
-    this.message.registerProcessTasks(this.tasks);
+    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
 
     // Subscribe to Process Queue
     // Process Tasks based on messages received
@@ -85,6 +73,7 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
     // Special Binding for Processing Loop
     this.message.getProcessQueue().subscribe(
       processRoutine => {
+
         // Run Process Loop
         processRoutine.queueTasks();
       }

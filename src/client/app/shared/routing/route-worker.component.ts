@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, ProcessRoutine, ProcessTask,
-  WorkerComponent, ProcessTaskDef, ProcessTaskStruct, ProcessContext } from '../../core/index';
+  WorkerComponent, ProcessContext, ProcessTaskRegistration } from '../../core/index';
 
 /**
  * This class represents the lazy loaded RouteWorkerComponent.
@@ -20,15 +20,12 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
   public routines: {} = {
     navigate_to: new ProcessRoutine(
       'navigate_to',
-      'Navigate to a Route',
-      new ProcessContext,
-      [],
-      ''
+      'Navigate to a Route'
     )
   };
 
   public tasks: {} = {
-      navigate_to_init: new ProcessTaskDef(
+      navigate_to_init: new ProcessTask(
           'navigate',
           'navigate_to',
           'navigate_to',
@@ -39,7 +36,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           },
           {navigate_to:'string'}
       ),
-      remove_goal_complete: new ProcessTaskDef(
+      remove_goal_complete: new ProcessTask(
           'navigate',
           'remove_goal_complete',
           'goal_delete',
@@ -50,7 +47,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           },
           {navigate_to:'string'}
       ),
-      store_user_complete: new ProcessTaskDef(
+      store_user_complete: new ProcessTask(
           'navigate',
           'store_user_complete',
           'user_login',
@@ -61,7 +58,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           },
           {navigate_to:'string'}
       ),
-      register_user_complete: new ProcessTaskDef(
+      register_user_complete: new ProcessTask(
           'navigate',
           'register_user_complete',
           'user_register',
@@ -86,18 +83,10 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
   ngOnInit() {
     // Subscribe to Worker Registrations
     this.message.getRegistrarQueue().subscribe(
-      message => {
-        if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
-            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
-            task.identifier = taskdef.identifier;
-            task.trigger = taskdef.trigger;
-            task.routine = taskdef.routine;
-            task.description = taskdef.description;
-            task.method = taskdef.method;
-            task.ready = taskdef.ready;
-            task.params = taskdef.params;
-            task.queue = this.workQueue;
+      taskRegistration => {
+        if(Object.keys(taskRegistration.tasks).length) {
+          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
+            task.queue = taskRegistration.queue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -106,7 +95,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
         }
       }
     );
-    this.message.registerProcessTasks(this.tasks);
+    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
 
     // Subscribe to Process Queue
     // Process Tasks based on messages received

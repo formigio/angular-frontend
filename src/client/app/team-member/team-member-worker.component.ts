@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
+  ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
 import { TeamMember, TeamMemberService } from './index';
 import { User } from '../user/index';
 
@@ -21,15 +21,12 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
     public routines: {} = {
         teammember_fetch_team_members: new ProcessRoutine(
             'teammember_fetch',
-            'The Process Used to Control the Fetching of TeamMembers',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Fetching of TeamMembers'
         )
     };
 
     public tasks: {} = {
-        get_user_for_load_teammembers_complete: new ProcessTaskDef(
+        get_user_for_load_teammembers_complete: new ProcessTask(
             'fetch_team_members',
             'get_user_for_load_teammembers_complete',
             'teammember_fetch',
@@ -56,18 +53,10 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
   ngOnInit() {
     // Subscribe to Worker Registrations
     this.message.getRegistrarQueue().subscribe(
-      message => {
-        if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
-            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
-            task.identifier = taskdef.identifier;
-            task.trigger = taskdef.trigger;
-            task.routine = taskdef.routine;
-            task.description = taskdef.description;
-            task.method = taskdef.method;
-            task.ready = taskdef.ready;
-            task.params = taskdef.params;
-            task.queue = this.workQueue;
+      taskRegistration => {
+        if(Object.keys(taskRegistration.tasks).length) {
+          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
+            task.queue = taskRegistration.queue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -76,7 +65,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
         }
       }
     );
-    this.message.registerProcessTasks(this.tasks);
+    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
 
     // Subscribe to Process Queue
     // Process Tasks based on messages received

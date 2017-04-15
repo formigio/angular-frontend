@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
+  ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
 import { User } from '../user/index';
 import { Task } from '../task/index';
 import { Commitment, CommitmentService } from './index';
@@ -22,50 +22,32 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
     public routines: {} = {
         commitment_create: new ProcessRoutine(
             'commitment_create',
-            'The Process Used to Control the Creating a Commitment',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Creating a Commitment'
         ),
         commitment_save: new ProcessRoutine(
             'commitment_save',
-            'The Process Used to Control the Save a Commitment',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Save a Commitment'
         ),
         commitment_delete: new ProcessRoutine(
             'commitment_delete',
-            'The Process Used to Control the Deleting a Commitment',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Deleting a Commitment'
         ),
         commitment_load_commitments: new ProcessRoutine(
             'commitment_load_commitments',
-            'The Process Used to Control the Load Commitments',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Load Commitments'
         ),
         commitment_load_worker_commitments: new ProcessRoutine(
             'commitment_load_worker_commitments',
-            'The Process Used to Control the Load Commitments',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Load Commitments'
         ),
         commitment_task_save: new ProcessRoutine(
             'commitment_task_save',
-            'The Process Used to Control the Saving a Task from Commitment',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Saving a Task from Commitment'
         )
     };
 
     public tasks: {} = {
-        get_user_for_load_worker_commitments_complete: new ProcessTaskDef(
+        get_user_for_load_worker_commitments_complete: new ProcessTask(
             'load_worker_commitments',
             'get_user_for_load_worker_commitments_complete',
             'commitment_load_worker_commitments',
@@ -76,7 +58,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User',workerId:'string'}
         ),
-        get_user_for_load_commitments_complete: new ProcessTaskDef(
+        get_user_for_load_commitments_complete: new ProcessTask(
             'load_commitments',
             'get_user_for_load_commitment_list_complete',
             'commitment_load_commitments',
@@ -87,7 +69,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User'}
         ),
-        get_user_for_commitment_create_complete: new ProcessTaskDef(
+        get_user_for_commitment_create_complete: new ProcessTask(
             'create_commitment',
             'get_user_for_commitment_create_complete',
             'commitment_create',
@@ -98,7 +80,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
             },
             {commitment:'Commitment',user:'User'}
         ),
-        get_user_for_commitment_save_complete: new ProcessTaskDef(
+        get_user_for_commitment_save_complete: new ProcessTask(
             'save_commitment',
             'get_user_for_commitment_save_complete',
             'commitment_save',
@@ -109,7 +91,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
             },
             {commitment:'Commitment',user:'User'}
         ),
-        get_user_for_commitment_delete_complete: new ProcessTaskDef(
+        get_user_for_commitment_delete_complete: new ProcessTask(
             'delete_commitment',
             'get_user_for_commitment_delete_complete',
             'commitment_delete',
@@ -120,7 +102,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
             },
             {commitment:'Commitment',user:'User'}
         ),
-        save_task_from_commitment_complete: new ProcessTaskDef(
+        save_task_from_commitment_complete: new ProcessTask(
             'load_commitments_after_task_save',
             'save_task_from_commitment_complete',
             'commitment_task_save',
@@ -147,18 +129,10 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
   ngOnInit() {
     // Subscribe to Worker Registrations
     this.message.getRegistrarQueue().subscribe(
-      message => {
-        if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
-            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
-            task.identifier = taskdef.identifier;
-            task.trigger = taskdef.trigger;
-            task.routine = taskdef.routine;
-            task.description = taskdef.description;
-            task.method = taskdef.method;
-            task.ready = taskdef.ready;
-            task.params = taskdef.params;
-            task.queue = this.workQueue;
+      taskRegistration => {
+        if(Object.keys(taskRegistration.tasks).length) {
+          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
+            task.queue = taskRegistration.queue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -167,7 +141,7 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
         }
       }
     );
-    this.message.registerProcessTasks(this.tasks);
+    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
 
     // Subscribe to Process Queue
     // Process Tasks based on messages received

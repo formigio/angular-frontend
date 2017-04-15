@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
+  ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
 import { User } from '../user/index';
 import { GoalTemplate } from '../goal-template/index';
 import { Goal, GoalService, GoalStruct } from './index';
@@ -22,50 +22,33 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
   public routines: {} = {
       goal_delete: new ProcessRoutine(
           'goal_delete',
-          'The Process Used to Control the Deletion of Goals',
-          new ProcessContext,
-          [],
-          ''
+          'The Process Used to Control the Deletion of Goals'
       ),
       goal_view: new ProcessRoutine(
           'goal_view',
-          'The Process Used to Control the Viewing of Goals',
-          new ProcessContext,
-          [],
-          ''
+          'The Process Used to Control the Viewing of Goals'
       ),
       load_goal_list: new ProcessRoutine(
           'load_goal_list',
           'The Process Used to Control the Viewing of Goals',
-          new ProcessContext,
-          [],
-          ''
+          true
       ),
       create_goal: new ProcessRoutine(
           'create_goal',
-          'The Process Used to Control the Creating of Goals',
-          new ProcessContext,
-          [],
-          ''
+          'The Process Used to Control the Creating of Goals'
       ),
       goal_save: new ProcessRoutine(
           'goal_save',
-          'The Process Used to Control the Saving of Goals',
-          new ProcessContext,
-          [],
-          ''
+          'The Process Used to Control the Saving of Goals'
       ),
       goal_save_template_from_goal: new ProcessRoutine(
           'goal_save_template_from_goal',
-          'The Process Used to Control the Saving of Goal Templates',
-          new ProcessContext,
-          [],
-          ''
+          'The Process Used to Control the Saving of Goal Templates'
       )
   };
 
   public tasks: {} = {
-      get_user_for_goal_template_to_goal_complete: new ProcessTaskDef(
+      get_user_for_goal_template_to_goal_complete: new ProcessTask(
           'create_goal_from_template',
           'get_user_for_goal_template_to_goal_complete',
           'goal_template_to_goal',
@@ -76,7 +59,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             },
           {goalTemplate:'GoalTemplate',user:'User'}
       ),
-      remove_invites_complete: new ProcessTaskDef(
+      remove_invites_complete: new ProcessTask(
           'remove_goal',
           'remove_invites_complete',
           'goal_delete',
@@ -87,7 +70,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             },
           {goal:'string', invite_count:'string', task_count:'string'}
       ),
-      get_user_for_view_goal_complete: new ProcessTaskDef(
+      get_user_for_view_goal_complete: new ProcessTask(
           'load_goal',
           'get_user_for_view_goal_complete',
           'goal_view',
@@ -98,7 +81,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             },
           {goal_uuid:'string',user:'User'}
       ),
-      get_user_for_load_goals_complete: new ProcessTaskDef(
+      get_user_for_load_goals_complete: new ProcessTask(
           'load_team_goals',
           'get_user_for_load_goals_complete',
           'load_goal_list',
@@ -109,7 +92,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             },
           {team:'string',user:'User'}
       ),
-      get_user_for_create_goal_complete: new ProcessTaskDef(
+      get_user_for_create_goal_complete: new ProcessTask(
           'create_goal_task',
           'get_user_for_create_goal_complete',
           'create_goal',
@@ -120,7 +103,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             },
           {goal:'Goal',user:'User'}
       ),
-      get_user_for_goal_save_complete: new ProcessTaskDef(
+      get_user_for_goal_save_complete: new ProcessTask(
           'put_goal_task',
           'get_user_for_goal_save_complete',
           'goal_save',
@@ -131,7 +114,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             },
           {goal:'Goal',user:'User'}
       ),
-      get_user_for_goal_delete_complete: new ProcessTaskDef(
+      get_user_for_goal_delete_complete: new ProcessTask(
           'delete_goal_task',
           'get_user_for_goal_delete_complete',
           'goal_delete',
@@ -159,18 +142,10 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
   ngOnInit() {
     // Subscribe to Worker Registrations
     this.message.getRegistrarQueue().subscribe(
-      message => {
-        if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
-            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
-            task.identifier = taskdef.identifier;
-            task.trigger = taskdef.trigger;
-            task.routine = taskdef.routine;
-            task.description = taskdef.description;
-            task.method = taskdef.method;
-            task.ready = taskdef.ready;
-            task.params = taskdef.params;
-            task.queue = this.workQueue;
+      taskRegistration => {
+        if(Object.keys(taskRegistration.tasks).length) {
+          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
+            task.queue = taskRegistration.queue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -179,7 +154,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         }
       }
     );
-    this.message.registerProcessTasks(this.tasks);
+    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
 
     // Subscribe to Process Queue
     // Process Tasks based on messages received

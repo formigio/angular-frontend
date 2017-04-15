@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine,
-  ProcessContext, ProcessTask, ProcessTaskDef,
-  ProcessTaskStruct, WorkerComponent } from '../core/index';
+  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
 import { Config } from '../shared/index';
 import { User, UserService } from './index';
 
@@ -26,78 +25,48 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     public routines: {} = {
         user_login: new ProcessRoutine(
             'user_login',
-            'The Process Used to Control the Login',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Login'
         ),
         user_login_google: new ProcessRoutine(
             'user_login_google',
-            'The Process Used to Control the Login with Google',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Login with Google'
         ),
         user_google_api: new ProcessRoutine(
             'user_google_api',
-            'The Process Used to Control the Login with Google',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Login with Google'
         ),
         user_google_token_refresh: new ProcessRoutine(
             'user_google_token_refresh',
-            'The Process Used to Control the Login with Google',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Login with Google'
         ),
         user_register: new ProcessRoutine(
             'user_register',
-            'The Process Used to Control the Registration of New Users',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Registration of New Users'
         ),
         user_confirm: new ProcessRoutine(
             'user_confirm',
-            'The Process Used to Control the Confirmation of New Users',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Confirmation of New Users'
         ),
         user_load_for_app: new ProcessRoutine(
             'user_load_for_app',
-            'The Process Used to Control the Initiation of App User',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Initiation of App User'
         ),
         user_logout: new ProcessRoutine(
             'user_logout',
-            'The Process Used to Control the Logout',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Logout'
         ),
         user_update: new ProcessRoutine(
             'user_update',
-            'The Process Used to Control the User Updates',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the User Updates'
         ),
         user_test_username: new ProcessRoutine(
             'user_test_username',
-            'The Process Used to Control the Testing of Usernames',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Testing of Usernames'
         )
     };
 
     public tasks: {} = {
-        user_test_username_init: new ProcessTaskDef(
+        user_test_username_init: new ProcessTask(
             'test_username',
             'user_test_username_init',
             'user_test_username',
@@ -108,7 +77,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        user_load_for_app_init: new ProcessTaskDef(
+        user_load_for_app_init: new ProcessTask(
             'check_data_service',
             'user_load_for_app_init',
             'user_load_for_app',
@@ -119,7 +88,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        check_data_service_complete: new ProcessTaskDef(
+        check_data_service_complete: new ProcessTask(
             'start_google_api_on_load',
             'user_load_for_app_init',
             'user_load_for_app',
@@ -130,7 +99,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        user_google_api_init: new ProcessTaskDef(
+        user_google_api_init: new ProcessTask(
             'start_google_api',
             'user_google_api_init',
             'user_google_api',
@@ -141,7 +110,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        user_update_init: new ProcessTaskDef(
+        user_update_init: new ProcessTask(
             'update_user_record',
             'user_update_init',
             'user_update',
@@ -152,7 +121,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User'}
         ),
-        update_user_record_complete: new ProcessTaskDef(
+        update_user_record_complete: new ProcessTask(
             'store_user_record_after_update',
             'update_user_record_complete',
             'user_update',
@@ -163,7 +132,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User'}
         ),
-        store_user_record_after_update_complete: new ProcessTaskDef(
+        store_user_record_after_update_complete: new ProcessTask(
             'redirect_after_user_update',
             'store_user_record_after_update_complete',
             'user_update',
@@ -174,7 +143,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User'}
         ),
-        start_google_api_on_load_complete: new ProcessTaskDef(
+        start_google_api_on_load_complete: new ProcessTask(
             'load_user_for_app',
             'start_google_api_on_load_complete',
             'user_load_for_app',
@@ -185,7 +154,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        user_login_init: new ProcessTaskDef(
+        user_login_init: new ProcessTask(
             'login_cognito_user',
             'user_login_init',
             'user_login',
@@ -196,8 +165,8 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User'}
         ),
-        confirm_cognito_user_complete: new ProcessTaskDef(
-            'login_cognito_user',
+        confirm_cognito_user_complete: new ProcessTask(
+            'login_cognito_user_after_confirm',
             'confirm_cognito_user_complete',
             'user_login',
             'Login User',
@@ -207,7 +176,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User'}
         ),
-        user_login_google_init: new ProcessTaskDef(
+        user_login_google_init: new ProcessTask(
             'login_google_user',
             'user_login_google_init',
             'user_login_google',
@@ -218,7 +187,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {token:'string',user:'User'}
         ),
-        user_google_token_refresh_init: new ProcessTaskDef(
+        user_google_token_refresh_init: new ProcessTask(
             'refresh_google_token',
             'user_google_token_refresh_init',
             'user_google_token_refresh',
@@ -229,7 +198,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {token:'string',user:'User'}
         ),
-        refresh_google_token_complete: new ProcessTaskDef(
+        refresh_google_token_complete: new ProcessTask(
             'store_refreshed_user',
             'refresh_google_token_complete',
             'user_google_token_refresh',
@@ -240,18 +209,18 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User',token:'string'}
         ),
-        login_cognito_user_complete: new ProcessTaskDef(
+        login_cognito_user_complete: new ProcessTask(
           'swap_token',
           'login_cognito_user_complete',
           'login_user',
           'Swap the Tokens',
           'swapToken',
           (context:ProcessContext) => {
-            return context.hasSignal('login_cognito_user_complete');
+            return context.hasSignal('login_cognito_user_complete') || context.hasSignal('login_cognito_user_after_confirm_complete');
           },
           {user:'User'}
         ),
-        store_google_user_complete: new ProcessTaskDef(
+        store_google_user_complete: new ProcessTask(
           'fetch_user_worker',
           'store_google_user_complete',
           'user_login_google',
@@ -264,7 +233,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             user:'User'
           }
         ),
-        login_google_user_complete: new ProcessTaskDef(
+        login_google_user_complete: new ProcessTask(
           'store_google_user',
           'login_google_user_complete',
           'user_login_google',
@@ -277,7 +246,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             user:'User'
           }
         ),
-        fetch_user_worker_complete: new ProcessTaskDef(
+        fetch_user_worker_complete: new ProcessTask(
           'store_user_worker',
           'fetch_user_worker_complete',
           'user_login',
@@ -290,7 +259,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             user:'User'
           }
         ),
-        swap_token_complete: new ProcessTaskDef(
+        swap_token_complete: new ProcessTask(
           'store_congito_user',
           'login_cognito_user_complete',
           'user_login',
@@ -303,7 +272,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             user:'User'
           }
         ),
-        store_congito_user_complete: new ProcessTaskDef(
+        store_congito_user_complete: new ProcessTask(
           'fetch_user_worker',
           'store_congito_user_complete',
           'user_login',
@@ -316,20 +285,20 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             user:'User'
           }
         ),
-        test_authenticated_complete: new ProcessTaskDef(
+        fetch_google_user_worker_complete: new ProcessTask(
           'store_google_user',
-          'test_authenticated_complete',
+          'fetch_user_worker_complete',
           'user_login_google',
           'Store the Google User for the app',
           'storeUser',
           (context:ProcessContext) => {
-            return context.hasSignal('test_authenticated_complete');
+            return context.hasSignal('fetch_user_worker_complete');
           },
           {
             user:'User'
           }
         ),
-        user_register_init: new ProcessTaskDef(
+        user_register_init: new ProcessTask(
             'create_cognito_user',
             'user_register_init',
             'user_register',
@@ -340,7 +309,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User'}
         ),
-        user_confirm_init: new ProcessTaskDef(
+        user_confirm_init: new ProcessTask(
             'confirm_cognito_user',
             'user_confirm_init',
             'user_confirm',
@@ -351,7 +320,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User'}
         ),
-        user_logout_init: new ProcessTaskDef(
+        user_logout_init: new ProcessTask(
             'user_logout',
             'user_logout_init',
             'user_logout',
@@ -362,7 +331,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        team_save_init: new ProcessTaskDef(
+        team_save_init: new ProcessTask(
             'get_user_for_save_team',
             'team_save_init',
             'team_save',
@@ -373,7 +342,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        team_create_init: new ProcessTaskDef(
+        team_create_init: new ProcessTask(
             'get_user_for_create_team',
             'team_create_init',
             'team_create',
@@ -384,7 +353,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        team_view_init: new ProcessTaskDef(
+        team_view_init: new ProcessTask(
             'get_user_for_view_team',
             'team_view_init',
             'team_view',
@@ -395,7 +364,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        team_fetch_user_teams_init: new ProcessTaskDef(
+        team_fetch_user_teams_init: new ProcessTask(
             'get_user_for_fetch_teams',
             'team_fetch_user_teams_init',
             'team_fetch_user_teams',
@@ -406,7 +375,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        teammember_add_init: new ProcessTaskDef(
+        teammember_add_init: new ProcessTask(
             'validate_user_as_teammember',
             'teammember_add_init',
             'teammember_add',
@@ -417,7 +386,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {user_email:'string'}
         ),
-        goal_view_init: new ProcessTaskDef(
+        goal_view_init: new ProcessTask(
             'get_user_for_view_goal',
             'goal_view_init',
             'goal_view',
@@ -428,7 +397,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        load_goal_list_init: new ProcessTaskDef(
+        load_goal_list_init: new ProcessTask(
             'get_user_for_load_goals',
             'load_goal_list_init',
             'load_goal_list',
@@ -439,7 +408,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        teammember_fetch_team_members_init: new ProcessTaskDef(
+        teammember_fetch_team_members_init: new ProcessTask(
             'get_user_for_load_teammembers',
             'teammember_fetch_team_members_init',
             'teammember_fetch_team_members',
@@ -450,7 +419,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        create_goal_init: new ProcessTaskDef(
+        create_goal_init: new ProcessTask(
             'get_user_for_create_goal',
             'create_goal_init',
             'create_goal',
@@ -461,7 +430,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        load_task_list_init: new ProcessTaskDef(
+        load_task_list_init: new ProcessTask(
             'get_user_for_load_task_list',
             'load_task_list_init',
             'load_task_list',
@@ -472,7 +441,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        invite_fetch_init: new ProcessTaskDef(
+        invite_fetch_init: new ProcessTask(
             'get_user_for_invite_fetch',
             'invite_fetch_init',
             'invite_fetch',
@@ -483,7 +452,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        invite_create_init: new ProcessTaskDef(
+        invite_create_init: new ProcessTask(
             'get_user_for_invite_create',
             'invite_create_init',
             'invite_create',
@@ -494,7 +463,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        invite_view_init: new ProcessTaskDef(
+        invite_view_init: new ProcessTask(
             'get_user_for_invite_view',
             'invite_view_init',
             'invite_view',
@@ -505,7 +474,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        goal_save_init: new ProcessTaskDef(
+        goal_save_init: new ProcessTask(
             'get_user_for_goal_save',
             'goal_save_init',
             'goal_save',
@@ -516,7 +485,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        task_create_init: new ProcessTaskDef(
+        task_create_init: new ProcessTask(
             'get_user_for_task_create',
             'task_create_init',
             'task_create',
@@ -527,7 +496,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        task_save_init: new ProcessTaskDef(
+        task_save_init: new ProcessTask(
             'get_user_for_task_save',
             'task_save_init',
             'task_save',
@@ -538,7 +507,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        team_delete_init: new ProcessTaskDef(
+        team_delete_init: new ProcessTask(
             'get_user_for_delete_team',
             'team_delete_init',
             'team_delete',
@@ -549,7 +518,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        task_delete_init: new ProcessTaskDef(
+        task_delete_init: new ProcessTask(
             'get_user_for_delete_task',
             'task_delete_init',
             'task_delete',
@@ -560,7 +529,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        goal_delete_init: new ProcessTaskDef(
+        goal_delete_init: new ProcessTask(
             'get_user_for_goal_delete',
             'goal_delete_init',
             'goal_delete',
@@ -571,7 +540,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             },
             {}
         ),
-        invite_accept_init: new ProcessTaskDef(
+        invite_accept_init: new ProcessTask(
           'get_user_for_invite_accept',
           'invite_accept_init',
           'invite_accept',
@@ -582,7 +551,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        invite_delete_init: new ProcessTaskDef(
+        invite_delete_init: new ProcessTask(
           'get_user_for_invite_delete',
           'invite_delete_init',
           'invite_delete',
@@ -593,7 +562,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        commitment_load_commitments_init: new ProcessTaskDef(
+        commitment_load_commitments_init: new ProcessTask(
           'get_user_for_load_commitments',
           'commitment_load_commitments_init',
           'commitment_load_commitments',
@@ -604,7 +573,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        commitment_create_init: new ProcessTaskDef(
+        commitment_create_init: new ProcessTask(
           'get_user_for_commitment_create',
           'commitment_create_init',
           'commitment_create',
@@ -615,7 +584,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        commitment_delete_init: new ProcessTaskDef(
+        commitment_delete_init: new ProcessTask(
           'get_user_for_commitment_delete',
           'commitment_delete_init',
           'commitment_delete',
@@ -626,7 +595,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        commitment_task_save_init: new ProcessTaskDef(
+        commitment_task_save_init: new ProcessTask(
           'get_user_for_commitment_task_save',
           'commitment_task_save_init',
           'commitment_task_save',
@@ -637,7 +606,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        process_every_minute_init: new ProcessTaskDef(
+        process_every_minute_init: new ProcessTask(
           'check_user_for_keeping_active_user',
           'process_every_minute_init',
           'process_every_minute',
@@ -648,7 +617,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        check_user_for_keeping_active_user_complete: new ProcessTaskDef(
+        check_user_for_keeping_active_user_complete: new ProcessTask(
           'get_user_for_keeping_active_user',
           'process_every_minute_init',
           'process_every_minute',
@@ -659,7 +628,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        commitment_save_init: new ProcessTaskDef(
+        commitment_save_init: new ProcessTask(
           'get_user_for_commitment_save',
           'commitment_save_init',
           'commitment_save',
@@ -670,7 +639,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        commitment_load_worker_commitments_init: new ProcessTaskDef(
+        commitment_load_worker_commitments_init: new ProcessTask(
           'get_user_for_load_worker_commitments',
           'commitment_load_worker_commitments_init',
           'commitment_load_worker_commitments',
@@ -681,7 +650,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        goal_save_template_from_goal_init: new ProcessTaskDef(
+        goal_save_template_from_goal_init: new ProcessTask(
           'get_user_for_save_goal_template',
           'goal_save_template_from_goal_init',
           'goal_save_template_from_goal',
@@ -692,7 +661,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        refresh_google_token_error: new ProcessTaskDef(
+        refresh_google_token_error: new ProcessTask(
           'logout_after_google_token_refresh_failed',
           'refresh_google_token_error',
           'user_google_token_refresh',
@@ -703,7 +672,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        fetch_user_worker_error: new ProcessTaskDef(
+        fetch_user_worker_error: new ProcessTask(
           'redirect_to_register',
           'fetch_user_worker_error',
           'user_login_google',
@@ -714,7 +683,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        goal_template_delete_init: new ProcessTaskDef(
+        goal_template_delete_init: new ProcessTask(
           'get_user_for_goal_template_delete',
           'goal_template_delete_init',
           'goal_template_delete',
@@ -725,7 +694,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        goal_template_view_init: new ProcessTaskDef(
+        goal_template_view_init: new ProcessTask(
           'get_user_for_goal_template_view',
           'goal_template_view_init',
           'goal_template_view',
@@ -736,7 +705,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        goal_template_load_list_init: new ProcessTaskDef(
+        goal_template_load_list_init: new ProcessTask(
           'get_user_for_goal_template_load_list',
           'goal_template_load_list_init',
           'goal_template_load_list',
@@ -747,7 +716,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        goal_template_create_init: new ProcessTaskDef(
+        goal_template_create_init: new ProcessTask(
           'get_user_for_goal_template_create',
           'goal_template_create_init',
           'goal_template_create',
@@ -758,7 +727,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        goal_template_save_init: new ProcessTaskDef(
+        goal_template_save_init: new ProcessTask(
           'get_user_for_goal_template_save',
           'goal_template_save_init',
           'goal_template_save',
@@ -769,7 +738,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        task_template_delete_init: new ProcessTaskDef(
+        task_template_delete_init: new ProcessTask(
           'get_user_for_task_template_delete',
           'task_template_delete_init',
           'task_template_delete',
@@ -780,7 +749,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        task_template_view_init: new ProcessTaskDef(
+        task_template_view_init: new ProcessTask(
           'get_user_for_task_template_view',
           'task_template_view_init',
           'task_template_view',
@@ -791,7 +760,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        task_template_load_list_init: new ProcessTaskDef(
+        task_template_load_list_init: new ProcessTask(
           'get_user_for_task_template_load_list',
           'task_template_load_list_init',
           'task_template_load_list',
@@ -802,7 +771,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        task_template_create_init: new ProcessTaskDef(
+        task_template_create_init: new ProcessTask(
           'get_user_for_task_template_create',
           'task_template_create_init',
           'task_template_create',
@@ -813,7 +782,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        task_template_save_init: new ProcessTaskDef(
+        task_template_save_init: new ProcessTask(
           'get_user_for_task_template_save',
           'task_template_save_init',
           'task_template_save',
@@ -824,7 +793,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        goal_template_to_goal_init: new ProcessTaskDef(
+        goal_template_to_goal_init: new ProcessTask(
           'get_user_for_goal_template_to_goal',
           'goal_template_to_goal_init',
           'goal_template_to_goal',
@@ -835,7 +804,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           },
           {}
         ),
-        goal_template_search_init: new ProcessTaskDef(
+        goal_template_search_init: new ProcessTask(
           'get_user_for_goal_template_search',
           'goal_template_search_init',
           'goal_template_search',
@@ -862,18 +831,10 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   ngOnInit() {
     // Subscribe to Worker Registrations
     this.message.getRegistrarQueue().subscribe(
-      message => {
-        if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
-            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
-            task.identifier = taskdef.identifier;
-            task.trigger = taskdef.trigger;
-            task.routine = taskdef.routine;
-            task.description = taskdef.description;
-            task.method = taskdef.method;
-            task.ready = taskdef.ready;
-            task.params = taskdef.params;
-            task.queue = this.workQueue;
+      taskRegistration => {
+        if(Object.keys(taskRegistration.tasks).length) {
+          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
+            task.queue = taskRegistration.queue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -882,13 +843,14 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         }
       }
     );
-    this.message.registerProcessTasks(this.tasks);
+    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
 
     // Subscribe to Process Queue
     // Process Tasks based on messages received
     if(Object.keys(this.tasks).length > 0) {
       this.workQueue.subscribe(
         workMessage => {
+          workMessage.routine.log('user worker - executing...');
           // Process Signals
           workMessage.executeMethod(this);
         }
@@ -1475,7 +1437,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'We can\'t identify who you are, exactly. So, we might need to get you logged in or registered.',
+          message:'We can\'t identify who you are, exactly. Your Formigio Worker ID is not Valid, please contact support.',
           context:{params:{}}
         });
       } else {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
+  ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
 import { Team, TeamService } from './index';
 import { User } from '../user/index';
 
@@ -21,44 +21,29 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
     public routines: {} = {
         team_delete: new ProcessRoutine(
             'team_delete',
-            'The Process Used to Control the Deletion of Teams',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Deletion of Teams'
         ),
         team_save: new ProcessRoutine(
             'team_save',
-            'The Process Used to Control the Saving of Teams',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Saving of Teams'
         ),
         team_create: new ProcessRoutine(
             'team_create',
-            'The Process Used to Control the Creating of Teams',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Creating of Teams'
         ),
         team_view: new ProcessRoutine(
             'team_view',
-            'The Process Used for Loading of Team Entity from View Url',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used for Loading of Team Entity from View Url'
         ),
         team_fetch_user_teams: new ProcessRoutine(
             'team_fetch_user_teams',
-            'The Process Used to Teams for the Logged in User',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Teams for the Logged in User'
         )
 
     };
 
     public tasks: {} = {
-        get_user_for_delete_team_complete: new ProcessTaskDef(
+        get_user_for_delete_team_complete: new ProcessTask(
             'delete_team',
             'get_user_for_delete_team_complete',
             'team_delete',
@@ -69,7 +54,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User',team:'Team'}
         ),
-        get_user_for_save_team_complete: new ProcessTaskDef(
+        get_user_for_save_team_complete: new ProcessTask(
             'save_team',
             'get_user_for_save_team_complete',
             'team_save',
@@ -80,7 +65,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             },
             {team:'Team',user:'User'}
         ),
-        get_user_for_create_team_complete: new ProcessTaskDef(
+        get_user_for_create_team_complete: new ProcessTask(
             'create_team',
             'get_user_for_create_team_complete',
             'team_create',
@@ -91,7 +76,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             },
             {team:'Team'}
         ),
-        get_user_for_view_team_complete: new ProcessTaskDef(
+        get_user_for_view_team_complete: new ProcessTask(
             'load_team',
             'get_user_for_view_team_complete',
             'team_view',
@@ -102,7 +87,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
             },
             {uuid:'string', user:'User'}
         ),
-        get_user_for_fetch_teams_complete: new ProcessTaskDef(
+        get_user_for_fetch_teams_complete: new ProcessTask(
             'fetch_teams',
             'get_user_for_fetch_teams_complete',
             'team_fetch_user_teams',
@@ -129,18 +114,10 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
   ngOnInit() {
     // Subscribe to Worker Registrations
     this.message.getRegistrarQueue().subscribe(
-      message => {
-        if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
-            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
-            task.identifier = taskdef.identifier;
-            task.trigger = taskdef.trigger;
-            task.routine = taskdef.routine;
-            task.description = taskdef.description;
-            task.method = taskdef.method;
-            task.ready = taskdef.ready;
-            task.params = taskdef.params;
-            task.queue = this.workQueue;
+      taskRegistration => {
+        if(Object.keys(taskRegistration.tasks).length) {
+          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
+            task.queue = taskRegistration.queue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -149,13 +126,14 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
         }
       }
     );
-    this.message.registerProcessTasks(this.tasks);
+    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
 
     // Subscribe to Process Queue
     // Process Tasks based on messages received
     if(Object.keys(this.tasks).length > 0) {
       this.workQueue.subscribe(
         workMessage => {
+          workMessage.routine.log('team worker - executing...');
           // Process Signals
           workMessage.executeMethod(this);
         }

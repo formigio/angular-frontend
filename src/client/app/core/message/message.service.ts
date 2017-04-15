@@ -52,6 +52,7 @@ export class MessageService {
     }
 
     public startProcess(routine: string, params: {}) {
+        console.log('Starting Routine: ' + routine);
         this.processInitQueue.next(new ProcessMessage(routine,params));
     }
 
@@ -87,8 +88,8 @@ export class MessageService {
         return this.registrarQueue;
     }
 
-    public registerProcessTasks(tasks: any) {
-        this.registrarQueue.next(new ProcessTaskRegistration(tasks));
+    public registerProcessTasks(processTaskRegistration: ProcessTaskRegistration) {
+        this.registrarQueue.next(processTaskRegistration);
     }
 
 }

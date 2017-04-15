@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, ProcessTaskDef, ProcessTaskStruct, WorkerComponent } from '../core/index';
+  ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
 import { User } from '../user/index';
 import { Invite, InviteService } from './index';
 
@@ -21,43 +21,28 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
     public routines: {} = {
         invite_delete: new ProcessRoutine(
             'invite_delete',
-            'The Process Used to Control the Deletion of Invites',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Deletion of Invites'
         ),
         invite_fetch: new ProcessRoutine(
             'invite_fetch',
-            'The Process Used to Control the Fetch of Invites',
-            new ProcessContext,
-            [],
-            ''
+            'The Process Used to Control the Fetch of Invites'
         ),
         invite_create: new ProcessRoutine(
           'invite_create',
-          'The Process Used to Control the Creation of Invites',
-          new ProcessContext,
-          [],
-          ''
+          'The Process Used to Control the Creation of Invites'
         ),
         invite_view: new ProcessRoutine(
           'invite_view',
-          'The Process Used to Control the View of Invite',
-          new ProcessContext,
-          [],
-          ''
+          'The Process Used to Control the View of Invite'
         ),
         invite_accept: new ProcessRoutine(
           'invite_accept',
-          'The Process Used to Control the Acceptance of an Invite',
-          new ProcessContext,
-          [],
-          ''
+          'The Process Used to Control the Acceptance of an Invite'
         )
     };
 
     public tasks: {} = {
-        get_user_for_invite_delete_complete: new ProcessTaskDef(
+        get_user_for_invite_delete_complete: new ProcessTask(
             'delete_invite',
             'get_user_for_invite_delete_complete',
             'invite_delete',
@@ -68,7 +53,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User',invite:'Invite'}
         ),
-        remove_tasks_complete: new ProcessTaskDef(
+        remove_tasks_complete: new ProcessTask(
             'gather_goal_invites',
             'remove_tasks_complete',
             'goal_delete',
@@ -79,7 +64,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             },
             {entity:'string',entity_id:'string',status:'string'}
         ),
-        gather_goal_invites_complete: new ProcessTaskDef(
+        gather_goal_invites_complete: new ProcessTask(
             'remove_invites',
             'gather_goal_invites_complete',
             'goal_delete',
@@ -90,7 +75,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             },
             {goal:'string', invite_count:'string'}
         ),
-        get_user_for_invite_fetch_complete: new ProcessTaskDef(
+        get_user_for_invite_fetch_complete: new ProcessTask(
             'gather_invites_for_invite_fetch',
             'get_user_for_invite_fetch_complete',
             'invite_fetch',
@@ -101,7 +86,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             },
             {entity:'string',entity_id:'string',user:'User'}
         ),
-        gather_invites_for_invite_fetch_complete: new ProcessTaskDef(
+        gather_invites_for_invite_fetch_complete: new ProcessTask(
             'publish_invites',
             'gather_invites_for_invite_fetch_complete',
             'invite_fetch',
@@ -112,7 +97,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             },
             {invites:'Invite'}
         ),
-        get_user_for_invite_create_complete: new ProcessTaskDef(
+        get_user_for_invite_create_complete: new ProcessTask(
             'create_invite',
             'get_user_for_invite_create_complete',
             'invite_create',
@@ -123,7 +108,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             },
             {invite:'Invite',user:'User'}
         ),
-        get_user_for_invite_view_complete: new ProcessTaskDef(
+        get_user_for_invite_view_complete: new ProcessTask(
             'load_invite',
             'get_user_for_invite_view_complete',
             'invite_view',
@@ -134,7 +119,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             },
             {hash:'string',user:'User'}
         ),
-        load_invite_complete: new ProcessTaskDef(
+        load_invite_complete: new ProcessTask(
             'link_invite',
             'load_invite_complete',
             'invite_view',
@@ -145,7 +130,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             },
             {invite:'Invite',user:'User'}
         ),
-        get_user_for_invite_accept_complete: new ProcessTaskDef(
+        get_user_for_invite_accept_complete: new ProcessTask(
             'accept_invite',
             'get_user_for_invite_accept_complete',
             'invite_accept',
@@ -172,18 +157,10 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
   ngOnInit() {
     // Subscribe to Worker Registrations
     this.message.getRegistrarQueue().subscribe(
-      message => {
-        if(Object.keys(message.tasks).length) {
-          Object.values(message.tasks).forEach((taskdef:ProcessTaskDef) => {
-            let task: ProcessTask = JSON.parse(JSON.stringify(ProcessTaskStruct));
-            task.identifier = taskdef.identifier;
-            task.trigger = taskdef.trigger;
-            task.routine = taskdef.routine;
-            task.description = taskdef.description;
-            task.method = taskdef.method;
-            task.ready = taskdef.ready;
-            task.params = taskdef.params;
-            task.queue = this.workQueue;
+      taskRegistration => {
+        if(Object.keys(taskRegistration.tasks).length) {
+          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
+            task.queue = taskRegistration.queue;
             if(this.routines.hasOwnProperty(task.routine)) {
               let processRoutine = (<any>this.routines)[task.routine];
               processRoutine.tasks.push(task);
@@ -192,7 +169,7 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         }
       }
     );
-    this.message.registerProcessTasks(this.tasks);
+    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
 
     // Subscribe to Process Queue
     // Process Tasks based on messages received
