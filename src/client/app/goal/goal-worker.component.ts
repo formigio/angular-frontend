@@ -30,8 +30,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
       ),
       load_goal_list: new ProcessRoutine(
           'load_goal_list',
-          'The Process Used to Control the Viewing of Goals',
-          true
+          'The Process Used to Control the Viewing of Goals'
       ),
       create_goal: new ProcessRoutine(
           'create_goal',

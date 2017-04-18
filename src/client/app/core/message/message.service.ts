@@ -19,13 +19,13 @@ export class MessageService {
 
 // Add Notices, messages that must be dismissed. Notices stack.
 
-    public flashMessage: ReplaySubject<any> = new ReplaySubject(1);
+    public flashMessage: ReplaySubject<any> = new ReplaySubject();
     public processMessage: ReplaySubject<any> = new ReplaySubject(1);
     public stickyMessage: ReplaySubject<any> = new ReplaySubject(1);
-    public workerQueue: ReplaySubject<any> = new ReplaySubject(1);
-    public processInitQueue: ReplaySubject<any> = new ReplaySubject(1);
-    public processQueue: ReplaySubject<any> = new ReplaySubject(1);
-    public registrarQueue: ReplaySubject<any> = new ReplaySubject(1);
+    public workerQueue: ReplaySubject<any> = new ReplaySubject();
+    public processInitQueue: ReplaySubject<any> = new ReplaySubject();
+    public processQueue: ReplaySubject<any> = new ReplaySubject();
+    public registrarQueue: ReplaySubject<any> = new ReplaySubject();
 
     public setFlash(message:string, alert:string = 'info') {
         let flashMessage = new Message(true,message,alert);

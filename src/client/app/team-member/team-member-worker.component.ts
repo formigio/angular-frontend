@@ -20,7 +20,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
 
     public routines: {} = {
         teammember_fetch_team_members: new ProcessRoutine(
-            'teammember_fetch',
+            'teammember_fetch_team_members',
             'The Process Used to Control the Fetching of TeamMembers'
         )
     };
@@ -29,11 +29,11 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
         get_user_for_load_teammembers_complete: new ProcessTask(
             'fetch_team_members',
             'get_user_for_load_teammembers_complete',
-            'teammember_fetch',
+            'teammember_fetch_team_members',
             'Fetch Team Members',
             'fetchTeamMembers',
             (context:ProcessContext) => {
-              return context.hasSignal('get_user_for_delete_task_complete');
+              return context.hasSignal('get_user_for_load_teammembers_complete');
             },
             {team:'Team',user:'User'}
         )

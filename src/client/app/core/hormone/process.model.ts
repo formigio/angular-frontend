@@ -32,7 +32,7 @@ export class ProcessRoutine {
 
     public queueTasks() {
         this.log('Process Continue: Queueing Tasks');
-        this.log('Process Continue: signals' + this.context.signals);
+        this.log('Process Continue: signals: ' + this.context.signals);
 
         let allTasks = this.tasks.length;
         let completedTasks = 0;
@@ -67,6 +67,29 @@ export class ProcessRoutine {
             }
         });
     }
+
+    public resetTaskStatuses(): Observable<any> {
+        let tasks = this.tasks;
+        let obs = new Observable((observer:any) => {
+            let tasksReset: string[] = [];
+            if(tasks.length === 0) {
+                observer.complete();
+            }
+            tasks.forEach((task) => {
+                task.resetStatus();
+                tasksReset.push(this.identifier);
+                this.log('Reseting task ' + this.identifier);
+                if(tasks.length === tasksReset.length) {
+                    this.log('All tasks reset for ' + this.identifier);
+                    observer.complete();
+                }
+            });
+            return;
+        });
+
+        return obs;
+    }
+
 
 }
 
@@ -150,6 +173,11 @@ export class ProcessTask {
         return obs;
     }
 
+    public resetStatus() {
+        this.systemStatus = 'pending';
+        this.workStatus = 'notstarted';
+    }
+
 }
 
 export class ProcessContext {
@@ -203,10 +231,11 @@ export class ProcessMessage {
 
         processRoutine.log('Process Starting: ' + processRoutine.identifier);
 
-        processRoutine.localDebug();
-
-        processRoutine.context.signals.push(processRoutine.identifier + '_init');
-        worker.message.continueProcess(processRoutine);
+        processRoutine.resetTaskStatuses().subscribe(null,null,() => {
+            processRoutine.localDebug();
+            processRoutine.context.signals.push(processRoutine.identifier + '_init');
+            worker.message.continueProcess(processRoutine);
+        });
 
         return true;
         //
@@ -250,8 +279,12 @@ export class WorkerMessage {
       );
       return true;
     }
-
-    if(processTask.systemStatus === 'ready') {
+    if(processTask.systemStatus === 'ready' && processTask.workStatus == 'started') {
+        // Process Loop Actively Checking
+        return true;
+    }
+    else if(processTask.systemStatus === 'ready' && processTask.workStatus == 'notstarted') {
+        processTask.workStatus = 'started';
         processRoutine.log('Executing Method: ' + processTask.identifier + '::' + processTask.method);
         try {
             let workerMethod: Observable<any> = (<any>worker)[processTask.method](
@@ -306,9 +339,8 @@ export class WorkerMessage {
         return true;
     }
 
-    worker.message.addStickyMessage('Error - Invalid System Status for Task: ' + processTask.identifier ,'warning');
+    worker.message.addStickyMessage('Error - Invalid System Status: ' + processTask.systemStatus + ' - Work Status: ' + processTask.workStatus + ' for Task: ' + processTask.identifier ,'warning');
 
     return false;
   }
-
 }
