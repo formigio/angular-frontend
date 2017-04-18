@@ -43,7 +43,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           'Navigate to Goals after Goal Delete',
           'navigateTo',
           (context:ProcessContext) => {
-            return context.hasSignal('remove_goal_complete');;
+            return context.hasSignal('remove_goal_complete');
           },
           {navigate_to:'string'}
       ),
@@ -54,7 +54,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           'Navigate to Home after Login',
           'navigateTo',
           (context:ProcessContext) => {
-            return context.hasSignal('store_user_complete');;
+            return context.hasSignal('store_user_complete');
           },
           {navigate_to:'string'}
       ),
@@ -65,7 +65,7 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           'Navigate to Login after Register',
           'navigateTo',
           (context:ProcessContext) => {
-            return context.hasSignal('register_user_complete');;
+            return context.hasSignal('register_user_complete');
           },
           {navigate_to:'string'}
       )

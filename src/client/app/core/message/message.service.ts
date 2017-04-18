@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { WorkerMessage, ProcessMessage, ProcessTaskRegistration, ProcessTask, ProcessRoutine } from '../index';
+import { WorkerMessage, ProcessMessage, ProcessTaskRegistration, ProcessRoutine } from '../index';
 
 export class Message {
   constructor(
@@ -47,12 +47,10 @@ export class MessageService {
     }
 
     public processSignal(message: WorkerMessage) {
-        let date = new Date();
         this.workerQueue.next(message);
     }
 
     public startProcess(routine: string, params: {}) {
-        console.log('Starting Routine: ' + routine);
         this.processInitQueue.next(new ProcessMessage(routine,params));
     }
 

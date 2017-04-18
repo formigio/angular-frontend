@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine,
-  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../index';
+import { MessageService, HelperService, ProcessRoutine, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.

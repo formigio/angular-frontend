@@ -257,7 +257,7 @@ export class WorkerMessage {
         return false;
     }
 
-    if(processTask.systemStatus === 'pending' && processTask.workStatus != 'blocked') {
+    if(processTask.systemStatus === 'pending' && processTask.workStatus !== 'blocked') {
       processRoutine.log('Checking Params: ' + processTask.identifier);
       // Verify Required Process Params are in place
       let paramProcessor: Observable<any> = processTask.processRoutineHasRequiredParams(processRoutine);
@@ -279,11 +279,13 @@ export class WorkerMessage {
       );
       return true;
     }
-    if(processTask.systemStatus === 'ready' && processTask.workStatus == 'started') {
+
+    if(processTask.systemStatus === 'ready' && processTask.workStatus === 'started') {
         // Process Loop Actively Checking
         return true;
     }
-    else if(processTask.systemStatus === 'ready' && processTask.workStatus == 'notstarted') {
+
+    if(processTask.systemStatus === 'ready' && processTask.workStatus === 'notstarted') {
         processTask.workStatus = 'started';
         processRoutine.log('Executing Method: ' + processTask.identifier + '::' + processTask.method);
         try {
@@ -339,7 +341,8 @@ export class WorkerMessage {
         return true;
     }
 
-    worker.message.addStickyMessage('Error - Invalid System Status: ' + processTask.systemStatus + ' - Work Status: ' + processTask.workStatus + ' for Task: ' + processTask.identifier ,'warning');
+    worker.message.addStickyMessage('Error - Invalid System Status: ' + processTask.systemStatus
+        + ' - Work Status: ' + processTask.workStatus + ' for Task: ' + processTask.identifier ,'warning');
 
     return false;
   }

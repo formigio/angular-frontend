@@ -79,8 +79,8 @@ export class UserService {
     }
 
     logout() {
+        localStorage.clear();
         let user:User = UserStruct;
-        console.log(user);
         this.storeUser(user);
     }
 
