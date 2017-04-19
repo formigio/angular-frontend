@@ -46,10 +46,6 @@ export class MessageService {
         this.stickyMessage.next(stickyMessage);
     }
 
-    public processSignal(message: WorkerMessage) {
-        this.workerQueue.next(message);
-    }
-
     public startProcess(routine: string, params: {}) {
         this.processInitQueue.next(new ProcessMessage(routine,params));
     }
@@ -68,10 +64,6 @@ export class MessageService {
 
     public getProcessMessageRelay(): ReplaySubject<any> {
         return this.processMessage;
-    }
-
-    public getWorkerQueue(): ReplaySubject<any> {
-        return this.workerQueue;
     }
 
     public getProcessQueue(): ReplaySubject<any> {
