@@ -143,9 +143,7 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
         }
       );
     }
-
   }
-
 
   public deleteNotification(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
@@ -207,8 +205,8 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.post(notification)
-        .then((response:any) => {
+      this.service.post(notification).then(
+        (response:any) => {
           notification = response.data;
           this.service.addNotification(notification);
           observer.next({
@@ -232,18 +230,29 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public loadNotification(control_uuid: string, params: any): Observable<any> {
-    let uuid: string = params.uuid;
+    let id: string = params.id;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
-      this.service.publishNotification(uuid);
-      observer.next({
+      this.service.get(id).then(
+        response => {
+          this.service.publishNotification(response.data);
+          observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Notification loaded successfully.',
-            context:{params:{notification_loaded:uuid}}
-      });
-      observer.complete();
+            message:'Notification Loaded.',
+            context:{params:{}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message:'Notification Load Failed.',
+            context:{params:{}}
+        })
+      );
     });
     return obs;
   }
