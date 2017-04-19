@@ -9,11 +9,11 @@ export const NotificationStruct = {
 
 export class Notification {
     constructor(
-        id: string,
-        worker_id: number,
-        content: string,
-        created_at: string,
-        sent_at: string,
-        viewed: boolean
+        public id: string,
+        public worker_id: string,
+        public content: string,
+        public created_at: string,
+        public sent_at: string,
+        public viewed: boolean
     ) {}
 }

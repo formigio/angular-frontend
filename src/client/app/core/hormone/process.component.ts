@@ -3,6 +3,7 @@ import { TeamWorkerComponent } from '../../team/index';
 import { GoalWorkerComponent } from '../../goal/index';
 import { TaskWorkerComponent } from '../../task/index';
 import { InviteWorkerComponent } from '../../invite/index';
+import { NotificationWorkerComponent } from '../../notification/index';
 import { RouteWorkerComponent } from '../../shared/index';
 import { UserWorkerComponent } from '../../user/index';
 import { TeamMemberWorkerComponent } from '../../team-member/index';
@@ -19,7 +20,7 @@ import { ProcessWorkerComponent } from '../index';
   selector: 'sd-process',
   templateUrl: 'process.component.html',
   directives: [TeamWorkerComponent, GoalWorkerComponent, TaskWorkerComponent,
-    InviteWorkerComponent,RouteWorkerComponent, UserWorkerComponent,
+    InviteWorkerComponent,RouteWorkerComponent, UserWorkerComponent, NotificationWorkerComponent,
     TeamMemberWorkerComponent, CommitmentWorkerComponent, GoalTemplateWorkerComponent,
     TaskTemplateWorkerComponent, ProcessWorkerComponent]
 })
