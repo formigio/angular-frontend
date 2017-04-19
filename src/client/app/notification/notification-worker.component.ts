@@ -3,7 +3,7 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine,
   ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
 import { User } from '../user/index';
-import { Notification, NotificationService } from './index';
+import { Notification, NotificationService, NotificationStruct } from './index';
 
 
 @Component({
@@ -29,6 +29,10 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
             'notification_create',
             'The Process Used to Control the Creating of Notifications'
         ),
+        notification_create_from_params: new ProcessRoutine(
+            'notification_create_from_params',
+            'The Process Used to Control the Creating of Notifications from Params'
+        ),
         notification_view: new ProcessRoutine(
             'notification_view',
             'The Process Used for Loading of Notification Entity'
@@ -40,6 +44,28 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
     };
 
     public tasks: {} = {
+      notification_create_from_params_init: new ProcessTask(
+            'formulate_notification_from_params',
+            'notification_create_from_params_init',
+            'notification_create_from_params',
+            'Formulate Notification from Params',
+            'formulateNotification',
+            (context:ProcessContext) => {
+              return context.hasSignal('notification_create_from_params_init');
+            },
+            {user:'User',worker_id:'string',content:'string'}
+        ),
+        create_notification_from_params_complete: new ProcessTask(
+            'create_notification_from_params',
+            'create_notification_from_params_complete',
+            'notification_create_from_params',
+            'Create Notification from Params',
+            'createNotification',
+            (context:ProcessContext) => {
+              return context.hasSignal('formulate_notification_from_params_complete');
+            },
+            {user:'User',notification:'Notification'}
+        ),
         get_user_for_delete_notification_complete: new ProcessTask(
             'delete_notification',
             'get_user_for_delete_notification_complete',
@@ -196,6 +222,26 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
           context:{params:{}}
         })
       );
+    });
+    return obs;
+  }
+
+  public formulateNotification(control_uuid: string, params: any): Observable<any> {
+    let worker_id: string = params.worker_id;
+    let content: string = params.content;
+    let notification: Notification = JSON.parse(JSON.stringify(NotificationStruct));
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      notification.content = content;
+      notification.worker_id = worker_id;
+      notification.user_id = user.worker.id
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message:'Notification Formed successfully.',
+        context:{params:{notification:notification}}
+      });
+      observer.complete();
     });
     return obs;
   }

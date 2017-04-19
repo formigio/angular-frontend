@@ -175,41 +175,6 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
     }
   }
 
-  // protected removeGoal(control_uuid: string, params: any): Observable<any> {
-  //   let goal: string = params.goal;
-  //   let taskCount: number = params.task_count;
-  //   let obs = new Observable((observer:any) => {
-  //     if(taskCount > 0) {
-  //       observer.error({
-  //         control_uuid: control_uuid,
-  //         outcome: 'error',
-  //         message:'You can only delete a goal, when it is empty. taskCount:' + taskCount,
-  //         context:{params:{}}
-  //       });
-  //     } else {
-  //       this.service.delete(goal).subscribe(
-  //         null,
-  //         error => observer.error({
-  //           control_uuid: control_uuid,
-  //           outcome: 'error',
-  //           message:'An error has occured during Goal delete',
-  //           context:{params:{}}
-  //         }),
-  //         () => {
-  //           observer.next({
-  //             control_uuid: control_uuid,
-  //             outcome: 'success',
-  //             message:'Goal removed successfully.',
-  //             context:{params:{navigate_to:'/teams'}}
-  //           });
-  //           observer.complete();
-  //         }
-  //       );
-  //     }
-  //   });
-  //   return obs;
-  // }
-
   public loadGoal(control_uuid: string, params: any): Observable<any> {
     let uuid: string = params.goal_uuid;
     let user: User = params.user;
@@ -281,6 +246,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
 
   public createGoal(control_uuid: string, params: any): Observable<any> {
     let goal: Goal = params.goal;
+    let notify: string[] = params.goal.notify;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
@@ -294,6 +260,17 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             message:'Goal Saved Successfully.',
             context:{params:{goal:response.data}}
           });
+
+          notify.forEach((workerId) => {
+            if(workerId !== user.worker.id) {
+              this.message.startProcess('notification_create_from_params',{
+                worker_id: workerId,
+                content:'Goal: ' + goal.title + ' was added to Team: ' + goal.team_id,
+                user: user
+              });
+            }
+          });
+
           observer.complete();
         }
       ).catch(

@@ -4,5 +4,6 @@
 export * from './team-member.model';
 export * from './team-member.service';
 export * from './team-member-item.component';
+export * from './team-member-notify.component';
 export * from './team-member-list.component';
 export * from './team-member-worker.component';

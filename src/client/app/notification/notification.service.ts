@@ -12,7 +12,7 @@ export class NotificationService {
 
   note: Notification;
   user: User;
-  notes: Notification[];
+  notes: Notification[] = [];
 
   constructor(
     private message: MessageService,
@@ -103,8 +103,14 @@ export class NotificationService {
    * @return {string[]} The Observable for the HTTP request.
    */
   post(note:Notification): Promise<Notification> {
+    let date = new Date();
     let user = this.getUser();
-    let body = {content:note.content};
+    let body = {
+      worker_id:note.worker_id,
+      user_id:note.user_id,
+      content:note.content,
+      created_at: date.toISOString()
+    };
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService, HelperService } from '../core/index';
+import { TeamMemberNotifyComponent } from '../team-member/index';
 import { GoalService, Goal, GoalItemComponent, GoalStruct } from './index';
 
 /**
@@ -9,7 +10,7 @@ import { GoalService, Goal, GoalItemComponent, GoalStruct } from './index';
 @Component({
   moduleId: module.id,
   selector: 'goal-list',
-  directives: [ GoalItemComponent ],
+  directives: [ GoalItemComponent, TeamMemberNotifyComponent ],
   templateUrl: 'goal-list.component.html',
   providers: [ GoalService ]
 })
@@ -59,6 +60,10 @@ export class GoalListComponent implements OnInit {
       this.team = params['uuid'];
       this.refreshGoals();
     });
+  }
+
+  updateNotify(members:string[]) {
+    this.goal.notify = members;
   }
 
   processGoals() {
@@ -114,7 +119,7 @@ export class GoalListComponent implements OnInit {
 
   searchTemplates(e:any) {
     this.debounce(() => {
-      console.log('Search Term: ' + e.target.value);
+      // console.log('Search Term: ' + e.target.value);
       if(e.target.value) {
         this.message.startProcess('goal_template_search',{team:this.team,term:e.target.value});
       }

@@ -22,7 +22,7 @@
             [class.btn-default]="!showAccomplished" >
             Accomplished <span class="badge">{{accomplishCount}}</span>
           </button>
-
+          <team-member-notify (notify)="updateNotify($event)"></team-member-notify>
         </div>
         </form>
       </div>
