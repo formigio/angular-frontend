@@ -110,14 +110,14 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
             },
             {uuid:'string', user:'User'}
         ),
-        get_user_for_fetch_notifications_complete: new ProcessTask(
+        get_user_for_notification_fetch_list_complete: new ProcessTask(
             'fetch_notifications',
-            'get_user_for_fetch_notifications_complete',
-            'notification_fetch_user_notifications',
+            'get_user_for_notification_fetch_list_complete',
+            'notification_fetch_list',
             'Fetch Notifications',
             'fetchUserNotifications',
             (context:ProcessContext) => {
-              return context.hasSignal('get_user_for_fetch_notifications_complete');
+              return context.hasSignal('get_user_for_notification_fetch_list_complete');
             },
             {user:'User'}
         )

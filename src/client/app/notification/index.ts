@@ -3,4 +3,5 @@
  */
 export * from './notification.model';
 export * from './notification.service';
+export * from './notification-nav.component';
 export * from './notification-worker.component';

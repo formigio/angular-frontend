@@ -1,0 +1,12 @@
+<div style="display:inline-block" class="dropdown" [class.open]="show">
+  <button (click)="toggleNotes()" class="btn btn-link dropdown-toggle"><span class="glyphicon glyphicon-bell"></span> <span class="badge">{{getNotificationCount()}}</span></button>
+  <ul class="dropdown-menu" aria-haspopup="true" >
+      <li class="dropdown-header">Your Notifications</li>
+      <li *ngFor="let note of notifications">
+          <div class="alert alert-info alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{note.content}}
+          </div>
+      </li>
+  </ul>
+</div>

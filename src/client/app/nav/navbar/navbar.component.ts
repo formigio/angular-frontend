@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService, HelperService } from '../../core/index';
 import { User, UserService, UserStruct } from '../../user/index';
+import { NotificationNavComponent } from '../../notification/index';
 
 /**
  * This class represents the navigation bar component.
@@ -8,6 +9,7 @@ import { User, UserService, UserStruct } from '../../user/index';
 @Component({
   moduleId: module.id,
   selector: 'sd-navbar',
+  directives: [NotificationNavComponent],
   templateUrl: 'navbar.component.html',
   styleUrls: ['navbar.component.css']
 })
