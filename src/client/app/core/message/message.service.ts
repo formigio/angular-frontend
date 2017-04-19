@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { WorkerMessage, ProcessMessage, ProcessTaskRegistration, ProcessRoutine } from '../index';
+import { ProcessMessage, ProcessTaskRegistration, ProcessRoutine } from '../index';
 
 export class Message {
   constructor(
