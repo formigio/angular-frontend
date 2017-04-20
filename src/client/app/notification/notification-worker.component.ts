@@ -77,14 +77,14 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User',notification:'Notification'}
         ),
-        get_user_for_save_notification_complete: new ProcessTask(
+        get_user_for_notification_save_complete: new ProcessTask(
             'save_notification',
-            'get_user_for_save_notification_complete',
+            'get_user_for_notification_save_complete',
             'notification_save',
             'Save Notification',
             'saveNotification',
             (context:ProcessContext) => {
-              return context.hasSignal('get_user_for_save_notification_complete');
+              return context.hasSignal('get_user_for_notification_save_complete');
             },
             {notification:'Notification',user:'User'}
         ),
@@ -118,6 +118,17 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
             'fetchUserNotifications',
             (context:ProcessContext) => {
               return context.hasSignal('get_user_for_notification_fetch_list_complete');
+            },
+            {user:'User'}
+        ),
+        save_notification_complete: new ProcessTask(
+            'fetch_notifications_after_save',
+            'save_notification_complete',
+            'notification_save',
+            'Fetch Notifications',
+            'fetchUserNotifications',
+            (context:ProcessContext) => {
+              return context.hasSignal('save_notification_complete');
             },
             {user:'User'}
         )
@@ -210,7 +221,7 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
             control_uuid: control_uuid,
             outcome: 'success',
             message:'Notification Saved successfully.',
-            context:{params:{notification_saved:notification.id}}
+            context:{params:{notification_saved:notification.id,params:{viewed:false}}}
           });
           observer.complete();
         }
@@ -305,9 +316,10 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
 
   public fetchUserNotifications(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
+    let fetchparams: {} = params.params;
     let loadedNotifications: Notification[];
     let obs = new Observable((observer:any) => {
-      this.service.list(user).then((response:any) => {
+      this.service.list(user,fetchparams).then((response:any) => {
           loadedNotifications = response.data;
           observer.next({
             control_uuid: control_uuid,
@@ -315,7 +327,11 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
             message:'Notifications loaded successfully.',
             context:{params:{notifications_loaded:true}}
           });
-          this.service.publishNotifications(loadedNotifications);
+          if(fetchparams.hasOwnProperty('viewed')) {
+            this.service.publishUnviewedNotifications(loadedNotifications);
+          } else {
+            this.service.publishNotifications(loadedNotifications);
+          }
           observer.complete();
         }).catch((error:any) => {
           let message = 'Notifications Load Failed. ('+ error +')';

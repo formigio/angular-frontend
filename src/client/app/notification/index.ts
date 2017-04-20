@@ -4,4 +4,6 @@
 export * from './notification.model';
 export * from './notification.service';
 export * from './notification-nav.component';
+export * from './notification-item.component';
+export * from './notification-list.component';
 export * from './notification-worker.component';

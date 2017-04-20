@@ -30,10 +30,17 @@ export class NotificationNavComponent implements OnInit {
    */
   ngOnInit() {
     // Start Notification Fetch Process
-    this.service.getListSubscription().subscribe(
-      notifications => this.notifications = notifications
+    this.service.getUnviewedSubscription().subscribe(
+      (notifications:Notification[]) => {
+        this.notifications = [];
+        notifications.forEach((note) => {
+          if(!note.viewed) {
+            this.notifications.push(note);
+          }
+        });
+      }
     );
-    this.message.startProcess('notification_fetch_list',{});
+    this.message.startProcess('notification_fetch_list',{params:{viewed:false}});
   }
 
   getNotificationCount() {
@@ -46,6 +53,12 @@ export class NotificationNavComponent implements OnInit {
     } else {
       this.show = true;
     }
+  }
+
+  dismiss(note:Notification) {
+    note.viewed = true;
+    this.message.startProcess('notification_save',{notification:note});
+    this.show = false;
   }
 
 }

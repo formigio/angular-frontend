@@ -7,7 +7,7 @@ import { Notification } from './index';
 @Injectable()
 export class NotificationService {
 
-  public itemSubscription: ReplaySubject<any> = new ReplaySubject(1);
+  public unviewedSubscription: ReplaySubject<any> = new ReplaySubject(1);
   public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
   note: Notification;
@@ -18,22 +18,24 @@ export class NotificationService {
     private message: MessageService,
     private helper: HelperService) { }
 
-  getItemSubscription(): ReplaySubject<any> {
-    return this.itemSubscription;
+  getUnviewedSubscription(): ReplaySubject<any> {
+    return this.unviewedSubscription;
   }
 
   getListSubscription(): ReplaySubject<any> {
     return this.listSubscription;
   }
 
-  publishNotification(note:Notification) {
-    this.itemSubscription.next(note);
-  }
-
   publishNotifications(notes:Notification[]) {
     this.notes = notes;
     this.sort();
     this.listSubscription.next(this.notes);
+  }
+
+  publishUnviewedNotifications(notes:Notification[]) {
+    this.notes = notes;
+    this.sort();
+    this.unviewedSubscription.next(this.notes);
   }
 
   getNotes(): Notification[] {
@@ -75,13 +77,16 @@ export class NotificationService {
    * Returns an Promise for the HTTP GET request for the JSON resource.
    * @return {Note[]} The Promise for the HTTP request.
    */
-  list(user:User): Promise<Notification[]> {
+  list(user:User,params:{} = {}): Promise<Notification[]> {
       let api = this.helper.apiFactory.newClient({
         accessKey: user.credentials.accessKey,
         secretKey: user.credentials.secretKey,
         sessionToken: user.credentials.sessionToken
       });
-      return api.get('/notifications',{'headers':{'x-identity-id':user.worker.identity}});
+      return api.get('/notifications',{
+        'params':params,
+        'headers':{'x-identity-id':user.worker.identity}
+      });
   }
 
   /**
@@ -140,7 +145,7 @@ export class NotificationService {
    */
   put(note:Notification): Promise<any> {
     let user = this.getUser();
-    let body = note;
+    let body = {id:note.id,viewed:note.viewed};
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,

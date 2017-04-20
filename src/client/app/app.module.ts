@@ -22,6 +22,7 @@ import { GoalPagesModule } from './+goals/goal-pages.module';
 import { GoalTemplatePagesModule } from './+goal-templates/goal-template-pages.module';
 import { CommitmentPagesModule } from './+commitments/commitment-pages.module';
 import { InvitePagesModule } from './+invites/invite-pages.module';
+import { NotificationPagesModule } from './+notifications/notification-pages.module';
 import { LoginModule } from './+login/login.module';
 import { UserModule } from './user/user.module';
 import { SharedModule } from './shared/shared.module';
@@ -32,7 +33,7 @@ import { NavModule } from './nav/nav.module';
   imports: [
     BrowserModule, HttpModule, routing, CoreModule, LoginModule,
     UserModule, TeamModule, TeamMemberModule, GoalModule, TaskModule,
-    GoalTemplateModule, TaskTemplateModule, NotificationModule,
+    GoalTemplateModule, TaskTemplateModule, NotificationModule, NotificationPagesModule,
     InviteModule, CommitmentModule, TeamPagesModule, GoalPagesModule, InvitePagesModule,
     CommitmentPagesModule,GoalTemplatePagesModule,
     HomeModule, NavModule, SharedModule.forRoot()],

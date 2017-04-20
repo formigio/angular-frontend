@@ -7,6 +7,7 @@ import { GoalPagesRoutes } from './+goals/index';
 import { GoalTemplatePagesRoutes } from './+goal-templates/index';
 import { CommitmentPagesRoutes } from './+commitments/index';
 import { InvitePagesRoutes } from './+invites/index';
+import { NotificationPagesRoutes } from './+notifications/index';
 import { LoginRoutes } from './+login/index';
 
 export const routes: Routes = [
@@ -16,6 +17,7 @@ export const routes: Routes = [
   ...GoalTemplatePagesRoutes,
   ...CommitmentPagesRoutes,
   ...InvitePagesRoutes,
+  ...NotificationPagesRoutes,
   ...LoginRoutes
 ];
 
