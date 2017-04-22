@@ -8,7 +8,7 @@ const ProdConfig: EnvConfig = {
   COGNITO_IDENTITYPOOL: 'us-east-1:38c1785e-4101-4eb4-b489-6fe8608406d0',
   COGNITO_CLIENT_ID: '1nupbfn12bgmra4ueie0dqagnv',
   GOOGLE_CLIENT_ID: '733735566798-5ob9fijml9fsf43tfvi26iong72r954u.apps.googleusercontent.com',
-  NOTIFICATION_WS: 'ws://messaging.alpha.formig.io:8081'
+  NOTIFICATION_WS: 'wss://messaging.alpha.formig.io'
 };
 
 export = ProdConfig;
