@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NotificationService, Notification } from './index';
 import { MessageService, HelperService } from '../core/index';
 
@@ -13,7 +13,7 @@ import { MessageService, HelperService } from '../core/index';
   providers: [ NotificationService ]
 })
 
-export class NotificationItemComponent implements OnInit {
+export class NotificationItemComponent {
 
   @Input() notification: Notification;
 
@@ -22,12 +22,6 @@ export class NotificationItemComponent implements OnInit {
     public message: MessageService,
     public helper: HelperService
   ) {}
-
-  /**
-   * Get the names OnInit
-   */
-  ngOnInit() {
-  }
 
   /**
    * Deletes a new goal onto the goals array

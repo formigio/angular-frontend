@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { TeamMemberService, TeamMember } from './index';
 import { MessageService, HelperService } from '../core/index';
 
@@ -39,7 +38,7 @@ export class TeamMemberNotifyComponent implements OnInit {
                 this.members = members;
                 this.selectedMembers = [];
                 this.members.forEach((member:TeamMember) => {
-                  this.selectedMembers.push(member.id)
+                  this.selectedMembers.push(member.id);
                   if(this.selectedMembers.length === this.members.length) {
                     this.notify.emit(this.selectedMembers);
                   }
@@ -49,7 +48,7 @@ export class TeamMemberNotifyComponent implements OnInit {
   }
 
   selected(member:TeamMember) {
-    return this.selectedMembers.indexOf(member.id) !== -1
+    return this.selectedMembers.indexOf(member.id) !== -1;
   }
 
   updateNotify(member:TeamMember) {

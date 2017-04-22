@@ -286,7 +286,7 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
     let obs = new Observable((observer:any) => {
       notification.content = content;
       notification.worker_id = worker_id;
-      notification.user_id = user.worker.id
+      notification.user_id = user.worker.id;
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',

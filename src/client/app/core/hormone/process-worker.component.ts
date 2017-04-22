@@ -72,7 +72,6 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
     // Special Binding for Processing Loop
     this.message.getProcessQueue().subscribe(
       processRoutine => {
-        let pr: any;
         // Run Process Loop
         processRoutine.queueTasks().subscribe(
           null,

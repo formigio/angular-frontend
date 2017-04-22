@@ -1,10 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine,
-  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
-import { User } from '../user/index';
-import { Notification, NotificationService, NotificationStruct } from './index';
-
+import { MessageService, HelperService } from '../core/index';
+import { Notification, NotificationService } from './index';
 
 @Component({
   moduleId: module.id,

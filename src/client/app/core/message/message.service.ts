@@ -101,7 +101,7 @@ export class MessageService {
                 this.startProcess(message.process,message.params);
                 this.setFlash('Process: ' + message.process + ' requested.');
             },
-            error => {console.log(error)},
+            error => {console.log(error);},
             () => {
                 this.addStickyMessage('We may have lost connection with the Notification Service...');
             }
@@ -126,13 +126,17 @@ export class MessageService {
         });
 
         let observer = {
-            error: () => {},
+            error: () => {
+                // error handler
+            },
             next: (data: Object) => {
                 if (ws.readyState === WebSocket.OPEN) {
                     ws.send(JSON.stringify(data));
                 }
             },
-            complete: () => {}
+            complete: () => {
+                // complete handler
+            }
         };
 
         return new Subject(observer,obs);
