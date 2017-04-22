@@ -37,6 +37,7 @@ export class TeamMemberNotifyComponent implements OnInit {
           .subscribe(
               members => {
                 this.members = members;
+                this.selectedMembers = [];
                 this.members.forEach((member:TeamMember) => {
                   this.selectedMembers.push(member.id)
                   if(this.selectedMembers.length === this.members.length) {
