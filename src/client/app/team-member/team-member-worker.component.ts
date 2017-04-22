@@ -16,7 +16,7 @@ import { User } from '../user/index';
 })
 export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
 
-    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+    public workQueue: ReplaySubject<any> = new ReplaySubject();
 
     public routines: {} = {
         teammember_fetch_team_members: new ProcessRoutine(

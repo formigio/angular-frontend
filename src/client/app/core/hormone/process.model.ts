@@ -30,42 +30,50 @@ export class ProcessRoutine {
         localStorage.removeItem('process_' + this.control_uuid);
     }
 
-    public queueTasks() {
-        this.log('Process Continue: Queueing Tasks');
-        this.log('Process Continue: signals: ' + this.context.signals);
+    public queueTasks(): Observable<any> {
+        let obs = new Observable((observer:any) => {
+            this.log('Process Continue: Queueing ' + this.tasks.length + 'Tasks');
+            this.log('Process Continue: signals: ' + this.context.signals);
 
-        let allTasks = this.tasks.length;
-        let completedTasks = 0;
-        let processedTasks = 0;
+            let allTasks = this.tasks.length;
+            let completedTasks = 0;
+            let processedTasks = 0;
 
-        this.tasks.forEach((task) => {
-            this.log('Queue Task: ' + task.identifier);
-            this.log(task.identifier + ' Ready? ' + task.ready(this.context));
-            this.log(task.identifier + ' System: ' + task.systemStatus);
-            this.log(task.identifier + ' Work: ' + task.workStatus);
+            this.tasks.forEach((task) => {
+                this.log('Queue Task: ' + task.identifier);
+                this.log(task.identifier + ' Ready? ' + task.ready(this.context));
+                this.log(task.identifier + ' System: ' + task.systemStatus);
+                this.log(task.identifier + ' Work: ' + task.workStatus);
 
-            if(task.workStatus === 'completed' || task.workStatus === 'blocked') {
-                completedTasks += 1;
-                processedTasks += 1;
-                this.localDebug();
-                if(completedTasks === allTasks) {
-                    this.log('Looks like we have completed all the tasks');
+                if(task.workStatus === 'completed' || task.workStatus === 'blocked') {
+                    completedTasks += 1;
+                    processedTasks += 1;
+                    this.localDebug();
+                    if(completedTasks === allTasks) {
+                        this.log('Looks like we have processed all the tasks');
+                        observer.next(this);
+                        observer.complete();
+                    }
+                    this.log(completedTasks + ' Completed Tasks | ' + processedTasks + ' Processed Tasks');
+                    return;
                 }
-                return;
-            }
 
-            // Here we can do some state/status checks to see if we need to actual queue the work
-            if(task.ready(this.context) && (task.systemStatus === 'pending' || task.systemStatus === 'ready')) {
-                this.log('Queueing Work for ' + task.identifier);
-                // task.queue hits the specific worker
-                task.queue.next(new WorkerMessage(task, this.control_uuid, this));
-            } else {
-                processedTasks += 1;
-                if(processedTasks === allTasks) {
-                    this.log('Looks like we have processed all the tasks');
+                // Here we can do some state/status checks to see if we need to actual queue the work
+                if(task.ready(this.context) && (task.systemStatus === 'pending' || task.systemStatus === 'ready')) {
+                    this.log('Queueing Work for ' + task.identifier);
+                    // task.queue hits the specific worker
+                    task.queue.next(new WorkerMessage(task, this.control_uuid, this));
+                } else {
+                    processedTasks += 1;
+                    if(processedTasks === allTasks) {
+                        this.log('Looks like we have processed all the tasks');
+                        observer.next(this);
+                        observer.complete();
+                    }
                 }
-            }
+            });
         });
+        return obs;
     }
 
     public resetTaskStatuses(): Observable<any> {
@@ -90,6 +98,40 @@ export class ProcessRoutine {
         return obs;
     }
 
+    public initTasks(): Observable<any> {
+        let tasks = this.tasks;
+        let obs = new Observable((observer:any) => {
+            let tasksReset: string[] = [];
+            let initTasks: ProcessTask[] = [];
+            if(tasks.length === 0) {
+                observer.complete();
+            }
+            tasks.forEach((taskTemplate) => {
+                let task = new ProcessTask(
+                    taskTemplate.identifier,
+                    taskTemplate.trigger,
+                    taskTemplate.routine,
+                    taskTemplate.description,
+                    taskTemplate.method,
+                    taskTemplate.ready,
+                    taskTemplate.params
+                );
+                task.queue = taskTemplate.queue;
+                task.resetStatus();
+                tasksReset.push(task.identifier);
+                this.log('Reseting task ' + task.identifier);
+                initTasks.push(task);
+                if(tasks.length === tasksReset.length) {
+                    this.log('All tasks reset for ' + this.identifier);
+                    this.tasks = initTasks;
+                    observer.complete();
+                }
+            });
+            return;
+        });
+
+        return obs;
+    }
 
 }
 
@@ -225,13 +267,19 @@ export class ProcessMessage {
             return false;
         }
 
-        let processRoutine: ProcessRoutine = (<any>worker.routines)[identifier];
+        let processRoutineTemplate: ProcessRoutine = (<any>worker.routines)[identifier];
+        let processRoutine: ProcessRoutine = new ProcessRoutine(
+          processRoutineTemplate.identifier,
+          processRoutineTemplate.description,
+          processRoutineTemplate.debug
+        );
         processRoutine.control_uuid = control_uuid;
         processRoutine.context = context;
+        processRoutine.tasks = processRoutineTemplate.tasks;
 
         processRoutine.log('Process Starting: ' + processRoutine.identifier);
 
-        processRoutine.resetTaskStatuses().subscribe(null,null,() => {
+        processRoutine.initTasks().subscribe(null,null,() => {
             processRoutine.localDebug();
             processRoutine.context.signals.push(processRoutine.identifier + '_init');
             worker.message.continueProcess(processRoutine);
@@ -313,7 +361,7 @@ export class WorkerMessage {
                     worker.message.continueProcess(processRoutine);
                 },
                 () => {
-                    processRoutine.log('Successs returned from Method: ' + processTask.identifier + '::' + processTask.method);
+                    processRoutine.log('Success returned from Method: ' + processTask.identifier + '::' + processTask.method);
                     if(workerResponse.message) {
                         worker.message.setFlash(workerResponse.message,'success');
                     }

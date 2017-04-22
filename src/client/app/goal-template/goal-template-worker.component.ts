@@ -16,7 +16,7 @@ import { GoalTemplate, GoalTemplateService } from './index';
 })
 export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
 
-  public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+  public workQueue: ReplaySubject<any> = new ReplaySubject();
 
   public routines: {} = {
       goal_template_delete: new ProcessRoutine(

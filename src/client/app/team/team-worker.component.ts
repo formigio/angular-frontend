@@ -16,7 +16,7 @@ import { User } from '../user/index';
 })
 export class TeamWorkerComponent implements OnInit, WorkerComponent {
 
-    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+    public workQueue: ReplaySubject<any> = new ReplaySubject();
 
     public routines: {} = {
         team_delete: new ProcessRoutine(

@@ -20,7 +20,7 @@ declare let apigClientFactory: any;
 })
 export class UserWorkerComponent implements OnInit, WorkerComponent {
 
-    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+    public workQueue: ReplaySubject<any> = new ReplaySubject();
 
     public routines: {} = {
         user_login: new ProcessRoutine(
@@ -1396,10 +1396,15 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'User Saved.',
+        message:'User Stored.',
         context:{params:{}}
       });
       observer.complete();
+      if(user.worker.id) {
+        this.message.startProcess('notification_connect',{
+          url:Config.NOTIFICATION_WS + '/worker/' + user.worker.id
+        });
+      }
     });
     return obs;
   }

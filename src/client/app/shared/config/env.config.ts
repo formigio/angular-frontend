@@ -8,6 +8,7 @@ export interface EnvConfig {
   COGNITO_IDENTITYPOOL?: string;
   COGNITO_CLIENT_ID?: string;
   GOOGLE_CLIENT_ID?: string;
+  NOTIFICATION_WS?: string;
 }
 
 export const Config: EnvConfig = JSON.parse('<%= ENV_CONFIG %>');

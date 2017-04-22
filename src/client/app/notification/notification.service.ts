@@ -45,6 +45,7 @@ export class NotificationService {
   addNotification(note:Notification) {
     this.notes.push(note);
     this.publishNotifications(this.notes);
+    this.publishUnviewedNotifications(this.notes);
   }
 
   removeNotification(id:string) {
@@ -138,7 +139,6 @@ export class NotificationService {
     return api.delete('/notifications/{id}',{path:{id:id},'headers':{'x-identity-id':user.worker.identity}});
   }
 
-
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
@@ -153,4 +153,5 @@ export class NotificationService {
     });
     return api.put('/notifications/{id}',{path:{id:note.id},'headers':{'x-identity-id':user.worker.identity}},body);
   }
+
 }

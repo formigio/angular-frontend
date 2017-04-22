@@ -17,7 +17,7 @@ import { Commitment, CommitmentService } from './index';
 })
 export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
 
-    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+    public workQueue: ReplaySubject<any> = new ReplaySubject();
 
     public routines: {} = {
         commitment_create: new ProcessRoutine(

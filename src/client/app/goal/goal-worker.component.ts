@@ -17,7 +17,7 @@ import { Goal, GoalService, GoalStruct } from './index';
 })
 export class GoalWorkerComponent implements OnInit, WorkerComponent {
 
-  public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+  public workQueue: ReplaySubject<any> = new ReplaySubject();
 
   public routines: {} = {
       goal_delete: new ProcessRoutine(

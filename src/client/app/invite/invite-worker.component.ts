@@ -16,7 +16,7 @@ import { Invite, InviteService } from './index';
 })
 export class InviteWorkerComponent implements OnInit, WorkerComponent {
 
-    public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+    public workQueue: ReplaySubject<any> = new ReplaySubject();
 
     public routines: {} = {
         invite_delete: new ProcessRoutine(

@@ -15,7 +15,7 @@ import { MessageService, ProcessRoutine, ProcessTask,
 })
 export class RouteWorkerComponent implements OnInit, WorkerComponent {
 
-  public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+  public workQueue: ReplaySubject<any> = new ReplaySubject();
 
   public routines: {} = {
     navigate_to: new ProcessRoutine(

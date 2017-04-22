@@ -16,7 +16,7 @@ import { TaskTemplate, TaskTemplateService } from './index';
 })
 export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
 
-  public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+  public workQueue: ReplaySubject<any> = new ReplaySubject();
 
   public routines: {} = {
       task_template_delete: new ProcessRoutine(

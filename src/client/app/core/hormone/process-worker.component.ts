@@ -13,7 +13,7 @@ import { MessageService, HelperService, ProcessRoutine, ProcessTask, WorkerCompo
 })
 export class ProcessWorkerComponent implements OnInit, WorkerComponent {
 
-  public workQueue: ReplaySubject<any> = new ReplaySubject(1);
+  public workQueue: ReplaySubject<any> = new ReplaySubject();
 
   public routines: {} = {
     process_every_minute: new ProcessRoutine(
@@ -72,9 +72,16 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
     // Special Binding for Processing Loop
     this.message.getProcessQueue().subscribe(
       processRoutine => {
-
+        let pr: any;
         // Run Process Loop
-        processRoutine.queueTasks();
+        processRoutine.queueTasks().subscribe(
+          null,
+          null,
+          () => {
+            // this.message.addStickyMessage('Routine Complete');
+            // this.ref.tick();
+          }
+        );
       }
     );
 

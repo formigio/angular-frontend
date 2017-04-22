@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine,
   ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
@@ -20,7 +20,8 @@ export class NotificationNavComponent implements OnInit {
   constructor(
     protected service: NotificationService,
     protected helper: HelperService,
-    public message: MessageService
+    public message: MessageService,
+    public def: ChangeDetectorRef
   ) {
     this.service = this.helper.getServiceInstance(this.service,'NotificationService');
   }
@@ -33,9 +34,14 @@ export class NotificationNavComponent implements OnInit {
     this.service.getUnviewedSubscription().subscribe(
       (notifications:Notification[]) => {
         this.notifications = [];
+        let notes: Notification[] = [];
         notifications.forEach((note) => {
+          notes.push(note);
           if(!note.viewed) {
             this.notifications.push(note);
+          }
+          if(notes.length === notifications.length) {
+            this.def.detectChanges();
           }
         });
       }
