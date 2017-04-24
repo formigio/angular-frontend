@@ -17,9 +17,6 @@ export class TaskListComponent implements OnInit {
 
   @Input() editable: boolean;
 
-  errorMessage: string = '';
-  currentResponse: string = '';
-
   tasks: Task[] = [];
 
   task: Task = TaskStruct;

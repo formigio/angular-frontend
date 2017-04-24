@@ -178,7 +178,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Goal Template Loaded.',
+            message: {
+              message: 'Goal Template Loaded.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -187,7 +189,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Template Load Failed.',
+            message: {
+              message: 'Goal Template Load Failed.'
+            },
             context:{params:{}}
         })
       );
@@ -208,7 +212,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message: 'Goal Template loaded successfully.',
+            message: {
+              message: 'Goal Template loaded successfully.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -217,7 +223,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message: 'Goals Template Load Failed.',
+          message: {
+            message: 'Goals Template Load Failed.'
+          },
           context:{params:{}}
         })
       );
@@ -237,7 +245,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message: 'Goal Template loaded successfully.',
+            message: {
+              message: 'Goal Template loaded successfully.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -246,7 +256,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message: 'Goals Template Load Failed.',
+          message: {
+            message: 'Goals Template Load Failed.'
+          },
           context:{params:{}}
         })
       );
@@ -266,7 +278,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Goal Template Saved Successfully.',
+            message: {
+              message: 'Goal Template Saved Successfully.'
+            },
             context:{params:{goal:response.data}}
           });
           observer.complete();
@@ -275,7 +289,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Save Failed.',
+            message: {
+              message: 'Goal Save Failed.'
+            },
             context:{params:{}}
         })
       );
@@ -294,7 +310,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Goal Template Remove Successfully.',
+            message: {
+              message: 'Goal Template Remove Successfully.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -303,7 +321,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Template Remove Failed. You can only delete empty Goal Templates.',
+            message: {
+              message: 'Goal Template Remove Failed. You can only delete empty Goal Templates.'
+            },
             context:{params:{}}
         })
       );
@@ -323,7 +343,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Goal Template Saved Successfully.',
+            message: {
+              message: 'Goal Template Saved Successfully.'
+            },
             context:{params:{goalTemplate:response.data}}
           });
           observer.complete();
@@ -332,7 +354,9 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Template Save Failed.',
+            message: {
+              message: 'Goal Template Save Failed.'
+            },
             context:{params:{}}
         })
       );

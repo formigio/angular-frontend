@@ -186,7 +186,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
-              message:'Goal Retrieved.',
+              message: {
+                message: 'Goal Retrieved.'
+              },
               context:{params:{goal_loaded:uuid}}
         });
         observer.complete();
@@ -197,7 +199,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
-              message:'Goal Loaded.',
+              message: {
+                message: 'Goal Loaded.'
+              },
               context:{params:{}}
             });
             observer.complete();
@@ -206,7 +210,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           error => observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'Goal Load Failed.',
+              message: {
+                message: 'Goal Load Failed.'
+              },
               context:{params:{}}
           })
         );
@@ -227,7 +233,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
                 control_uuid: control_uuid,
                 outcome: 'success',
-                message:'Goal loaded successfully.',
+                message: {
+                  message: 'Goal loaded successfully.'
+                },
                 context:{params:{}}
           });
           observer.complete();
@@ -236,7 +244,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goals Load Failed.',
+            message: {
+              message: 'Goals Load Failed.'
+            },
             context:{params:{}}
         })
       );
@@ -257,7 +267,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Goal Saved Successfully.',
+            message: {
+              message: 'Goal Saved Successfully.'
+            },
             context:{params:{goal:response.data}}
           });
 
@@ -277,7 +289,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Save Failed.',
+            message: {
+              message: 'Goal Save Failed.'
+            },
             context:{params:{}}
         })
       );
@@ -302,7 +316,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Goal Saved Successfully.',
+            message: {
+              message: 'Goal Saved Successfully.'
+            },
             context:{params:{goal:response.data,goalTemplate:goalTemplate.id}}
           });
           observer.complete();
@@ -311,7 +327,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Save Failed.',
+            message: {
+              message: 'Goal Save Failed.'
+            },
             context:{params:{}}
         })
       );
@@ -330,7 +348,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Goal Remove Successfully.',
+            message: {
+              message: 'Goal Remove Successfully.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -339,7 +359,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Remove Failed. You can only delete empty Goals.',
+            message: {
+              message: 'Goal Remove Failed. You can only delete empty Goals.'
+            },
             context:{params:{}}
         })
       );
@@ -359,7 +381,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Goal Saved Successfully.',
+            message: {
+              message: 'Goal Saved Successfully.'
+            },
             context:{params:{goal:response.data}}
           });
           observer.complete();
@@ -368,7 +392,9 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Goal Save Failed.',
+            message: {
+              message: 'Goal Save Failed.'
+            },
             context:{params:{}}
         })
       );

@@ -20,7 +20,6 @@ export class GoalListComponent implements OnInit {
   successObject: {};
   newGoal: string = '';
   newAccomplished: string = 'false';
-  errorMessage: string;
   goals: Goal[] = [];
   activeGoals: Goal[] = [];
   accomplishCount: number;

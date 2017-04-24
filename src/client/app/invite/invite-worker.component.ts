@@ -203,7 +203,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Invites fetched successfully.',
+            message: {
+              message: 'Invites fetched successfully.'
+            },
             context:{params:{invites:invites,invite_count:invites.length}}
           });
           observer.complete();
@@ -213,7 +215,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured fetching the invites.'
+            message: {
+              message: 'An error has occured fetching the invites.'
+            }
           });
         }
       );
@@ -234,13 +238,17 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'Invalid or Expired Invitation.'
+              message: {
+                message: 'Invalid or Expired Invitation.'
+              }
             });
           } else {
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
-              message:'Invite fetched successfully.',
+              message: {
+                message: 'Invite fetched successfully.'
+              },
               context:{params:{invite:invite}}
             });
             observer.complete();
@@ -251,7 +259,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured fetching the invites.'
+            message: {
+              message: 'An error has occured fetching the invites.'
+            }
           });
         }
       );
@@ -274,7 +284,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Invite Created.',
+            message: {
+              message: 'Invite Created.'
+            },
             context:{params:{invite:invite}}
           });
           observer.complete();
@@ -284,7 +296,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured saving the invite.'
+            message: {
+              message: 'An error has occured saving the invite.'
+            }
           });
         }
       );
@@ -305,7 +319,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Invite Marked Accepted.',
+            message: {
+              message: 'Invite Marked Accepted.'
+            },
             context:{params:{invite:invite}}
           });
           observer.complete();
@@ -316,7 +332,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured. Please check to make sure you are not already a member of this team.'
+            message: {
+              message: 'An error has occured. Please check to make sure you are not already a member of this team.'
+            }
           });
         }
       );
@@ -333,13 +351,17 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
         observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'This Invite has expired or is invalid.'
+            message: {
+              message: 'This Invite has expired or is invalid.'
+            }
         });
       } else if(invite.inviter_worker_id === user.worker.id) {
         observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'You cannot create a link to an invite that you created.'
+            message: {
+              message: 'You cannot create a link to an invite that you created.'
+            }
         });
       } else {
         invite.invitee_worker_id = user.worker.id;
@@ -352,7 +374,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
-              message:'Invite Created.',
+              message: {
+                message: 'Invite Created.'
+              },
               context:{params:{invite:invite}}
             });
             observer.complete();
@@ -362,7 +386,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'An error has occured saving the invite.'
+              message: {
+                message: 'An error has occured saving the invite.'
+              }
             });
           }
         );
@@ -378,7 +404,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message: 'Invites Published.',
+        message: {
+          message: 'Invites Published.'
+        },
         context:{params:{}}
       });
       observer.complete();
@@ -396,7 +424,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Invite Removed.',
+            message: {
+              message: 'Invite Removed.'
+            },
             context:{params:{invite_deleted:invite.id}}
           });
           observer.complete();
@@ -406,7 +436,9 @@ export class InviteWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured removing the invite.'
+            message: {
+              message: 'An error has occured removing the invite.'
+            }
           });
         }
       );

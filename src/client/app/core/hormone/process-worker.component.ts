@@ -95,7 +95,7 @@ export class ProcessWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'end',
-        message: '',
+        message: {},
         context:{params:{}}
       });
       observer.complete();

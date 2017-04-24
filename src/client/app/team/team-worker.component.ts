@@ -158,7 +158,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Team removed.',
+            message: {
+              message: 'Team removed.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -167,7 +169,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message: 'Team delete failed, We cannot delete a team that still has goals.',
+            message: {
+              message: 'Team delete failed, We cannot delete a team that still has goals.'
+            },
             context:{
               params:{}
             }
@@ -187,7 +191,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Team Saved successfully.',
+            message: {
+              message: 'Team Saved successfully.'
+            },
             context:{params:{team_saved:team.id}}
           });
           observer.complete();
@@ -196,7 +202,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'Error has occured while saving team.',
+          message: {
+            message: 'Error has occured while saving team.'
+          },
           context:{params:{}}
         })
       );
@@ -216,7 +224,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Team Created successfully.',
+            message: {
+              message: 'Team Created successfully.'
+            },
             context:{params:{team_created:team.id}}
           });
           observer.complete();
@@ -225,7 +235,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
            control_uuid: control_uuid,
            outcome: 'error',
-           message:'Error has occured while saving team.',
+           message: {
+              message: 'Error has occured while saving team.'
+            },
            context:{params:{}}
           });
         });
@@ -242,7 +254,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Team loaded successfully.',
+            message: {
+              message: 'Team loaded successfully.'
+            },
             context:{params:{team_loaded:uuid}}
       });
       observer.complete();
@@ -259,7 +273,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Teams loaded successfully.',
+            message: {
+              message: 'Teams loaded successfully.'
+            },
             context:{params:{teams_loaded:true}}
           });
           this.service.publishTeams(loadedTeams);
@@ -269,7 +285,9 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message: message,
+            message: {
+              message: message
+            },
             context:{
               params:{}
             }

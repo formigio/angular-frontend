@@ -182,7 +182,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Commitment Created.',
+            message: {
+              message: 'Commitment Created.'
+            },
             context:{params:{commitment:commitment,task:task}}
           });
           observer.complete();
@@ -192,7 +194,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured creating Commitment.'
+            message: {
+              message: 'An error has occured creating Commitment.'
+            }
           });
         }
       );
@@ -213,7 +217,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Commitment Saved.',
+            message: {
+              message: 'Commitment Saved.'
+            },
             context:{params:{commitment:commitment}}
           });
           observer.complete();
@@ -223,7 +229,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured saving the Commitment.'
+            message: {
+              message: 'An error has occured saving the Commitment.'
+            }
           });
         }
       );
@@ -243,7 +251,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Commitment Removed.',
+            message: {
+              message: 'Commitment Removed.'
+            },
             context:{params:{commitment:commitment}}
           });
           observer.complete();
@@ -253,7 +263,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured saving the Commitment.'
+            message: {
+              message: 'An error has occured saving the Commitment.'
+            }
           });
         }
       );
@@ -273,7 +285,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Commitments Fetched.',
+            message: {
+              message: 'Commitments Fetched.'
+            },
             context:{params:{commitments:commitments}}
           });
           observer.complete();
@@ -283,7 +297,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured fetching Commitments.'
+            message: {
+              message: 'An error has occured fetching Commitments.'
+            }
           });
         }
       );
@@ -304,7 +320,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Commitments Fetched.',
+            message: {
+              message: 'Commitments Fetched.'
+            },
             context:{params:{commitments:data.commitments}}
           });
           observer.complete();
@@ -314,7 +332,9 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured fetching Commitments.'
+            message: {
+              message: 'An error has occured fetching Commitments.'
+            }
           });
         }
       );

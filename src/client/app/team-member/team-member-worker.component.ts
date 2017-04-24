@@ -99,7 +99,9 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Members loaded successfully.',
+            message: {
+              message: 'Members loaded successfully.'
+            },
             context:{params:{team_members_loaded:true}}
           });
           this.service.publishTeamMembers(loadedMembers);
@@ -109,7 +111,9 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Teams load failed: ' + error,
+            message: {
+              message: 'Teams load failed: ' + error
+            },
             context:{params:{}}
         })
       );

@@ -201,7 +201,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Task Created.',
+            message: {
+              message: 'Task Created.'
+            },
             context:{params:{task:task}}
           });
           observer.complete();
@@ -211,7 +213,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured fetching the tasks.'
+            message: {
+              message: 'An error has occured fetching the tasks.'
+            }
           });
         }
       );
@@ -244,7 +248,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'An error has occured fetching the tasks.'
+              message: {
+                message: 'An error has occured fetching the tasks.'
+              }
             });
           }
         );
@@ -252,7 +258,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Tasks Created.',
+            message: {
+              message: 'Tasks Created.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -276,7 +284,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Task Saved.',
+            message: {
+              message: 'Task Saved.'
+            },
             context:{params:{task:task}}
           });
           observer.complete();
@@ -286,7 +296,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured fetching the tasks.'
+            message: {
+              message: 'An error has occured fetching the tasks.'
+            }
           });
         }
       );
@@ -302,7 +314,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'Task Updated.',
+        message: {
+          message: 'Task Updated.'
+        },
         context:{params:{task:task}}
       });
       observer.complete();
@@ -322,7 +336,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:tasks.length + ' Tasks fetched.',
+            message: {
+              message: tasks.length + ' Tasks fetched.'
+            },
             context:{params:{tasks:tasks,task_count:tasks.length}}
           });
           observer.complete();
@@ -332,7 +348,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured fetching the tasks.'
+            message: {
+              message: 'An error has occured fetching the tasks.'
+            }
           });
         }
       );
@@ -348,7 +366,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message: ' Tasks Published.',
+        message: {
+          message: 'Tasks Published.'
+        },
         context:{params:{}}
       });
       observer.complete();
@@ -368,7 +388,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Task Removed.',
+            message: {
+              message: 'Task Removed.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -378,7 +400,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'An error has occured removing the task.'
+            message: {
+              message: 'An error has occured removing the task.'
+            }
           });
         }
       );
@@ -394,7 +418,9 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
   //       observer.next({
   //         control_uuid: control_uuid,
   //         outcome: 'success',
-  //         message:'No Tasks to Remove.',
+  //         message: {
+  //           message: 'No Tasks to Remove.'
+  //         },
   //         context:{params:{task_count:0}}
   //       });
   //       observer.complete();
@@ -405,7 +431,8 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
   //         error => observer.error({
   //           control_uuid: control_uuid,
   //           outcome: 'error',
-  //           message:'Error has occured while removing tasks.',
+  //           message: {
+  //              message: 'Error has occured while removing tasks.'},
   //           context:{params:{}}
   //         }),
   //         () => {
@@ -414,7 +441,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
   //             observer.next({
   //               control_uuid: control_uuid,
   //               outcome: 'success',
-  //               message:'Tasks removed successfully.',
+  //               message:{message:'Tasks removed successfully.'},
   //               context:{params:{task_count:0}}
   //             });
   //             observer.complete();

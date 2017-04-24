@@ -121,7 +121,14 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
     let navigate_to: string = params.navigate_to;
     let obs = new Observable((observer:any) => {
         this.router.navigate([navigate_to]);
-      observer.next({control_uuid: control_uuid, outcome: 'success', message:'Nagivated.',context:{params:{}}});
+      observer.next({
+        control_uuid: control_uuid,
+        outcome: 'success',
+        message:{
+          message:'Nagivated.'
+        },
+        context:{params:{}}
+      });
       observer.complete();
     });
     return obs;

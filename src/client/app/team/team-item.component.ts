@@ -18,7 +18,6 @@ export class TeamItemComponent implements OnInit {
   @Input() team: Team;
 
   state: string = 'view';
-  errorMessage: string = '';
 
   /**
    * Creates an instance of the HomeComponent with the injected

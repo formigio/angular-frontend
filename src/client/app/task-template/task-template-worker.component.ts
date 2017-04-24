@@ -169,7 +169,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Task Template Loaded.',
+            message: {
+              message: 'Task Template Loaded.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -178,7 +180,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Task Template Load Failed.',
+            message: {
+              message: 'Task Template Load Failed.'
+            },
             context:{params:{}}
         })
       );
@@ -198,7 +202,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message: 'Task Template loaded successfully.',
+            message: {
+              message: 'Task Template loaded successfully.'
+            },
             context:{params:{taskTemplates:taskTemplates}}
           });
           observer.complete();
@@ -207,7 +213,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message: 'Tasks Template Load Failed.',
+          message: {
+            message: 'Tasks Template Load Failed.'
+          },
           context:{params:{}}
         })
       );
@@ -227,7 +235,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Task Template Saved Successfully.',
+            message: {
+              message: 'Task Template Saved Successfully.'
+            },
             context:{params:{task:response.data}}
           });
           observer.complete();
@@ -236,7 +246,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Task Save Failed.',
+            message: {
+              message: 'Task Save Failed.'
+            },
             context:{params:{}}
         })
       );
@@ -255,7 +267,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Task Template Remove Successfully.',
+            message:{
+              message: 'Task Template Remove Successfully.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -264,7 +278,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Task Template Remove Failed. You can only delete empty Task Templates.',
+            message:{
+              message: 'Task Template Remove Failed. You can only delete empty Task Templates.'
+            },
             context:{params:{}}
         })
       );
@@ -284,7 +300,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Task Template Saved Successfully.',
+            message:{
+              message: 'Task Template Saved Successfully.'
+            },
             context:{params:{taskTemplate:response.data}}
           });
           observer.complete();
@@ -293,7 +311,9 @@ export class TaskTemplateWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'Task Template Save Failed.',
+            message: {
+              message: 'Task Template Save Failed.'
+            },
             context:{params:{}}
         })
       );

@@ -5,9 +5,11 @@ import { ProcessMessage, ProcessTaskRegistration, ProcessRoutine } from '../inde
 
 export class Message {
   constructor(
-    public show: boolean = false,
     public message: string = '',
-    public alert: string = 'info'
+    public alert: string = 'info',
+    public queue: string = 'flash',
+    public channel: string = '',
+    public show: boolean = true
   ) {}
 }
 
@@ -27,31 +29,46 @@ export class MessageService {
 
     socketSubject: Subject<any>;
 
-    public flashMessage: ReplaySubject<any> = new ReplaySubject();
-    public processMessage: ReplaySubject<any> = new ReplaySubject();
-    public stickyMessage: ReplaySubject<any> = new ReplaySubject();
+    // public flashMessage: ReplaySubject<any> = new ReplaySubject();
+    // public processMessage: ReplaySubject<any> = new ReplaySubject();
+    // public stickyMessage: ReplaySubject<any> = new ReplaySubject();
+    public messageQueue: ReplaySubject<any> = new ReplaySubject();
     public workerQueue: ReplaySubject<any> = new ReplaySubject();
     public processInitQueue: ReplaySubject<any> = new ReplaySubject();
     public processQueue: ReplaySubject<any> = new ReplaySubject();
     public registrarQueue: ReplaySubject<any> = new ReplaySubject();
 
     public setFlash(message:string, alert:string = 'info') {
-        let flashMessage = new Message(true,message,alert);
-        this.flashMessage.next(flashMessage);
+        let flashMessage = new Message(message,alert,'flash');
+        this.messageQueue.next(flashMessage);
         var control = Observable.timer(3000);
         control.subscribe(x => flashMessage.show = false);
     }
 
-    public addProcessMessage(message:string, alert:string = 'info') {
-        let processMessage = new Message(true,message,alert);
-        this.processMessage.next(processMessage);
+    public addProcessMessage(message:string, alert:string = 'info', channel = '', queue = 'process') {
+        let processMessage = new Message(message,alert,'process',channel);
+        this.messageQueue.next(processMessage);
         var control = Observable.timer(3000);
         control.subscribe(x => processMessage.show = false);
     }
 
-    public addStickyMessage(message:string, alert:string = 'info') {
-        let stickyMessage = new Message(true,message,alert);
-        this.stickyMessage.next(stickyMessage);
+    public addStickyMessage(message:string, alert:string = 'info', channel:string = '', queue = 'sticky') {
+        let stickyMessage = new Message(message,alert,'sticky',channel);
+        this.messageQueue.next(stickyMessage);
+    }
+
+    public addMessage(message:Message) {
+        switch(message.queue) {
+            case 'sticky':
+                this.addStickyMessage(message.message,message.alert,message.channel,message.queue);
+                break;
+            case 'process':
+                this.addProcessMessage(message.message,message.alert,message.channel,message.queue);
+                break;
+            default:
+                this.setFlash(message.message,message.alert);
+                break;
+        }
     }
 
     public startProcess(routine: string, params: {}) {
@@ -62,17 +79,21 @@ export class MessageService {
         this.processQueue.next(process);
     }
 
-    public getFlashMessage(): ReplaySubject<any> {
-        return this.flashMessage;
+    public gethMessageQueue(): ReplaySubject<any> {
+        return this.messageQueue;
     }
 
-    public getStickyMessageRelay(): ReplaySubject<any> {
-        return this.stickyMessage;
-    }
+    // public getFlashMessage(): ReplaySubject<any> {
+    //     return this.flashMessage;
+    // }
 
-    public getProcessMessageRelay(): ReplaySubject<any> {
-        return this.processMessage;
-    }
+    // public getStickyMessageRelay(): ReplaySubject<any> {
+    //     return this.stickyMessage;
+    // }
+
+    // public getProcessMessageRelay(): ReplaySubject<any> {
+    //     return this.processMessage;
+    // }
 
     public getProcessQueue(): ReplaySubject<any> {
         return this.processQueue;

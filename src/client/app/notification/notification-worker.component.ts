@@ -215,7 +215,11 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'Socket Connect Initiated.',
+        message:{
+          message:'Real-time Messaging Activated.',
+          queue: 'process',
+          alert: 'success'
+        },
         context:{params:{}}
       });
       observer.complete();
@@ -232,7 +236,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Notification removed.',
+            message:{
+              message: 'Notification removed.'
+            },
             context:{params:{}}
           });
           observer.complete();
@@ -241,7 +247,10 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message: 'Notification delete failed, We cannot delete a notification that still has goals.',
+            message: {
+              message: 'Notification delete failed, We cannot delete a notification that still has goals.',
+              queue: 'sticky'
+            },
             context:{
               params:{}
             }
@@ -261,7 +270,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Notification Saved successfully.',
+            message: {
+              message: 'Notification Saved successfully.'
+            },
             context:{params:{notification_saved:notification.id,params:{viewed:false}}}
           });
           observer.complete();
@@ -270,7 +281,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
         error => observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'Error has occured while saving notification.',
+          message: {
+            message: 'Error has occured while saving notification.'
+          },
           context:{params:{}}
         })
       );
@@ -290,7 +303,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'Notification Formed successfully.',
+        message: {
+          message: 'Notification Formed successfully.'
+        },
         context:{params:{notification:notification}}
       });
       observer.complete();
@@ -305,7 +320,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'Notification Formed successfully.',
+        message: {
+          message:'Teammates Notified.'
+        },
         context:{params:{notification:notification}}
       });
       observer.complete();
@@ -325,7 +342,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Notification Created successfully.',
+            message: {
+              message:'Notification Created successfully.'
+            },
             context:{params:{notification_created:notification.id}}
           });
           observer.complete();
@@ -333,7 +352,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
            control_uuid: control_uuid,
            outcome: 'error',
-           message:'Error has occured while saving notification.',
+           message: {
+             message:'Error has occured while saving notification.'
+            },
            context:{params:{}}
           });
         });
@@ -351,7 +372,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Notifications loaded successfully.',
+            message: {
+              message: 'Notifications loaded successfully.'
+            },
             context:{params:{notifications_loaded:true}}
           });
           if(fetchparams.hasOwnProperty('viewed')) {
@@ -365,7 +388,9 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message: message,
+            message: {
+              message: message
+            },
             context:{
               params:{}
             }

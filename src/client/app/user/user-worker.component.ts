@@ -894,12 +894,16 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   public notifyNewUser(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      this.message.addStickyMessage('Welcome to Formigio, yur all set. ;)','success');
+      this.message.addStickyMessage('Welcome to Formigio, yur all set. ;)','success','auth');
       this.message.startProcess('navigate_to',{navigate_to:'/teams'});
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'Ready? Begin.',
+        message: {
+          message: 'Ready? Begin.',
+          queue: 'process',
+          channel: 'auth'
+        },
         context:{params:{user:user}}
       });
       observer.complete();
@@ -910,12 +914,17 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
   public registerUser(control_uuid: string, params: any): Observable<any> {
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      this.message.addStickyMessage('Please Register to Continue.','warning');
+      this.message.addStickyMessage('Please Register to Continue.','warning','auth');
       this.message.startProcess('navigate_to',{navigate_to:'/register'});
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'Registration Maybe Required.',
+        message: {
+          message: 'Registration Maybe Required.',
+          alert: 'warning',
+          queue: 'process',
+          channel: 'auth'
+        },
         context:{params:{user:user}}
       });
       observer.complete();
@@ -935,7 +944,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Testing Username',
+            message: {
+              message: 'Testing Username'
+            },
             context:{params:{user:user}}
           });
           observer.complete();
@@ -944,7 +955,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
            control_uuid: control_uuid,
            outcome: 'error',
-           message:'System Error.',
+           message: {
+              message: 'System Error.'
+            },
            context:{params:{}}
           });
         });
@@ -959,7 +972,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'',
+            message:{},
             context:{params:{}}
           });
           observer.complete();
@@ -967,7 +980,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
            control_uuid: control_uuid,
            outcome: 'error',
-           message:'There is a problem with the Data Service.',
+           message: {
+             message: 'There is a problem with the Data Service.',
+             queue: 'sticky',
+             channel: 'app'
+           },
            context:{params:{}}
           });
         });
@@ -984,7 +1001,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Worker Record Found.',
+            message: {
+              message: 'Looks like you are all logged in, Welcome Back.',
+              channel: 'auth',
+              queue: 'process'
+            },
             context:{params:{user:user}}
           });
           observer.complete();
@@ -993,7 +1014,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.error({
            control_uuid: control_uuid,
            outcome: 'error',
-           message:'No Worker Record Found.',
+           message: {
+              message: 'No Worker Record Found.'
+            },
            context:{params:{}}
           });
         });
@@ -1017,7 +1040,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         observer.next({
           control_uuid: control_uuid,
           outcome: 'success',
-          message:'Google API Initiated.',
+          message: {
+            message: 'Google API Initiated.'
+          },
           context:{params:{}}
         });
         observer.complete();
@@ -1036,7 +1061,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
-              message:'Worker Record Found.',
+              message: {
+                message: 'Worker Record Found.'
+              },
               context:{params:{user:user}}
             });
             observer.complete();
@@ -1045,7 +1072,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'No Worker Record Found.',
+            message: {
+              message: 'No Worker Record Found.'
+            },
             context:{params:{}}
             });
           });
@@ -1056,7 +1085,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
-              message:'Worker Record Found.',
+              message: {
+                message: 'Worker Record Found.'
+              },
               context:{params:{user:user}}
             });
             observer.complete();
@@ -1065,7 +1096,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
             control_uuid: control_uuid,
             outcome: 'error',
-            message:'No Worker Record Found.',
+            message: {
+              message: 'No Worker Record Found.'
+            },
             context:{params:{}}
             });
           });
@@ -1103,17 +1136,21 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'User Registration Failed. ('+err+')',
+              message: {
+                message: 'User Registration Failed. ('+err+')'
+              },
               context:{params:{}}
             });
             return;
           } else {
-            this.message.addStickyMessage('Please check your email and enter the confirmation code below.','success');
+            this.message.addStickyMessage('Please check your email and enter the confirmation code below.','success','auth');
             let cognitoUser = result.user;
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
-              message:'Cognito User is Registered.',
+              message: {
+                message: 'Cognito User is Registered.'
+              },
               context:{params:{user_created:cognitoUser.getUsername(),navigate_to:'/login',user:user}}
             });
             console.log('user name is ' + cognitoUser.getUsername());
@@ -1158,7 +1195,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'It looks like we need to get you logged back in.',
+              message: {
+                message: 'It looks like we need to get you logged back in.',
+                queue: 'sticky',
+                channel: 'auth'
+              },
               context:{params:{}}
             });
           }
@@ -1176,7 +1217,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Google User is Authenticated.',
+            message: {
+              message: 'Google User is Authenticated.',
+              queue: 'process',
+              channel: 'auth'
+            },
             context:{params:{
               user:user
             }}
@@ -1210,7 +1255,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'It looks like we need to get you logged back in.',
+              message: {
+                message: 'It looks like we need to get you logged back in.',
+                queue: 'sticky',
+                channel: 'auth'
+              },
               context:{params:{}}
             });
           }
@@ -1226,7 +1275,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Google User is Authenticated.',
+            message: {
+              message: 'Google User is Authenticated.'
+            },
             context:{params:{
               user:user
             }}
@@ -1272,7 +1323,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
-              message:'Cognito User is Authenticated.',
+              message: {
+                message: 'Cognito User is Authenticated.'
+              },
               context:{params:{
                 navigate_to:'/',
                 user:user
@@ -1284,7 +1337,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'User Registration Failed. ('+err+')',
+              message: {
+                message: 'User Registration Failed. ('+err+')'
+              },
               context:{params:{}}
             });
           }
@@ -1319,7 +1374,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'Login Failed. ('+err+')',
+              message: {
+                message: 'Login Failed. ('+err+')'
+              },
               context:{params:{}}
             });
           }
@@ -1335,7 +1392,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'User is Authenticated.',
+            message: {
+              message: 'Login Successful, Welcome Back!'
+            },
             context:{params:{
               user:user
             }}
@@ -1372,7 +1431,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             observer.error({
               control_uuid: control_uuid,
               outcome: 'error',
-              message:'User Confirm Failed. ('+err+')',
+              message: {
+                message: 'User Confirm Failed. ('+err+')'
+              },
               context:{params:{}}
             });
             return;
@@ -1380,7 +1441,11 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',
-            message:'Cognito User is Confirmed.',
+            message: {
+              message: 'Your Account has been confirmed. Please login to start using Formigio',
+              channel: 'auth',
+
+            },
             context:{params:{confirm_result:result,navigate_to:'/login',user:user}}
           });
           observer.complete();
@@ -1455,7 +1520,10 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'token_expired',
-          message: 'Tokens needs a refresh, please try again... Or you may need to logout and log back in.',
+          message: {
+            message: 'Tokens needs a refresh, please try again... Or you may need to logout and log back in.',
+            channel: 'auth'
+          },
           context:{params:{}}
         });
       }
@@ -1464,14 +1532,17 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'We can\'t identify who you are, exactly. Your Formigio Worker ID is not Valid, please contact support.',
+          message: {
+            message: 'We can\'t identify who you are, exactly. Your Formigio Worker ID is not Valid, please contact support.',
+            channel: 'auth'
+          },
           context:{params:{}}
         });
       } else {
         observer.next({
           control_uuid: control_uuid,
           outcome: 'success',
-          message:'',
+          message: {},
           context:{params:{user:user}}
         });
         observer.complete();
@@ -1487,7 +1558,10 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         observer.error({
           control_uuid: control_uuid,
           outcome: 'error',
-          message:'Authentication Required',
+          message: {
+            message: 'Authentication Required',
+            channel: 'auth'
+          },
           context:{params:{}}
         });
       } else {
@@ -1495,7 +1569,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
         observer.next({
           control_uuid: control_uuid,
           outcome: 'success',
-          message:'User Loaded',
+          message: {
+            message: 'User Loaded'
+          },
           context:{params:{user:user}}
         });
         observer.complete();
@@ -1510,7 +1586,9 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
-        message:'Logout Successful.',
+        message: {
+          message: 'Logout Successful.'
+        },
         context:{params:{}}
       });
       observer.complete();

@@ -1,4 +1,5 @@
 import { Observable, ReplaySubject } from 'rxjs';
+import { Message } from '../index';
 
 export interface WorkerComponent {
     routines: {};
@@ -236,7 +237,7 @@ export class ProcessContext {
 export class WorkerResponse {
     constructor(
         public outcome: string,
-        public message: string,
+        public message: Message,
         public context: ProcessContext,
         public control_uuid: string
     ) {}
@@ -346,15 +347,9 @@ export class WorkerMessage {
                 response => workerResponse = response,
                 error => {
                     processRoutine.log('Error returned from Method: ' + processTask.identifier + '::' + processTask.method);
-                    let errorMessage:string = '';
-                    if(typeof error.message === 'string') {
-                        errorMessage = error.message;
-                    } else {
-                        errorMessage = JSON.stringify(error.message);
-                    }
-                    if(errorMessage) {
-                        worker.message.addStickyMessage(errorMessage,'danger');
-                    }
+                    let errorMessage:Message;
+                    errorMessage = new Message(error.message.message,'danger','sticky',error.message.channel);
+                    worker.message.addMessage(errorMessage);
                     processTask.workStatus = 'blocked';
                     processRoutine.context.signals.push(processTask.identifier + '_blocked');
                     processRoutine.localDebug();
@@ -363,7 +358,7 @@ export class WorkerMessage {
                 () => {
                     processRoutine.log('Success returned from Method: ' + processTask.identifier + '::' + processTask.method);
                     if(workerResponse.message) {
-                        worker.message.setFlash(workerResponse.message,'success');
+                        worker.message.addMessage(workerResponse.message);
                     }
                     processTask.updateProcessAfterWork(control_uuid, workerResponse.context, processRoutine).subscribe(
                         null,
@@ -379,7 +374,7 @@ export class WorkerMessage {
                 }
             );
         } catch(err) {
-            worker.message.addStickyMessage('Been kinda an internal error, please contact support.','danger');
+            worker.message.addStickyMessage('Been kinda an internal error, please contact support.','danger','app');
             processRoutine.log('Error returned from Method: ' + processTask.identifier + '::' + processTask.method);
             processTask.workStatus = 'blocked';
             processRoutine.context.signals.push(processTask.identifier + '_blocked');
