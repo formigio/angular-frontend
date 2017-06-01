@@ -277,7 +277,13 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
             if(workerId !== user.worker.id) {
               this.message.startProcess('notification_create_from_params',{
                 worker_id: workerId,
-                content:'Goal: ' + goal.title + ' was added to Team: ' + goal.team_id,
+                message: user.worker.name + ' added Goal: ' + goal.title + ' to Team: ' + goal.team.title,
+                meta_data:{
+                  user_id: user.worker.id,
+                  user_name: user.worker.name,
+                  goal: goal,
+                  email_template: 'formigio-new-goal'
+                },
                 user: user
               });
             }

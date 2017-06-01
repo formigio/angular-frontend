@@ -124,7 +124,8 @@ export class MessageService {
             },
             error => {console.log(error);},
             () => {
-                this.addStickyMessage('We may have lost connection with the Notification Service...');
+                this.addProcessMessage('We may have lost connection with the Notification Service...','warning');
+                this.startProcess('notification_connect',{url:url});
             }
         );
     }

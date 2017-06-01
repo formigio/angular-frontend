@@ -113,8 +113,8 @@ export class NotificationService {
     let user = this.getUser();
     let body = {
       worker_id:note.worker_id,
-      user_id:note.user_id,
-      content:note.content,
+      meta_data:JSON.stringify(note.meta_data),
+      message:note.message,
       created_at: date.toISOString()
     };
     let api = this.helper.apiFactory.newClient({

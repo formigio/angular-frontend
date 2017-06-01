@@ -19,6 +19,7 @@ export class GoalTemplateService {
   user: User;
   goalTemplate: GoalTemplate = GoalTemplateStruct;
   goalTemplates: GoalTemplate[] = [];
+  searchResults: Number = -1;
 
   /**
    * Creates a new NameListService with the injected Http.
@@ -44,6 +45,11 @@ export class GoalTemplateService {
     this.goalTemplates = goalTemplates;
     this.sort();
     this.listSubscription.next(this.goalTemplates);
+  }
+
+  publishSearchedTemplates(goalTemplates:GoalTemplate[]) {
+    this.searchResults = goalTemplates.length;
+    this.publishGoalTemplates(goalTemplates);
   }
 
   removeGoalTemplate(id:string) {

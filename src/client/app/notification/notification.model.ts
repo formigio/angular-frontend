@@ -2,11 +2,10 @@ export const NotificationStruct = {
     id: '',
     worker_id: '',
     worker_name: '',
-    user_id: '',
-    user_name: '',
-    content: '',
+    message: '',
     created_at: '',
     sent_at: '',
+    meta_data: {},
     viewed: false
 };
 
@@ -15,11 +14,10 @@ export class Notification {
         public id: string,
         public worker_id: string,
         public worker_name: string,
-        public user_id: string,
-        public user_name: string,
-        public content: string,
+        public message: string,
         public created_at: string,
         public sent_at: string,
+        public meta_data: {},
         public viewed: boolean
     ) {}
 }

@@ -5,7 +5,7 @@
       <li *ngFor="let note of notifications">
           <div class="alert alert-info alert-dismissible" role="alert">
             <button type="button" (click)="dismiss(note)" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <div>{{note.content}}</div>
+            <div>{{note.message}}</div>
             <div><small>{{note.created_at | date:short}}</small></div>
           </div>
       </li>

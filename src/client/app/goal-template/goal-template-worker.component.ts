@@ -204,31 +204,46 @@ export class GoalTemplateWorkerComponent implements OnInit, WorkerComponent {
     let team: string = params.team;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
-      this.service.setUser(user);
-      this.service.search(team,term).then(
-        response => {
-          let goalTemplates = <GoalTemplate[]>response.data;
-          this.service.publishGoalTemplates(goalTemplates);
-          observer.next({
-            control_uuid: control_uuid,
-            outcome: 'success',
-            message: {
-              message: 'Goal Template loaded successfully.'
-            },
-            context:{params:{}}
-          });
-          observer.complete();
-        }
-      ).catch(
-        error => observer.error({
+      if(term.length < 2) {
+        this.service.searchResults = -1;
+      }
+      if(this.service.searchResults === 0) {
+        observer.next({
           control_uuid: control_uuid,
-          outcome: 'error',
+          outcome: 'success',
           message: {
-            message: 'Goals Template Load Failed.'
+            message: 'No Templates Found, so we can stop searching.'
           },
           context:{params:{}}
-        })
-      );
+        });
+        observer.complete();
+      } else {
+        this.service.setUser(user);
+        this.service.search(team,term).then(
+          response => {
+            let goalTemplates = <GoalTemplate[]>response.data;
+            this.service.publishSearchedTemplates(goalTemplates);
+            observer.next({
+              control_uuid: control_uuid,
+              outcome: 'success',
+              message: {
+                message: 'Goal Template loaded successfully.'
+              },
+              context:{params:{}}
+            });
+            observer.complete();
+          }
+        ).catch(
+          error => observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message: {
+              message: 'Goals Template Load Failed.'
+            },
+            context:{params:{}}
+          })
+        );
+      }
     });
     return obs;
   }

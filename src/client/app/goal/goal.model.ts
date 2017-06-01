@@ -1,3 +1,5 @@
+import { Team, TeamStruct } from '../team/index';
+
 export const GoalStruct = {
   id: '',
   title: '',
@@ -6,12 +8,14 @@ export const GoalStruct = {
   accomplished: false,
   changed: false,
   template_id: '',
-  notify: ['']
+  notify: [''],
+  team: TeamStruct
 };
 
 export class Goal {
   public changed:boolean = false;
   public notify:string[] = [];
+  public team: Team;
   constructor(
     public id: string,
     public title: string,

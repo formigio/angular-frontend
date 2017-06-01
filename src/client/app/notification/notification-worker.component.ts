@@ -68,7 +68,7 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
             (context:ProcessContext) => {
               return context.hasSignal('notification_create_from_params_init');
             },
-            {user:'User',worker_id:'string',content:'string'}
+            {meta_data:'{}',worker_id:'string',message:'string'}
         ),
         formulate_notification_from_params_complete: new ProcessTask(
             'create_notification_from_params',
@@ -293,13 +293,13 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
 
   public formulateNotification(control_uuid: string, params: any): Observable<any> {
     let worker_id: string = params.worker_id;
-    let content: string = params.content;
+    let message: string = params.message;
     let notification: Notification = JSON.parse(JSON.stringify(NotificationStruct));
-    let user: User = params.user;
+    let meta_data: {} = params.meta_data;
     let obs = new Observable((observer:any) => {
-      notification.content = content;
+      notification.message = message;
       notification.worker_id = worker_id;
-      notification.user_id = user.worker.id;
+      notification.meta_data = meta_data;
       observer.next({
         control_uuid: control_uuid,
         outcome: 'success',
