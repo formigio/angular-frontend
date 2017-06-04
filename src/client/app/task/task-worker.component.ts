@@ -36,6 +36,10 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         task_save: new ProcessRoutine(
             'task_save',
             'The Process Used to Control the Save a Task'
+        ),
+        task_fetch: new ProcessRoutine(
+            'task_fetch',
+            'The Process Used to Control the Fetch a Task'
         )
     };
 
@@ -51,6 +55,17 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             },
             {user:'User',task:'Task'}
         ),
+        get_user_for_task_fetch_complete: new ProcessTask(
+            'fetch_task',
+            'get_user_for_task_fetch_complete',
+            'task_fetch',
+            'Fetch Task',
+            'fetchTask',
+            (context:ProcessContext) => {
+              return context.hasSignal('get_user_for_task_fetch_complete');
+            },
+            {user:'User',id:'string'}
+        ),
         get_user_for_load_task_list_complete: new ProcessTask(
             'load_tasks',
             'get_user_for_load_task_list_complete',
@@ -60,7 +75,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
             (context:ProcessContext) => {
               return context.hasSignal('get_user_for_load_task_list_complete');
             },
-            {goal:'string',user:'User'}
+            {user:'User'}
         ),
         get_user_for_save_goal_template_complete: new ProcessTask(
             'gather_tasks_for_goal_template',
@@ -340,6 +355,41 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
               message: tasks.length + ' Tasks fetched.'
             },
             context:{params:{tasks:tasks,task_count:tasks.length}}
+          });
+          observer.complete();
+        }
+      ).catch(
+        error => {
+          observer.error({
+            control_uuid: control_uuid,
+            outcome: 'error',
+            message: {
+              message: 'An error has occured fetching the tasks.'
+            }
+          });
+        }
+      );
+    });
+
+    return obs;
+  }
+
+  public fetchTask(control_uuid: string, params: any): Observable<any> {
+    let id: string = params.id;
+    let user: User = params.user;
+    let obs = new Observable((observer:any) => {
+      this.service.setUser(user);
+      this.service.get(id).then(
+        response => {
+          let task = <Task>response.data;
+          this.service.publishTask(task);
+          observer.next({
+            control_uuid: control_uuid,
+            outcome: 'success',
+            message: {
+              message: 'Task fetched.'
+            },
+            context:{params:{task:task}}
           });
           observer.complete();
         }

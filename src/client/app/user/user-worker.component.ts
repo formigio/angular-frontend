@@ -836,6 +836,17 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
             return context.hasSignal('notification_save_init');
           },
           {}
+        ),
+        task_fetch_init: new ProcessTask(
+          'get_user_for_task_fetch',
+          'task_fetch_init',
+          'task_fetch',
+          'Get User for Process Context',
+          'getUser',
+          (context:ProcessContext) => {
+            return context.hasSignal('task_fetch_init');
+          },
+          {}
         )
     };
 

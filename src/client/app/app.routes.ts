@@ -5,6 +5,7 @@ import { HomeRoutes } from './+home/index';
 import { TeamPagesRoutes } from './+teams/index';
 import { GoalPagesRoutes } from './+goals/index';
 import { GoalTemplatePagesRoutes } from './+goal-templates/index';
+import { TaskPagesRoutes } from './+tasks/index';
 import { CommitmentPagesRoutes } from './+commitments/index';
 import { InvitePagesRoutes } from './+invites/index';
 import { NotificationPagesRoutes } from './+notifications/index';
@@ -15,6 +16,7 @@ export const routes: Routes = [
   ...TeamPagesRoutes,
   ...GoalPagesRoutes,
   ...GoalTemplatePagesRoutes,
+  ...TaskPagesRoutes,
   ...CommitmentPagesRoutes,
   ...InvitePagesRoutes,
   ...NotificationPagesRoutes,

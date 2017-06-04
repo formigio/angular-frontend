@@ -31,6 +31,10 @@ export class TaskService {
     return this.listSubscription;
   }
 
+  getItemSubscription(): ReplaySubject<any> {
+    return this.itemSubscription;
+  }
+
   refreshTasks(goal:string) {
     this.list(goal).then(
       response => this.tasks = response.data
@@ -59,6 +63,7 @@ export class TaskService {
   }
 
   publishTask(taskToPublish:Task) {
+    this.itemSubscription.next(taskToPublish);
     let checked:Task[] = [];
     this.tasks.forEach((task) => {
       if(taskToPublish.id === task.id) {
@@ -95,7 +100,25 @@ export class TaskService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/tasks',{params:{goal_id:goal},headers:{'x-identity-id':user.worker.identity}});
+    let params:any = {};
+    if(goal){
+      params.goal_id = goal;
+    }
+    return api.get('/tasks',{params:params,headers:{'x-identity-id':user.worker.identity}});
+  }
+
+  /**
+   * Returns an Observable for the HTTP GET request for the JSON resource.
+   * @return {string[]} The Observable for the HTTP request.
+   */
+  get(id:string): Promise<any> {
+    let user = this.getUser();
+    let api = this.helper.apiFactory.newClient({
+      accessKey: user.credentials.accessKey,
+      secretKey: user.credentials.secretKey,
+      sessionToken: user.credentials.sessionToken
+    });
+    return api.get('/tasks/{id}',{path:{id:id},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**

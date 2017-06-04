@@ -1,0 +1,53 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div *ngIf="state==='view'">
+            <span *ngIf="task.template_id" class="label label-default pull-right">Template: {{task.template_id}}</span>
+            <button *ngIf="editable===true && editing===true" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
+            <div style="display:inline-block" class="dropdown" [class.open]="showMenu">
+                <button id="taskActionMenu_{{task.id}}" *ngIf="editable===true" (click)="toggleMenu()"
+                    [class.btn-success]="task.work_status=='completed'"
+                    [class.btn-primary]="task.work_status=='started'"
+                    [class.btn-danger]="task.work_status=='blocked'"
+                    [class.btn-warning]="task.work_status=='paused'"
+                    [class.btn-default]="task.work_status!='completed'"
+                    name="complete" class="btn btn-xs dropdown-toggle"
+                    data-toggle="dropdown" type="button">
+                    <span
+                        [class.glyphicon-minus]="task.work_status=='notstarted' && !task.commitment_promised_start"
+                        [class.glyphicon-calendar]="task.work_status=='notstarted' && task.commitment_promised_start"
+                        [class.glyphicon-cog.spinner]="task.work_status=='started'"
+                        [class.spinner]="task.work_status=='started'"
+                        [class.glyphicon-pause]="task.work_status=='paused'"
+                        [class.glyphicon-warning-sign]="task.work_status=='blocked'"
+                        [class.glyphicon-ok]="task.work_status=='completed'"
+                        class="glyphicon"></span>
+                        <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-haspopup="true" >
+                    <li class="dropdown-header">Set Work Status</li>
+                    <li>
+                        <button type="button" (click)="setStatus('started')" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-cog"></span> Start</button>
+                    </li>
+                    <li>
+                        <button type="button" (click)="setStatus('completed')" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-ok"></span> Complete</button>
+                    </li>
+                    <li>
+                        <button type="button" (click)="setStatus('paused')" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pause"></span> Pause</button>
+                    </li>
+                    <li>
+                        <button type="button" (click)="setStatus('blocked')" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-warning-sign"></span> Blocked</button>
+                    </li>
+                </ul>
+            </div>
+            <span>{{task.sequence}}. {{task.title}}</span>
+            <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+            <!--<task-commit-form *ngIf="!task.commitment.worker.id" [task]="task"></task-commit-form>-->
+            <!--<task-commit-info *ngIf="task.commitment.worker.id" [task]="task"></task-commit-info>-->
+        </div>
+        <form class="form" (submit)="persistTask()" *ngIf="state==='edit'">
+            <input [(ngModel)]="task.title" name="task.title" class="form-control" type="text" />
+            <button type="submit" class="btn btn-primary btn-xs">Save</button>
+            <button type="button" (click)="closeForm()" class="btn btn-default btn-xs">Cancel</button>
+        </form>
+    </div>
+</div>

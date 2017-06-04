@@ -20,6 +20,7 @@ import { NotificationModule } from './notification/notification.module';
 import { TeamPagesModule } from './+teams/team-pages.module';
 import { GoalPagesModule } from './+goals/goal-pages.module';
 import { GoalTemplatePagesModule } from './+goal-templates/goal-template-pages.module';
+import { TaskPagesModule } from './+tasks/task-pages.module';
 import { CommitmentPagesModule } from './+commitments/commitment-pages.module';
 import { InvitePagesModule } from './+invites/invite-pages.module';
 import { NotificationPagesModule } from './+notifications/notification-pages.module';
@@ -35,7 +36,7 @@ import { NavModule } from './nav/nav.module';
     UserModule, TeamModule, TeamMemberModule, GoalModule, TaskModule,
     GoalTemplateModule, TaskTemplateModule, NotificationModule, NotificationPagesModule,
     InviteModule, CommitmentModule, TeamPagesModule, GoalPagesModule, InvitePagesModule,
-    CommitmentPagesModule,GoalTemplatePagesModule,
+    CommitmentPagesModule,GoalTemplatePagesModule, TaskPagesModule,
     HomeModule, NavModule, SharedModule.forRoot()],
   declarations: [AppComponent],
   providers: [
