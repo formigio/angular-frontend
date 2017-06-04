@@ -18,15 +18,10 @@ export class TaskListComponent implements OnInit {
   @Input() editable: boolean;
 
   tasks: Task[] = [];
-
   task: Task = TaskStruct;
-
   goal: string;
-
   maxSequence: number = 0;
-
   loading: boolean = false;
-
   editing: boolean = false;
 
   /**

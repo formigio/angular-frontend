@@ -1,13 +1,17 @@
-export const TaskStruct = {
+import { Goal, GoalStruct } from '../goal/index';
+import { Team, TeamStruct } from '../team/index';
+import { Commitment, CommitmentStruct } from '../commitment/index';
+
+export const TaskStruct:Task = {
       id:'',
       goal_id:'',
       title:'',
       sequence: '',
       work_status: 'notstarted',
       system_status: 'pending',
-      commitment_worker_id:'',
-      commitment_worker_name:'',
-      commitment_promised_start:'',
+      commitment: CommitmentStruct,
+      team: TeamStruct,
+      goal: GoalStruct,
       template_id: '',
       changed: false
     };
@@ -21,9 +25,9 @@ export class Task {
     public goal_id: string,
     public work_status: string,
     public system_status: string,
-    public commitment_worker_id: string,
-    public commitment_promised_start: string,
-    public commitment_worker_name: string,
+    public commitment: Commitment,
+    public team: Team,
+    public goal: Goal,
     public template_id: string
   ) {}
 

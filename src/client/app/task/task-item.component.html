@@ -43,8 +43,8 @@
             </div>
             <span>{{task.sequence}}. {{task.title}}</span>
             <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
-            <task-commit-form *ngIf="!task.commitment_worker_id" [task]="task"></task-commit-form>
-            <task-commit-info *ngIf="task.commitment_worker_id" [task]="task"></task-commit-info>
+            <task-commit-form *ngIf="!task.commitment.worker.id" [task]="task"></task-commit-form>
+            <task-commit-info *ngIf="task.commitment.worker.id" [task]="task"></task-commit-info>
         </div>
         <form class="form" (submit)="persistTask()" *ngIf="state==='edit'">
             <input [(ngModel)]="task.title" name="task.title" class="form-control" type="text" />
