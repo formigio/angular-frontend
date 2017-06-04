@@ -28,7 +28,7 @@ export class CommitmentService {
    * @constructor
    */
   constructor(private http: Http, private helper: HelperService) {
-    this.today();
+    this.loadToday();
   }
 
   getListSubscription(): ReplaySubject<any> {
@@ -99,11 +99,21 @@ export class CommitmentService {
     this.startDate.setHours(this.startDate.getHours() - 24);
   }
 
-  today() {
-    this.startDate = new Date();
-    this.startDate.setHours(0);
-    this.startDate.setMinutes(0);
-    this.startDate.setSeconds(0);
+  loadToday() {
+    this.startDate = this.getToday();
+  }
+
+  getToday():Date {
+    let today = new Date();
+    today.setHours(0);
+    today.setMinutes(0);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+    return today;
+  }
+
+  showPast():boolean {
+    return this.startDate.toISOString() === this.getToday().toISOString();
   }
 
   getStartDate():Date {
@@ -138,6 +148,7 @@ export class CommitmentService {
   listCommitmentByWorker(worker_id:string): Promise<any> {
     let start = this.startDate.toISOString();
     let end = this.getEndDate().toISOString();
+    let showPast:boolean = this.showPast();
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
@@ -146,7 +157,7 @@ export class CommitmentService {
     });
     return api.get('/commitments/{worker_id}',{
       path:{worker_id:worker_id},
-      params:{start:start,end:end},
+      params:{start:start,end:end,showpast:showPast},
       headers:{'x-identity-id':user.worker.identity}
     });
   }
@@ -159,13 +170,20 @@ export class CommitmentService {
   list(): Promise<any> {
     let start = this.startDate.toISOString();
     let end = this.getEndDate().toISOString();
+    let showPast:boolean = this.showPast();
     let user = this.getUser();
     let api = this.helper.apiFactory.newClient({
       accessKey: user.credentials.accessKey,
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/commitments',{params:{start:start,end:end},headers:{'x-identity-id':user.worker.identity}});
+    return api.get(
+      '/commitments',
+      {
+        params:{start:start,end:end,showpast:showPast},
+        headers:{'x-identity-id':user.worker.identity}
+      }
+    );
   }
 
   /**

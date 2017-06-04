@@ -36,6 +36,9 @@
         <button *ngIf="isStartDateFuture()===false" class="btn" [class.btn-primary]="showFuture" [class.btn-default]="!showFuture" (click)="toggleFuture()" type="button">
           Future <span *ngIf="futureCommitments.length" class="badge">{{futureCommitments.length}}</span>
         </button>
+        <button *ngIf="canShowPast()===true" class="btn" [class.btn-primary]="showPast" [class.btn-default]="!showPast" (click)="togglePast()" type="button">
+          Past <span *ngIf="pastCommitments.length" class="badge">{{pastCommitments.length}}</span>
+        </button>
         <button class="btn" [class.btn-primary]="showCompleted" [class.btn-default]="!showComplete" (click)="toggleCompleted()" type="button">
           Completed <span *ngIf="completedCommitments.length" class="badge">{{completedCommitments.length}}</span>
         </button>

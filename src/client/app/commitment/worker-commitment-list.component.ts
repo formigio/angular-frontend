@@ -22,8 +22,10 @@ export class WorkerCommitmentListComponent implements OnInit {
   completedCommitments: Commitment[] = [];
   activeCommitments: Commitment[] = [];
   futureCommitments: Commitment[] = [];
+  pastCommitments: Commitment[] = [];
   loading: boolean = false;
   showFuture: boolean = false;
+  showPast: boolean = false;
   showCompleted: boolean = false;
   dailyCommittedMinutes: number = 0;
   showDelete: boolean;
@@ -63,11 +65,13 @@ export class WorkerCommitmentListComponent implements OnInit {
     this.loading = false;
     this.completedCommitments = [];
     this.futureCommitments = [];
+    this.pastCommitments = [];
     this.activeCommitments = [];
     this.dailyCommittedMinutes = 0;
 
     commitments.forEach((commitment:Commitment) => {
       let now = new Date();
+      let today = this.service.getToday();
       let future = new Date();
       future.setTime(future.getTime() + (60000*15)); // Get a date in the future 15 mins
       let promised = new Date(commitment.promised_start);
@@ -76,13 +80,12 @@ export class WorkerCommitmentListComponent implements OnInit {
         this.dailyCommittedMinutes += Number(commitment.promised_minutes);
       }
 
-      // Check if the Commitment Date is the same as the start date, if not remove from the list
-      if(this.service.getStartDate().toLocaleDateString() !== promised.toLocaleDateString()) {
-        return;
-      } else if(commitment.task.work_status === 'completed' && this.showCompleted === false) {
+      if(commitment.task.work_status === 'completed' && this.showCompleted === false) {
         this.completedCommitments.push(commitment);
       } else if(promised > future && this.showFuture === false && this.service.getStartDate() < now) {
         this.futureCommitments.push(commitment);
+      } else if(promised < today && this.showPast === false) {
+        this.pastCommitments.push(commitment);
       } else {
         this.activeCommitments.push(commitment);
       }
@@ -113,6 +116,10 @@ export class WorkerCommitmentListComponent implements OnInit {
     return this.service.getStartDate() > now;
   }
 
+  canShowPast():boolean {
+    return this.service.showPast();
+  }
+
   refreshCommitments() {
     this.loading = true;
     this.message.startProcess('commitment_load_worker_commitments',{workerId:this.workerId});
@@ -129,7 +136,7 @@ export class WorkerCommitmentListComponent implements OnInit {
   }
 
   today() {
-    this.service.today();
+    this.service.loadToday();
     this.refreshCommitments();
   }
 
@@ -138,6 +145,15 @@ export class WorkerCommitmentListComponent implements OnInit {
       this.showFuture = false;
     } else {
       this.showFuture = true;
+    }
+    this.processCommitments();
+  }
+
+  togglePast() {
+    if(this.showPast) {
+      this.showPast = false;
+    } else {
+      this.showPast = true;
     }
     this.processCommitments();
   }
