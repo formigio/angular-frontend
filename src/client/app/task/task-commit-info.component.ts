@@ -41,4 +41,8 @@ export class TaskCommitInfoComponent {
     protected message: MessageService
   ) {}
 
+  navigateToWorker() {
+    this.message.startProcess('navigate_to',{navigate_to:'/commitments/' + this.task.commitment.worker.id});
+  }
+
 }

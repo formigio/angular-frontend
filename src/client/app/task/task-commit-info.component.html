@@ -1,5 +1,5 @@
 <div class="row">
     <div class="col-xs-12">
-      <p class="small">{{task.commitment.worker.name}} has committed to work on this task starting {{task.commitment.promised_start | date}}</p>
+      <p class="small"><span class="clickable" (click)="navigateToWorker()">{{task.commitment.worker.name}}</span> has committed to work on this task starting {{task.commitment.promised_start | date}}</p>
     </div>
 </div>

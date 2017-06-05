@@ -4,7 +4,7 @@
       <button type="button" class="btn btn-xs btn-default pull-right" (click)="edit()" *ngIf="!showForm">Edit Goal</button>
       <button *ngIf="goal.template_id" type="button" class="btn btn-xs btn-default pull-right" (click)="navigateToTemplate()">Template: {{goal.template_id}}</button>
       <li><a href="#" (click)="navigateToTeams()">Teams</a></li>
-      <li><a href="#" (click)="navigateToTeam()">Team</a></li>
+      <li><a href="#" (click)="navigateToTeam()">{{goal.team.title}}</a></li>
       <li class="active">Goal: {{goal.id}}</li>
       <li *ngIf="goal.changed"><span class="label label-info">Saving...</span></li>
     </ol>

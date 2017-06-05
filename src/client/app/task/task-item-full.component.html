@@ -3,8 +3,6 @@
         <div *ngIf="state==='view'">
             <span *ngIf="task.template_id" class="label label-default pull-right">Template: {{task.template_id}}</span>
             <button *ngIf="editable===true && editing===true" type="button" class="btn btn-xs btn-danger pull-right" (click)="deleteTask(task)"><span class="glyphicon glyphicon-remove-sign"></span></button>
-            <button *ngIf="editable===true && editing===true" type="button" class="btn btn-xs btn-default pull-right" (click)="sequenceDown()"><span class="glyphicon glyphicon-chevron-up"></span></button>
-            <button *ngIf="editable===true && editing===true" type="button" class="btn btn-xs btn-default pull-right" (click)="sequenceUp()"><span class="glyphicon glyphicon-chevron-down"></span></button>
             <div style="display:inline-block" class="dropdown" [class.open]="showMenu">
                 <button id="taskActionMenu_{{task.id}}" *ngIf="editable===true" (click)="toggleMenu()"
                     [class.btn-success]="task.work_status=='completed'"
@@ -41,9 +39,14 @@
                     </li>
                 </ul>
             </div>
-            <span>{{task.sequence}}. {{task.title}}</span>
-            <button type="button" *ngIf="editable && !task.changed" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
-            <task-commit-form *ngIf="!task.commitment.worker.id && !task.changed" [task]="task"></task-commit-form>
+            <span (click)="navigateToTask()" class="clickable">{{task.title}}</span>
+            <div>
+                <button class="btn btn-link btn-xs" (click)="navigateToTeam()">{{task.team.title}}</button>
+                <span class="small">/</span>
+                <button class="btn btn-link btn-xs" (click)="navigateToGoal()">{{task.goal.title}}</button>
+            </div>
+            <button type="button" *ngIf="editable===true" (click)="makeEditable()" class="btn btn-xs btn-link"><span class="glyphicon glyphicon-edit"></span></button>
+            <task-commit-form *ngIf="!task.commitment.worker.id" [task]="task"></task-commit-form>
             <task-commit-info *ngIf="task.commitment.worker.id" [task]="task"></task-commit-info>
         </div>
         <form class="form" (submit)="persistTask()" *ngIf="state==='edit'">

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TaskListComponent } from '../task/index';
+import { TaskListFullComponent } from '../task/index';
 import { UserService } from '../user/index';
 
 /**
@@ -9,7 +9,7 @@ import { UserService } from '../user/index';
 @Component({
   moduleId: module.id,
   selector: 'tasks-page',
-  directives: [ TaskListComponent ],
+  directives: [ TaskListFullComponent ],
   templateUrl: 'tasks-page.component.html'
 })
 
