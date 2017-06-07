@@ -27,7 +27,8 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         ),
         load_task_list: new ProcessRoutine(
             'load_task_list',
-            'The Process Used to Control the Loading of Tasks'
+            'The Process Used to Control the Loading of Tasks',
+            true
         ),
         task_create: new ProcessRoutine(
             'task_create',
@@ -341,10 +342,13 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
   }
 
   public gatherTasks(control_uuid: string, params: any): Observable<any> {
+    let term:string = '';
+    term = params.term;
     let goal: string = params.goal;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
       this.service.setUser(user);
+      this.service.setSearchTerm(term);
       this.service.list(goal).then(
         response => {
           let tasks = <Task[]>response.data;

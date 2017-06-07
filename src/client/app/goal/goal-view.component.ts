@@ -76,7 +76,7 @@ export class GoalViewComponent implements OnInit {
    * @return {boolean} false to prevent default form submit behavior to refresh the page.
    */
   deleteGoal(goal:Goal): boolean {
-    this.message.startProcess('goal_delete',{goal:goal.id});
+    this.message.startProcess('goal_delete',{goal:goal.id,navigate_to:'/team/' + goal.team_id});
     return false;
   }
 

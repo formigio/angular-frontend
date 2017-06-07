@@ -17,6 +17,7 @@ export class TaskService {
   public listSubscription: ReplaySubject<any> = new ReplaySubject(1);
 
   user: User;
+  searchTerm: string = '';
 
   private tasks: Task[] = [];
 
@@ -89,6 +90,10 @@ export class TaskService {
     return this.user;
   }
 
+  setSearchTerm(searchTerm:string) {
+    this.searchTerm = searchTerm;
+  }
+
   /**
    * Returns an Observable for the HTTP GET request for the JSON resource.
    * @return {string[]} The Observable for the HTTP request.
@@ -101,8 +106,11 @@ export class TaskService {
       sessionToken: user.credentials.sessionToken
     });
     let params:any = {};
-    if(goal){
+    if(goal) {
       params.goal_id = goal;
+    }
+    if(this.searchTerm) {
+      params.term = this.searchTerm;
     }
     return api.get('/tasks',{params:params,headers:{'x-identity-id':user.worker.identity}});
   }

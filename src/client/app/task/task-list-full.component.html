@@ -1,12 +1,17 @@
 <div class="row">
   <div class="col-lg-12">
+    <div class="form-group">
+      <input placeholder="Search Tasks by Title, Goal Title, or Team Title" class="form-control" name="task-search" (keyup)="searchTasks($event)" />
+    </div>
     <ul class="list-group">
+      <div class="list-group-item" *ngIf="loading">
+        <span class="glyphicon glyphicon-cog spinner"></span>
+        <span *ngIf="searchTerm">Searching...</span>
+        <span *ngIf="!searchTerm">Loading...</span>
+      </div>
       <li class="list-group-item" *ngFor="let task of tasks" [class.list-group-item-warning]="task.changed">
         <task-item-full [task]="task" [editable]="editable" [editing]="editing"></task-item-full>
       </li>
-      <div class="list-group-item" *ngIf="loading && tasks.length===0">
-        <span class="glyphicon glyphicon-cog spinner"></span> Loading...
-      </div>
       <li class="list-group-item" *ngIf="editable===true">
         <form (submit)="addTask()" class="form-inline">
         <div class="form-group">

@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MessageService, HelperService } from '../core/index';
 import { TaskService, Task, TaskStruct } from './index';
 
@@ -19,10 +18,10 @@ export class TaskListFullComponent implements OnInit {
 
   tasks: Task[] = [];
   task: Task = TaskStruct;
-  goal: string;
   maxSequence: number = 0;
   loading: boolean = false;
   editing: boolean = false;
+  searchTerm: string = '';
 
   /**
    *
@@ -31,8 +30,7 @@ export class TaskListFullComponent implements OnInit {
   constructor(
     protected message: MessageService,
     protected helper: HelperService,
-    protected service: TaskService,
-    protected route: ActivatedRoute
+    protected service: TaskService
   ) {
     this.service = this.helper.getServiceInstance(this.service,'TaskService');
   }
@@ -58,40 +56,17 @@ export class TaskListFullComponent implements OnInit {
       }
     );
     this.tasks = [];
-    this.route.params.subscribe(params => {
-      this.goal = params['goal_uuid'];
-      this.refreshTasks();
-    });
+    this.refreshTasks();
   }
 
   refreshTasks() {
     this.loading = true;
-    this.message.startProcess('load_task_list',{goal:this.goal});
-  }
-
-  addTask(): void {
-    let newTask:Task;
-    this.task.goal_id = this.goal;
-    let taskLines = this.task.title.split('\n');
-    taskLines.forEach((taskTitle) => {
-      if(taskTitle) {
-        this.maxSequence++;
-        newTask = JSON.parse(JSON.stringify(TaskStruct));
-        newTask.goal_id = this.task.goal_id;
-        newTask.title = taskTitle;
-        newTask.sequence = String(Number(this.maxSequence));
-        newTask.changed = true;
-        this.tasks.push(newTask);
-      } // If Task Title
-    }); // Task Lines foreach
-    this.task.title = '';
-  }
-
-  watchInput(e:any):any {
-    if(e.keyCode === 13 && !e.shiftKey) {
-      this.addTask();
-      return false;
+    let params:any = {};
+    params.term = '';
+    if(this.searchTerm) {
+      params.term = this.searchTerm;
     }
+    this.message.startProcess('load_task_list',params);
   }
 
   toggleEditing() {
@@ -101,5 +76,44 @@ export class TaskListFullComponent implements OnInit {
       this.editing = true;
     }
   }
+
+  searchTasks(e:any) {
+    if(e.keyCode === 13 && !e.shiftKey) {
+        this.searchTerm = e.target.value;
+        this.refreshTasks();
+    }
+
+    this.debounce(() => {
+      if(e.target.value) {
+        if(this.searchTerm === e.target.value) {
+          return;
+        }
+        console.log(e.target.value);
+        this.searchTerm = e.target.value;
+        this.refreshTasks();
+        //this.message.startProcess('load_task_list',{term:e.target.value});
+      }
+    },1250)();
+  }
+
+  // Returns a function, that, as long as it continues to be invoked, will not
+  // be triggered. The function will be called after it stops being called for
+  // N milliseconds. If `immediate` is passed, trigger the function on the
+  // leading edge, instead of the trailing.
+  debounce(func:any, wait:number, immediate?:boolean) {
+    var timeout:any;
+    return function() {
+      var context = this, args = arguments;
+      var later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
+
 
 } // Component end

@@ -36,14 +36,14 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
           },
           {navigate_to:'string'}
       ),
-      remove_goal_complete: new ProcessTask(
+      delete_goal_task_complete: new ProcessTask(
           'navigate',
-          'remove_goal_complete',
+          'delete_goal_task_complete',
           'goal_delete',
           'Navigate to Goals after Goal Delete',
           'navigateTo',
           (context:ProcessContext) => {
-            return context.hasSignal('remove_goal_complete');
+            return context.hasSignal('delete_goal_task_complete');
           },
           {navigate_to:'string'}
       ),

@@ -27,6 +27,7 @@ export class GoalListComponent implements OnInit {
   team: string = '';
   loading:boolean = true;
   showAccomplished:boolean = false;
+  templateSearchTerm:string = '';
 
   /**
    * Creates an instance of the HomeComponent with the injected
@@ -118,10 +119,13 @@ export class GoalListComponent implements OnInit {
 
   searchTemplates(e:any) {
     this.debounce(() => {
-      // console.log('Search Term: ' + e.target.value);
+      if(this.templateSearchTerm === e.target.value) {
+        return;
+      }
       if(e.target.value) {
         this.message.startProcess('goal_template_search',{team:this.team,term:e.target.value});
       }
+      this.templateSearchTerm = e.target.value;
     },750)();
   }
 
