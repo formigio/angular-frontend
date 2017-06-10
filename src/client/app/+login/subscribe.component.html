@@ -1,0 +1,31 @@
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+            <p><b>Get Notified.</b></p>
+        </div>
+        <div class="panel-body">
+            <div class="well well-lg">
+              <form (submit)="save()">
+                <div class="form-group">
+                  <p>We just need an email address so we can send you notifications when your teammates create Goals, Add Comments or Complete Tasks.</p>
+                  <input (keyup)="testEmail()" (blur)="testEmail()" [(ngModel)]="user.worker.subscription.email" type="email" name="email" class="form-control" placeholder="Email Address">
+                  <div class="alert alert-info"
+                    *ngIf="!user.worker.subscription.email && !validEmail"
+                    [class.alert-info]="!user.worker.username && !isValidEmail">
+                   Please Enter a Valid Email Address.</div>
+                  <div class="alert alert-warning"
+                    *ngIf="user.worker.subscription.email && !validEmail">
+                    Not Valid Yet...</div>
+                  <div class="alert alert-success"
+                    *ngIf="user.worker.subscription.email && validEmail">
+                    Yay, Looks good.</div>
+                  <small>Privacy Note: We don't use this email address for anything but event notifications in Formigio</small>
+                </div>
+                <button *ngIf="user.worker.subscription.email && validEmail && user.worker.subscription.email !== existing.worker.subscription.email" type="submit" class="btn btn-primary">Save</button>
+              </form>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>

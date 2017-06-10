@@ -27,8 +27,7 @@ export class TaskWorkerComponent implements OnInit, WorkerComponent {
         ),
         load_task_list: new ProcessRoutine(
             'load_task_list',
-            'The Process Used to Control the Loading of Tasks',
-            true
+            'The Process Used to Control the Loading of Tasks'
         ),
         task_create: new ProcessRoutine(
             'task_create',

@@ -148,7 +148,7 @@ export class UserService {
         secretKey: user.credentials.secretKey,
         sessionToken: user.credentials.sessionToken
         });
-        return api.put('/workers/{id}',{path:{id:user.worker.id}},body);
+        return api.put('/workers/{id}',{path:{id:user.worker.id},headers:{'x-identity-id':user.worker.identity}},body);
     }
 
     // register(user:User) {

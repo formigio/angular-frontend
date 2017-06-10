@@ -5,11 +5,17 @@ export const UserCredentialsStruct = {
     expireTime: ''
 };
 
+export const SubscriptionStruct = {
+    id:'',
+    email:''
+};
+
 export const UserWorkerStruct = {
     id:'',
     name:'',
     username:'',
-    identity:''
+    identity:'',
+    subscription: SubscriptionStruct
 };
 
 export const UserStruct = {
@@ -45,11 +51,19 @@ export class UserCredentials {
     ) { }
 }
 
+export class Subscription {
+    constructor(
+        public id: string,
+        public email: string
+    ) { }
+}
+
 export class UserWorker {
     constructor(
         public id: string,
         public name: string,
         public username: string,
-        public identity: string
+        public identity: string,
+        public subscription: Subscription
     ) { }
 }

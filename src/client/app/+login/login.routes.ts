@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { LoginComponent, RegisterComponent } from './index';
+import { LoginComponent, RegisterComponent, SubscribeComponent } from './index';
 
 export const LoginRoutes: Route[] = [
   {
@@ -9,5 +9,9 @@ export const LoginRoutes: Route[] = [
   {
     path: 'register',
     component: RegisterComponent
+  },
+  {
+    path: 'subscribe',
+    component: SubscribeComponent
   }
 ];

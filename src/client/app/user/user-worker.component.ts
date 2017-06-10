@@ -679,7 +679,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
           'Direct the user to Registration, since there is no worker',
           'registerUser',
           (context:ProcessContext) => {
-            return context.hasSignal('fetch_user_worker_error');
+            return context.hasSignal('fetch_user_worker_blocked');
           },
           {}
         ),
@@ -1092,7 +1092,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
       } else {
         this.service.put(user)
           .then((response:any) => {
-            user = response.data;
+            user.worker = response.data;
             observer.next({
               control_uuid: control_uuid,
               outcome: 'success',
