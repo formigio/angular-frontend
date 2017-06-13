@@ -256,7 +256,6 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
 
   public createGoal(control_uuid: string, params: any): Observable<any> {
     let goal: Goal = params.goal;
-    let baseUrl: string = this.helper.getConfig().BASE_URL;
     let notify: string[] = params.goal.notify;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
