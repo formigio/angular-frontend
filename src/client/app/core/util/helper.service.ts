@@ -26,6 +26,10 @@ export class HelperService {
         this.apiFactory = (<any>this.getApiClientFactory());
     }
 
+    getConfig() {
+        return Config;
+    }
+
     sortBy(arr:any[],property:string) {
         arr.sort((a,b) => {
             let sortvala = a[property];

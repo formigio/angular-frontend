@@ -1,6 +1,7 @@
 import {EnvConfig} from './env-config.interface';
 
 const DevConfig: EnvConfig = {
+  BASE_URL: 'http://local.formigio.com:5555/',
   ENV: 'DEV',
   API: 'http://local.dev:8080',
   AWS_REGION: 'us-east-1',

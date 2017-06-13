@@ -48,9 +48,7 @@ export class SubscribeComponent implements OnInit {
       return false;
     }
     return this.user.worker.subscription.email
-      .match(['^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))',
-        '@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])',
-        '|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'].join()) !== null;
+      .match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/gi) !== null;
   }
 
   testEmail() {

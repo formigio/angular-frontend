@@ -256,6 +256,7 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
 
   public createGoal(control_uuid: string, params: any): Observable<any> {
     let goal: Goal = params.goal;
+    let baseUrl: string = this.helper.getConfig().BASE_URL;
     let notify: string[] = params.goal.notify;
     let user: User = params.user;
     let obs = new Observable((observer:any) => {
@@ -279,9 +280,16 @@ export class GoalWorkerComponent implements OnInit, WorkerComponent {
                 worker_id: workerId,
                 message: user.worker.name + ' added Goal: ' + goal.title + ' to Team: ' + goal.team.title,
                 meta_data:{
-                  user_id: user.worker.id,
-                  user_name: user.worker.name,
-                  goal: goal,
+                  template_variables:[
+                    {name:'base_url',content:this.helper.getConfig().BASE_URL},
+                    {name:'user_id',content:user.worker.id},
+                    {name:'user_name',content:user.worker.name},
+                    {name:'goal_title',content: goal.title},
+                    {name:'goal_description',content: goal.description},
+                    {name:'goal_id',content: goal.id},
+                    {name:'team_id',content: goal.team.id},
+                    {name:'team_title',content: goal.team.title}
+                  ],
                   email_template: 'formigio-new-goal'
                 },
                 user: user

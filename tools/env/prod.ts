@@ -1,6 +1,7 @@
 import {EnvConfig} from './env-config.interface';
 
 const ProdConfig: EnvConfig = {
+  BASE_URL: 'https://alpha.formigio.com/',
   ENV: 'PROD',
   API: 'https://ne8nefmm61.execute-api.us-east-1.amazonaws.com/v1',
   AWS_REGION: 'us-east-1',
