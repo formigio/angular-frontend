@@ -34,6 +34,7 @@ export class InviteListComponent implements OnInit {
     changed: false
   };
   loading:boolean = false;
+  validEmail:boolean = false;
 
   /**
    *
@@ -112,4 +113,15 @@ export class InviteListComponent implements OnInit {
     this.addFormActive = false;
   }
 
+  isValidEmail():boolean {
+    if(!this.invite.invitee_name) {
+      return false;
+    }
+    return this.invite.invitee_name
+      .match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/gi) !== null;
+  }
+
+  testEmail() {
+    this.validEmail = this.isValidEmail();
+  }
 }
