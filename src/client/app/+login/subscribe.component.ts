@@ -17,6 +17,7 @@ export class SubscribeComponent implements OnInit {
   user: User;
   existing: User;
   validEmail: boolean = false;
+  canShowForm: boolean = true;
 
   constructor(
     public service:UserService,
@@ -33,6 +34,9 @@ export class SubscribeComponent implements OnInit {
     this.service.getItemSubscription().subscribe(
       user => {
         this.user = user;
+        if(this.user.worker.subscription.email) {
+          this.canShowForm = false;
+        }
         this.existing = JSON.parse(JSON.stringify(user));
         this.testEmail();
       }
@@ -41,6 +45,7 @@ export class SubscribeComponent implements OnInit {
 
   save() {
     this.message.startProcess('user_update',{user:this.user});
+    this.canShowForm = false;
   }
 
   isValidEmail():boolean {
@@ -53,8 +58,15 @@ export class SubscribeComponent implements OnInit {
 
   testEmail() {
     this.validEmail = this.isValidEmail();
-    console.log(this.user.worker.subscription.email);
-    console.log('Valid: ' + this.validEmail);
+  }
+
+  useUserEmail() {
+    this.user.worker.subscription.email = this.user.email;
+    this.testEmail();
+  }
+
+  showForm() {
+    this.canShowForm = true
   }
 
 }

@@ -30,7 +30,7 @@
             <li><a [routerLink]="['/tasks']" (click)="close()" *ngIf="user.email">Tasks</a></li>
             <li><a [routerLink]="['/commitments']" (click)="close()" *ngIf="user.email">Commitments</a></li>
             <li><a [routerLink]="['/login']" (click)="close()" *ngIf="!user.email">Login</a></li>
-            <li><a (click)="logout()" *ngIf="user.email">Logout ({{user.email}})</a></li>
+            <li><a (click)="logout()" *ngIf="user.email" class="clickable">Logout ({{user.worker.username}})</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
