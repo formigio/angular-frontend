@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
+import { Observable } from 'rxjs';
+import { AppState, MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, WorkerBaseComponent } from '../core/index';
 import { User } from '../user/index';
 import { Task } from '../task/index';
 import { Commitment, CommitmentService } from './index';
@@ -15,9 +15,7 @@ import { Commitment, CommitmentService } from './index';
   template: `<div></div>`,
   providers: [ CommitmentService ]
 })
-export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
-
-    public workQueue: ReplaySubject<any> = new ReplaySubject();
+export class CommitmentWorkerComponent extends WorkerBaseComponent implements OnInit {
 
     public routines: {} = {
         commitment_create: new ProcessRoutine(
@@ -34,7 +32,10 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
         ),
         commitment_load_commitments: new ProcessRoutine(
             'commitment_load_commitments',
-            'The Process Used to Control the Load Commitments'
+            'The Process Used to Control the Load Commitments',
+            (appState:AppState) => {
+              return appState.hasSignal('user_login_success');
+            }
         ),
         commitment_load_worker_commitments: new ProcessRoutine(
             'commitment_load_worker_commitments',
@@ -117,9 +118,10 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
 
   constructor(
     protected service: CommitmentService,
-    protected helper: HelperService,
+    public helper: HelperService,
     public message: MessageService
   ) {
+    super();
     this.service = this.helper.getServiceInstance(this.service,'CommitmentService');
   }
 
@@ -127,42 +129,8 @@ export class CommitmentWorkerComponent implements OnInit, WorkerComponent {
    * Get the OnInit
    */
   ngOnInit() {
-    // Subscribe to Worker Registrations
-    this.message.getRegistrarQueue().subscribe(
-      taskRegistration => {
-        if(Object.keys(taskRegistration.tasks).length) {
-          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
-            task.queue = taskRegistration.queue;
-            if(this.routines.hasOwnProperty(task.routine)) {
-              let processRoutine = (<any>this.routines)[task.routine];
-              processRoutine.tasks.push(task);
-            }
-          });
-        }
-      }
-    );
-    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
-
-    // Subscribe to Process Queue
-    // Process Tasks based on messages received
-    if(Object.keys(this.tasks).length > 0) {
-      this.workQueue.subscribe(
-        workMessage => {
-          // Process Signals
-          workMessage.executeMethod(this);
-        }
-      );
-    }
-    if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessInitQueue().subscribe(
-        message => {
-          // Process Inits
-          message.initProcess(this);
-        }
-      );
-    }
+    this.subscribe();
   }
-
 
   public createCommitment(control_uuid: string, params: any): Observable<any> {
     let commitment: Commitment = params.commitment;

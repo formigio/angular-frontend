@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
+import { Observable } from 'rxjs';
+import { AppState, MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, WorkerBaseComponent } from '../core/index';
 import { Team, TeamService } from './index';
 import { User } from '../user/index';
 
@@ -14,9 +14,7 @@ import { User } from '../user/index';
   template: `<div></div>`,
   providers: [ TeamService ]
 })
-export class TeamWorkerComponent implements OnInit, WorkerComponent {
-
-    public workQueue: ReplaySubject<any> = new ReplaySubject();
+export class TeamWorkerComponent extends WorkerBaseComponent implements OnInit {
 
     public routines: {} = {
         team_delete: new ProcessRoutine(
@@ -37,7 +35,11 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
         ),
         team_fetch_user_teams: new ProcessRoutine(
             'team_fetch_user_teams',
-            'The Process Used to Teams for the Logged in User'
+            'The Process Used to Teams for the Logged in User',
+            (appState:AppState) => {
+              return appState.hasSignal('user_login_success');
+            }
+
         )
 
     };
@@ -102,9 +104,10 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
 
   constructor(
     protected service: TeamService,
-    protected helper: HelperService,
+    public helper: HelperService,
     public message: MessageService
   ) {
+    super();
     this.service = this.helper.getServiceInstance(this.service,'TeamService');
   }
 
@@ -113,40 +116,7 @@ export class TeamWorkerComponent implements OnInit, WorkerComponent {
    */
   ngOnInit() {
     // Subscribe to Worker Registrations
-    this.message.getRegistrarQueue().subscribe(
-      taskRegistration => {
-        if(Object.keys(taskRegistration.tasks).length) {
-          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
-            task.queue = taskRegistration.queue;
-            if(this.routines.hasOwnProperty(task.routine)) {
-              let processRoutine = (<any>this.routines)[task.routine];
-              processRoutine.tasks.push(task);
-            }
-          });
-        }
-      }
-    );
-    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
-
-    // Subscribe to Process Queue
-    // Process Tasks based on messages received
-    if(Object.keys(this.tasks).length > 0) {
-      this.workQueue.subscribe(
-        workMessage => {
-          workMessage.routine.log('team worker - executing...');
-          // Process Signals
-          workMessage.executeMethod(this);
-        }
-      );
-    }
-    if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessInitQueue().subscribe(
-        message => {
-          // Process Inits
-          message.initProcess(this);
-        }
-      );
-    }
+    this.subscribe();
   }
 
   public deleteTeam(control_uuid: string, params: any): Observable<any> {

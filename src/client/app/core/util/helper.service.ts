@@ -7,9 +7,14 @@ declare let uritemplate: any;
 
 export class AppState {
     constructor(
-        public state: any,
-        public services: any
+        public state: any = {},
+        public services: any = {},
+        public signals: string[] = []
     ) {}
+
+    public hasSignal(signalStr:string):boolean {
+        return this.signals.indexOf(signalStr) !== -1;
+    }
 }
 
 @Injectable()
@@ -17,13 +22,11 @@ export class HelperService {
 
     apiFactory: any;
 
-    public runtimestorage: AppState = {
-        state: {},
-        services: {}
-    };
+    public runtimestorage: AppState;
 
     constructor() {
         this.apiFactory = (<any>this.getApiClientFactory());
+        this.runtimestorage = new AppState({},{},[]);
     }
 
     getConfig() {
@@ -53,15 +56,16 @@ export class HelperService {
         return this.runtimestorage.services[alias];
     }
 
-    getAppState(location:string): any {
-        if(<any>this.runtimestorage.state.hasOwnProperty(location)) {
-            return this.runtimestorage.state[location];
-        }
+    getAppState(): AppState {
+        return this.runtimestorage;
     }
 
-    setAppState(location:string,value:any): boolean {
-        this.runtimestorage.state[location] = value;
-        return true;
+    addAppSignal(signal:string) {
+        this.runtimestorage.signals.push(signal);
+    }
+
+    getAppSignals(): string[] {
+        return this.runtimestorage.signals;
     }
 
     getApiClientFactory() {

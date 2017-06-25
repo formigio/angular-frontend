@@ -3,4 +3,3 @@
  */
 
 export * from './config/env.config';
-export * from './routing/route-worker.component';

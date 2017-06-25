@@ -10,6 +10,6 @@ import { HelperService } from './util/helper.service';
   imports: [],
   declarations: [],
   exports: [],
-  providers: [MessageService,HelperService]
+  providers: [ MessageService, HelperService ]
 })
 export class CoreModule { }

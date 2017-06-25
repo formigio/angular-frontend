@@ -66,7 +66,7 @@ export class SubscribeComponent implements OnInit {
   }
 
   showForm() {
-    this.canShowForm = true
+    this.canShowForm = true;
   }
 
 }
