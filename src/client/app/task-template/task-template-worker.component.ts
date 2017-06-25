@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
+  ProcessTask, WorkerBaseComponent } from '../core/index';
 import { User } from '../user/index';
 import { TaskTemplate, TaskTemplateService } from './index';
 

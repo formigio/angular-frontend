@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine,
-  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
+  ProcessContext, ProcessTask, WorkerBaseComponent } from '../core/index';
 import { Config } from '../shared/index';
 import { User, UserService } from './index';
 
@@ -850,7 +850,7 @@ export class UserWorkerComponent extends WorkerBaseComponent implements OnInit {
 
   constructor(
     protected service: UserService,
-    protected helper: HelperService,
+    public helper: HelperService,
     public message: MessageService
   ) {
     super();
@@ -975,6 +975,7 @@ export class UserWorkerComponent extends WorkerBaseComponent implements OnInit {
       this.service.get()
         .then((response:any) => {
           user.worker = response.data;
+          this.helper.addAppSignal('user_login_success');
           observer.next({
             control_uuid: control_uuid,
             outcome: 'success',

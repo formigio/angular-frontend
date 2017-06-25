@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
+import { Observable } from 'rxjs';
+import { AppState, MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, WorkerBaseComponent } from '../core/index';
 import { User } from '../user/index';
 import { TaskTemplate } from '../task-template/index';
 import { Goal } from '../goal/index';
@@ -25,7 +25,10 @@ export class TaskWorkerComponent extends WorkerBaseComponent implements OnInit {
         ),
         load_task_list: new ProcessRoutine(
             'load_task_list',
-            'The Process Used to Control the Loading of Tasks'
+            'The Process Used to Control the Loading of Tasks',
+            (appState:AppState) => {
+              return appState.hasSignal('user_login_success');
+            }
         ),
         task_create: new ProcessRoutine(
             'task_create',
@@ -156,7 +159,7 @@ export class TaskWorkerComponent extends WorkerBaseComponent implements OnInit {
 
   constructor(
     protected service: TaskService,
-    protected helper: HelperService,
+    public helper: HelperService,
     public message: MessageService
   ) {
     super();

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, ProcessRoutine, ProcessTask,
-  WorkerComponent, ProcessContext, ProcessTaskRegistration, WorkerBaseComponent } from '../../core/index';
+import { Observable } from 'rxjs';
+import { HelperService, MessageService, ProcessRoutine, ProcessTask,
+  ProcessContext, WorkerBaseComponent } from '../index';
 
 /**
  * This class represents the lazy loaded RouteWorkerComponent.
@@ -70,8 +70,9 @@ export class RouteWorkerComponent extends WorkerBaseComponent implements OnInit 
   };
 
   constructor(
-    public router: Router,
-    public message: MessageService
+    public helper: HelperService,
+    public message: MessageService,
+    public router: Router
   ) {
     super();
   }

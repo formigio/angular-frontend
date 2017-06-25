@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
+import { Observable } from 'rxjs';
+import { AppState, MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, WorkerBaseComponent } from '../core/index';
 import { User } from '../user/index';
 import { GoalTemplate } from '../goal-template/index';
 import { Goal, GoalService, GoalStruct } from './index';
@@ -17,8 +17,6 @@ import { Goal, GoalService, GoalStruct } from './index';
 })
 export class GoalWorkerComponent extends WorkerBaseComponent implements OnInit {
 
-  public workQueue: ReplaySubject<any> = new ReplaySubject();
-
   public routines: {} = {
       goal_delete: new ProcessRoutine(
           'goal_delete',
@@ -26,11 +24,17 @@ export class GoalWorkerComponent extends WorkerBaseComponent implements OnInit {
       ),
       goal_view: new ProcessRoutine(
           'goal_view',
-          'The Process Used to Control the Viewing of Goals'
+          'The Process Used to Control the Viewing of Goals',
+          (appState:AppState) => {
+            return appState.hasSignal('user_login_success');
+          }
       ),
       load_goal_list: new ProcessRoutine(
           'load_goal_list',
-          'The Process Used to Control the Viewing of Goals'
+          'The Process Used to Control the Viewing of Goals',
+          (appState:AppState) => {
+            return appState.hasSignal('user_login_success');
+          }
       ),
       create_goal: new ProcessRoutine(
           'create_goal',

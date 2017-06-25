@@ -6,9 +6,11 @@ export class ProcessRoutine {
     public tasks: ProcessTask[] = [];
     public context: ProcessContext;
     public worker: WorkerComponent;
+    public status: string = 'pending';
     constructor(
         public identifier: string,
         public description: string,
+        public ready: Function = () => { return true; },
         public debug: boolean = false
     ) {}
 
@@ -17,6 +19,17 @@ export class ProcessRoutine {
         // Then the initiator of the process can subscribe to Process Events
         // We can then push next/error/complete to the subject, and the subscriber can react.
         this.log('Process Starting: ' + this.identifier);
+
+        if(typeof this.ready !== 'function') {
+            this.ready = () => {return true;};
+        }
+
+        if(!this.ready(this.worker.helper.getAppState())) {
+            this.worker.message.addPendingProcess(this);
+            return;
+        }
+
+        this.status = 'ready';
 
         this.initTasks().subscribe(null,null,() => {
             this.localDebug();

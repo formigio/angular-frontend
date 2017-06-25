@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs'
+import { Observable } from 'rxjs';
 import { ProcessTask, ProcessRoutine, WorkerComponent,
-    WorkerResponse, Message } from '../index'
+    WorkerResponse, Message } from '../index';
 
 export class WorkerMessage {
     constructor(

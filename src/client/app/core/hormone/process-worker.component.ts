@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine, ProcessTask, WorkerComponent, WorkerBaseComponent, ProcessTaskRegistration } from '../index';
+import { MessageService, HelperService, ProcessRoutine,
+  WorkerBaseComponent } from '../index';
 
 /**
  * This class represents the lazy loaded GoalWorkerComponent.
@@ -18,7 +19,8 @@ export class ProcessWorkerComponent extends WorkerBaseComponent implements OnIni
   public routines: {} = {
     process_every_minute: new ProcessRoutine(
       'process_every_minute',
-      'The Process Used to Control the Automated Tasks'
+      'The Process Used to Control the Automated Tasks',
+      () => { return true; }
     )
   };
 
@@ -46,6 +48,7 @@ export class ProcessWorkerComponent extends WorkerBaseComponent implements OnIni
           null,
           null,
           () => {
+            this.message.processPendingProcesses();
             // this.message.addStickyMessage('Routine Complete');
             // this.ref.tick();
           }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
+import { Observable } from 'rxjs';
+import { AppState, MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, WorkerBaseComponent } from '../core/index';
 import { User } from '../user/index';
 import { Task } from '../task/index';
 import { Commitment, CommitmentService } from './index';
@@ -32,7 +32,10 @@ export class CommitmentWorkerComponent extends WorkerBaseComponent implements On
         ),
         commitment_load_commitments: new ProcessRoutine(
             'commitment_load_commitments',
-            'The Process Used to Control the Load Commitments'
+            'The Process Used to Control the Load Commitments',
+            (appState:AppState) => {
+              return appState.hasSignal('user_login_success');
+            }
         ),
         commitment_load_worker_commitments: new ProcessRoutine(
             'commitment_load_worker_commitments',
@@ -115,7 +118,7 @@ export class CommitmentWorkerComponent extends WorkerBaseComponent implements On
 
   constructor(
     protected service: CommitmentService,
-    protected helper: HelperService,
+    public helper: HelperService,
     public message: MessageService
   ) {
     super();

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
+import { Observable } from 'rxjs';
+import { AppState, MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, WorkerBaseComponent } from '../core/index';
 import { User } from '../user/index';
 import { Invite, InviteService } from './index';
 
@@ -23,7 +23,10 @@ export class InviteWorkerComponent extends WorkerBaseComponent implements OnInit
         ),
         invite_fetch: new ProcessRoutine(
             'invite_fetch',
-            'The Process Used to Control the Fetch of Invites'
+            'The Process Used to Control the Fetch of Invites',
+            (appState:AppState) => {
+              return appState.hasSignal('user_login_success');
+            }
         ),
         invite_create: new ProcessRoutine(
           'invite_create',
@@ -143,7 +146,7 @@ export class InviteWorkerComponent extends WorkerBaseComponent implements OnInit
 
   constructor(
     protected service: InviteService,
-    protected helper: HelperService,
+    public helper: HelperService,
     public message: MessageService
   ) {
     super();

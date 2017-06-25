@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine,
-  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
+import { Observable } from 'rxjs';
+import { AppState, MessageService, HelperService, ProcessRoutine,
+  ProcessContext, ProcessTask, WorkerBaseComponent } from '../core/index';
 import { User } from '../user/index';
 import { Notification, NotificationService, NotificationStruct } from './index';
 
@@ -37,7 +37,10 @@ export class NotificationWorkerComponent extends WorkerBaseComponent implements 
         ),
         notification_fetch_list: new ProcessRoutine(
             'notification_fetch_list',
-            'The Process Used to Notifications for the Logged in User'
+            'The Process Used to Notifications for the Logged in User',
+            (appState:AppState) => {
+              return appState.hasSignal('user_login_success');
+            }
         ),
         notification_connect: new ProcessRoutine(
             'notification_connect',
@@ -160,7 +163,7 @@ export class NotificationWorkerComponent extends WorkerBaseComponent implements 
 
   constructor(
     protected service: NotificationService,
-    protected helper: HelperService,
+    public helper: HelperService,
     public message: MessageService
   ) {
     super();

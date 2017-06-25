@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
+import { Observable } from 'rxjs';
+import { AppState, MessageService, HelperService, ProcessRoutine, ProcessContext,
+  ProcessTask, WorkerBaseComponent } from '../core/index';
 import { TeamMember, TeamMemberService } from './index';
 import { User } from '../user/index';
 
@@ -19,7 +19,8 @@ export class TeamMemberWorkerComponent extends WorkerBaseComponent implements On
     public routines: {} = {
         teammember_fetch_team_members: new ProcessRoutine(
             'teammember_fetch_team_members',
-            'The Process Used to Control the Fetching of TeamMembers'
+            'The Process Used to Control the Fetching of TeamMembers',
+            (appState:AppState) => { return appState.hasSignal('user_login_success'); }
         )
     };
 
@@ -39,7 +40,7 @@ export class TeamMemberWorkerComponent extends WorkerBaseComponent implements On
 
   constructor(
     protected service: TeamMemberService,
-    protected helper: HelperService,
+    public helper: HelperService,
     public message: MessageService
   ) {
     super();

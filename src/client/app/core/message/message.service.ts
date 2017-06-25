@@ -29,9 +29,8 @@ export class MessageService {
 
     socketSubject: Subject<any>;
 
-    // public flashMessage: ReplaySubject<any> = new ReplaySubject();
-    // public processMessage: ReplaySubject<any> = new ReplaySubject();
-    // public stickyMessage: ReplaySubject<any> = new ReplaySubject();
+    pendingProcesses: {} = {};
+
     public messageQueue: ReplaySubject<any> = new ReplaySubject();
     public workerQueue: ReplaySubject<any> = new ReplaySubject();
     public processInitQueue: ReplaySubject<any> = new ReplaySubject();
@@ -79,21 +78,23 @@ export class MessageService {
         this.processQueue.next(process);
     }
 
+    public addPendingProcess(process: ProcessRoutine) {
+        (<any>this.pendingProcesses)[process.identifier] = process;
+    }
+
+    public processPendingProcesses() {
+        let pendings: string[] = Object.keys(this.pendingProcesses);
+        pendings.forEach((identifier:string) => {
+            let process:ProcessRoutine = (<any>this.pendingProcesses)[identifier];
+            delete (<any>this.pendingProcesses)[identifier];
+            if(typeof process !== 'undefined')
+                process.start();
+        });
+    }
+
     public gethMessageQueue(): ReplaySubject<any> {
         return this.messageQueue;
     }
-
-    // public getFlashMessage(): ReplaySubject<any> {
-    //     return this.flashMessage;
-    // }
-
-    // public getStickyMessageRelay(): ReplaySubject<any> {
-    //     return this.stickyMessage;
-    // }
-
-    // public getProcessMessageRelay(): ReplaySubject<any> {
-    //     return this.processMessage;
-    // }
 
     public getProcessQueue(): ReplaySubject<any> {
         return this.processQueue;

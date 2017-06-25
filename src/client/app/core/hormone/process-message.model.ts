@@ -19,6 +19,7 @@ export class ProcessMessage {
         let processRoutine: ProcessRoutine = new ProcessRoutine(
           processRoutineTemplate.identifier,
           processRoutineTemplate.description,
+          processRoutineTemplate.ready,
           processRoutineTemplate.debug
         );
 
