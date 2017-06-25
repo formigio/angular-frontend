@@ -1,15 +1,14 @@
 import { ReplaySubject } from 'rxjs';
-import { MessageService, ProcessTask, ProcessTaskRegistration } from '../index';
+import { HelperService, MessageService, ProcessTask, ProcessTaskRegistration } from '../index';
 
 export class WorkerBaseComponent implements WorkerComponent {
 
     message: MessageService;
+    helper: HelperService;
     routines: {};
     tasks: {};
 
     public workQueue: ReplaySubject<any> = new ReplaySubject();
-
-    constructor(){}
 
     public subscribe() {
         this.message.getRegistrarQueue().subscribe(
@@ -56,5 +55,6 @@ export class WorkerBaseComponent implements WorkerComponent {
 export interface WorkerComponent {
     routines: {};
     tasks: {};
-    message: any;
+    message: MessageService;
+    helper: HelperService;
 }
