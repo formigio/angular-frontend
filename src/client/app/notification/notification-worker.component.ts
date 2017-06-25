@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine,
-  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
+  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
 import { User } from '../user/index';
 import { Notification, NotificationService, NotificationStruct } from './index';
 
@@ -12,9 +12,7 @@ import { Notification, NotificationService, NotificationStruct } from './index';
   template: `<div></div>`,
   providers: [ NotificationService ]
 })
-export class NotificationWorkerComponent implements OnInit, WorkerComponent {
-
-    public workQueue: ReplaySubject<any> = new ReplaySubject();
+export class NotificationWorkerComponent extends WorkerBaseComponent implements OnInit {
 
     public routines: {} = {
         notification_delete: new ProcessRoutine(
@@ -165,6 +163,7 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
     protected helper: HelperService,
     public message: MessageService
   ) {
+    super();
     this.service = this.helper.getServiceInstance(this.service,'NotificationService');
   }
 
@@ -173,39 +172,7 @@ export class NotificationWorkerComponent implements OnInit, WorkerComponent {
    */
   ngOnInit() {
     // Subscribe to Worker Registrations
-    this.message.getRegistrarQueue().subscribe(
-      taskRegistration => {
-        if(Object.keys(taskRegistration.tasks).length) {
-          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
-            task.queue = taskRegistration.queue;
-            if(this.routines.hasOwnProperty(task.routine)) {
-              let processRoutine = (<any>this.routines)[task.routine];
-              processRoutine.tasks.push(task);
-            }
-          });
-        }
-      }
-    );
-    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
-
-    // Subscribe to Process Queue
-    // Process Tasks based on messages received
-    if(Object.keys(this.tasks).length > 0) {
-      this.workQueue.subscribe(
-        workMessage => {
-          // Process Signals
-          workMessage.executeMethod(this);
-        }
-      );
-    }
-    if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessInitQueue().subscribe(
-        message => {
-          // Process Inits
-          message.initProcess(this);
-        }
-      );
-    }
+    this.subscribe();
   }
 
   public connectSocket(control_uuid: string, params: any): Observable<any> {

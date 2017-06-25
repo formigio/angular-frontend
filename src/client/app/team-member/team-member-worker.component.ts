@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine, ProcessContext,
-  ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
+  ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
 import { TeamMember, TeamMemberService } from './index';
 import { User } from '../user/index';
 
@@ -14,9 +14,7 @@ import { User } from '../user/index';
   template: `<div></div>`,
   providers: [ TeamMemberService ]
 })
-export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
-
-    public workQueue: ReplaySubject<any> = new ReplaySubject();
+export class TeamMemberWorkerComponent extends WorkerBaseComponent implements OnInit {
 
     public routines: {} = {
         teammember_fetch_team_members: new ProcessRoutine(
@@ -44,6 +42,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
     protected helper: HelperService,
     public message: MessageService
   ) {
+    super();
     this.service = this.helper.getServiceInstance(this.service,'TeamMemberService');
   }
 
@@ -52,39 +51,7 @@ export class TeamMemberWorkerComponent implements OnInit, WorkerComponent {
    */
   ngOnInit() {
     // Subscribe to Worker Registrations
-    this.message.getRegistrarQueue().subscribe(
-      taskRegistration => {
-        if(Object.keys(taskRegistration.tasks).length) {
-          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
-            task.queue = taskRegistration.queue;
-            if(this.routines.hasOwnProperty(task.routine)) {
-              let processRoutine = (<any>this.routines)[task.routine];
-              processRoutine.tasks.push(task);
-            }
-          });
-        }
-      }
-    );
-    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
-
-    // Subscribe to Process Queue
-    // Process Tasks based on messages received
-    if(Object.keys(this.tasks).length > 0) {
-      this.workQueue.subscribe(
-        workMessage => {
-          // Process Signals
-          workMessage.executeMethod(this);
-        }
-      );
-    }
-    if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessInitQueue().subscribe(
-        message => {
-          // Process Inits
-          message.initProcess(this);
-        }
-      );
-    }
+    this.subscribe();
   }
 
   public fetchTeamMembers(control_uuid: string, params: any): Observable<any> {

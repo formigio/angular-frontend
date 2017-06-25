@@ -3,6 +3,10 @@
  */
 
 export * from './hormone/process.model';
+export * from './hormone/process-message.model';
+export * from './hormone/process-routine.model';
+export * from './hormone/process-task.model';
+export * from './hormone/worker-message.model';
 export * from './message/message.service';
 export * from './util/helper.service';
 export * from './hormone/process-worker.component';

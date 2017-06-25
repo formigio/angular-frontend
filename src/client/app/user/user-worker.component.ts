@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, HelperService, ProcessRoutine,
-  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration } from '../core/index';
+  ProcessContext, ProcessTask, WorkerComponent, ProcessTaskRegistration, WorkerBaseComponent } from '../core/index';
 import { Config } from '../shared/index';
 import { User, UserService } from './index';
 
@@ -18,9 +18,7 @@ declare let apigClientFactory: any;
   template: `<div></div>`,
   providers: [ UserService ]
 })
-export class UserWorkerComponent implements OnInit, WorkerComponent {
-
-    public workQueue: ReplaySubject<any> = new ReplaySubject();
+export class UserWorkerComponent extends WorkerBaseComponent implements OnInit {
 
     public routines: {} = {
         user_login: new ProcessRoutine(
@@ -855,6 +853,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
     protected helper: HelperService,
     public message: MessageService
   ) {
+    super();
     this.service = this.helper.getServiceInstance(this.service,'UserService');
   }
 
@@ -863,40 +862,7 @@ export class UserWorkerComponent implements OnInit, WorkerComponent {
    */
   ngOnInit() {
     // Subscribe to Worker Registrations
-    this.message.getRegistrarQueue().subscribe(
-      taskRegistration => {
-        if(Object.keys(taskRegistration.tasks).length) {
-          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
-            task.queue = taskRegistration.queue;
-            if(this.routines.hasOwnProperty(task.routine)) {
-              let processRoutine = (<any>this.routines)[task.routine];
-              processRoutine.tasks.push(task);
-            }
-          });
-        }
-      }
-    );
-    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
-
-    // Subscribe to Process Queue
-    // Process Tasks based on messages received
-    if(Object.keys(this.tasks).length > 0) {
-      this.workQueue.subscribe(
-        workMessage => {
-          workMessage.routine.log('user worker - executing...');
-          // Process Signals
-          workMessage.executeMethod(this);
-        }
-      );
-    }
-    if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessInitQueue().subscribe(
-        message => {
-          // Process Inits
-          message.initProcess(this);
-        }
-      );
-    }
+    this.subscribe();
 
     // Start User Process
     this.message.startProcess('user_load_for_app',{});

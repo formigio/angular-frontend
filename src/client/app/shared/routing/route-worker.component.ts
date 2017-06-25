@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, ReplaySubject } from 'rxjs';
 import { MessageService, ProcessRoutine, ProcessTask,
-  WorkerComponent, ProcessContext, ProcessTaskRegistration } from '../../core/index';
+  WorkerComponent, ProcessContext, ProcessTaskRegistration, WorkerBaseComponent } from '../../core/index';
 
 /**
  * This class represents the lazy loaded RouteWorkerComponent.
@@ -13,9 +13,7 @@ import { MessageService, ProcessRoutine, ProcessTask,
   template: `<div></div>`,
   providers: [ ]
 })
-export class RouteWorkerComponent implements OnInit, WorkerComponent {
-
-  public workQueue: ReplaySubject<any> = new ReplaySubject();
+export class RouteWorkerComponent extends WorkerBaseComponent implements OnInit {
 
   public routines: {} = {
     navigate_to: new ProcessRoutine(
@@ -74,47 +72,16 @@ export class RouteWorkerComponent implements OnInit, WorkerComponent {
   constructor(
     public router: Router,
     public message: MessageService
-  ) {}
-
+  ) {
+    super();
+  }
 
   /**
    * Get the OnInit
    */
   ngOnInit() {
     // Subscribe to Worker Registrations
-    this.message.getRegistrarQueue().subscribe(
-      taskRegistration => {
-        if(Object.keys(taskRegistration.tasks).length) {
-          Object.values(taskRegistration.tasks).forEach((task:ProcessTask) => {
-            task.queue = taskRegistration.queue;
-            if(this.routines.hasOwnProperty(task.routine)) {
-              let processRoutine = (<any>this.routines)[task.routine];
-              processRoutine.tasks.push(task);
-            }
-          });
-        }
-      }
-    );
-    this.message.registerProcessTasks(new ProcessTaskRegistration(this.tasks,this.workQueue));
-
-    // Subscribe to Process Queue
-    // Process Tasks based on messages received
-    if(Object.keys(this.tasks).length > 0) {
-      this.workQueue.subscribe(
-        workMessage => {
-          // Process Signals
-          workMessage.executeMethod(this);
-        }
-      );
-    }
-    if(Object.keys(this.routines).length > 0) {
-      this.message.getProcessInitQueue().subscribe(
-        message => {
-          // Process Inits
-          message.initProcess(this);
-        }
-      );
-    }
+    this.subscribe();
   }
 
   public navigateTo(control_uuid: string, params: any): Observable<any> {
