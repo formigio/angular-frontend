@@ -108,7 +108,7 @@ export class InviteService {
       secretKey: user.credentials.secretKey,
       sessionToken: user.credentials.sessionToken
     });
-    return api.get('/invites',{params:{status:'pending',entity:entity,entity_id:entity_id},headers:{'x-identity-id':user.worker.identity}});
+    return api.get('/invites',{params:{status:'!=:accepted',entity:entity,entity_id:entity_id},headers:{'x-identity-id':user.worker.identity}});
   }
 
   /**

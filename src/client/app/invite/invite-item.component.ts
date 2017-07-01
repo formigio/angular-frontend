@@ -67,4 +67,28 @@ export class InviteItemComponent implements OnInit {
     }
   }
 
+  statusMessage(): string {
+    if(this.invite.status === ''){
+      return '';
+    } else if(this.invite.status === 'rejected') {
+      return 'Email didn\'t send (Rejected from Email Sender)';
+    } else if(this.invite.status === 'sent') {
+      return 'Email Sent, just waiting for acceptance';
+    } else if(this.invite.status === 'manual') {
+      return 'You will need to copy the invite link and send to your teammate.';
+    }
+    return 'Status: ' + this.invite.status;
+  }
+
+  statusLabel(): string {
+    if(this.invite.status === 'rejected') {
+      return 'label label-danger';
+    } else if(this.invite.status === 'manual') {
+      return 'label label-warning';
+    } else if(this.invite.status === 'pending') {
+      return 'label label-warning';
+    }
+    return 'label label-success';
+  }
+
 }
